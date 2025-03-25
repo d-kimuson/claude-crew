@@ -5,7 +5,7 @@ export const noSuchFileOrDirectoryError = (options?: {
   cause?: Error
 }) =>
   new DiscriminatedError(
-    "NoSuchFileOrDirectory",
+    "NO_SUCH_FILE_OR_DIRECTORY",
     options?.filePath
       ? `No such file or directory: ${options.filePath}`
       : "No such file or directory",

@@ -6,7 +6,6 @@
     "claude-crew": "./dist/index.js"
   },
   "scripts": {
-    "dev": "pnpm ts:run ./src/index.ts",
     "lint": "pnpm run:eslint .",
     "fix": "pnpm lint --fix",
     "build": "esbuild ./src/index.ts --format=esm --platform=node --bundle --packages=external --outdir=out",
@@ -16,6 +15,7 @@
   },
   "dependencies": {
     "@claude-crew/core": "workspace:*",
+    "inquirer": "^12.5.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {

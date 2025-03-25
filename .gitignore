@@ -146,3 +146,5 @@ lefthook-local.yml
 
 # env
 .env.secret
+
+.claude-crew/

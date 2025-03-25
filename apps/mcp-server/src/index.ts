@@ -7,8 +7,10 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js"
 import { zodToJsonSchema } from "zod-to-json-schema"
-import type { z } from "zod"
 import { version } from "../package.json"
+import { prepareTool } from "./tools/prepare"
+
+const tools = [prepareTool] as const
 
 const server = new Server(
   {
@@ -25,17 +27,42 @@ const server = new Server(
 
 server.setRequestHandler(ListToolsRequestSchema, () => {
   return {
-    tools: [],
+    tools: tools.map((declare) => ({
+      name: declare.name,
+      description: declare.description,
+      inputSchema: zodToJsonSchema(declare.inputSchema),
+    })),
   }
 })
 
-server.setRequestHandler(CallToolRequestSchema, (request) => {
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     const { name, arguments: _args } = request.params
+    const tool = tools.find((declare) => declare.name === name)
 
-    switch (name) {
-      default:
-        throw new Error(`Unknown tool: ${name}`)
+    if (!tool) {
+      throw new Error(`Unknown tool: ${name}`)
+    }
+
+    const parsed = tool.inputSchema.safeParse(_args)
+    if (!parsed.success) {
+      return {
+        isError: true,
+        content: parsed.error.errors.map((error) => ({
+          type: "text",
+          text: error.message,
+        })),
+      }
+    }
+
+    return {
+      isError: false,
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(await tool.execute(parsed.data)),
+        },
+      ],
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)

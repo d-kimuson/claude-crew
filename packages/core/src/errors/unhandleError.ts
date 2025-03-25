@@ -7,7 +7,7 @@ export const unhandledError = (
   }
 ) => {
   return new DiscriminatedError(
-    "UnhandledError",
+    "UNHANDLED_ERROR",
     "Unhandled error",
     {
       ...data,

@@ -1,3 +1,5 @@
 import type { DB } from "."
 
-export const withDb = <T>(cb: (context: { db: DB }) => T) => cb
+export type DbContext = { db: DB; databaseUrl: string }
+
+export const withDb = <T>(cb: (context: DbContext) => T) => cb
