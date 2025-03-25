@@ -1,5 +1,7 @@
-import * as fs from "fs"
+import { existsSync } from "fs"
 import { writeFile, readFile } from "fs/promises"
+import { mkdir } from "node:fs/promises"
+import { dirname } from "node:path"
 import { glob } from "glob"
 import { textDiff } from "../../utils/textDiff"
 import { withConfig } from "../../utils/withConfig"
@@ -29,7 +31,7 @@ export const editorTools = withConfig((config) => {
     readFile: async (filePath: string, maxLine = 100, offset = 0) => {
       try {
         const absolutePath = toAbsolutePath(config)(filePath)
-        if (!fs.existsSync(absolutePath)) {
+        if (!existsSync(absolutePath)) {
           return {
             success: false,
             error: {
@@ -63,8 +65,22 @@ export const editorTools = withConfig((config) => {
       }
     },
 
+    mkdir: async (filePath: string) => {
+      const absolutePath = toAbsolutePath(config)(filePath)
+      await mkdir(dirname(absolutePath), {
+        recursive: true,
+      })
+    },
+
     writeFile: async (filePath: string, content: string) => {
       try {
+        const absolutePath = toAbsolutePath(config)(filePath)
+        if (!existsSync(absolutePath)) {
+          await mkdir(dirname(absolutePath), {
+            recursive: true,
+          })
+        }
+
         await writeFile(toAbsolutePath(config)(filePath), content, {
           encoding: "utf-8",
         })
@@ -87,7 +103,7 @@ export const editorTools = withConfig((config) => {
     replaceFile: async (filePath: string, pattern: string, replace: string) => {
       try {
         const absolutePath = toAbsolutePath(config)(filePath)
-        if (!fs.existsSync(absolutePath)) {
+        if (!existsSync(absolutePath)) {
           return {
             success: false,
             error: {

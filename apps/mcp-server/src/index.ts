@@ -8,9 +8,11 @@ import {
 } from "@modelcontextprotocol/sdk/types.js"
 import { zodToJsonSchema } from "zod-to-json-schema"
 import { version } from "../package.json"
+import { editorTools } from "./tools/editor"
 import { prepareTool } from "./tools/prepare"
+import { ragTools } from "./tools/rag"
 
-const tools = [prepareTool] as const
+const tools = [prepareTool, ...editorTools, ...ragTools] as const
 
 const server = new Server(
   {
@@ -60,6 +62,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       content: [
         {
           type: "text",
+          // @ts-expect-error --
           text: JSON.stringify(await tool.execute(parsed.data)),
         },
       ],

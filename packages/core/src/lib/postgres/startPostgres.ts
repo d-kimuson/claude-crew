@@ -12,17 +12,31 @@ export const startPostgres = async () => {
     { encoding: "utf-8" }
   )
 
-  if (
-    execSync(
-      `docker ps -a --filter name="${constraints.defaultPostgresContainer.containerName}" --format=json`,
-      {
-        encoding: "utf-8",
+  const dockerPsStdout = execSync(
+    `docker ps -a --filter name="${constraints.defaultPostgresContainer.containerName}" --format=json`,
+    {
+      encoding: "utf-8",
+    }
+  )
+
+  if (dockerPsStdout !== "") {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (JSON.parse(dockerPsStdout).State === "running") {
+      console.log("Postgres Container is already running")
+      return {
+        url: connectUrl,
       }
-    ) === ""
-  ) {
-    console.log("Postgres Container is already running")
-    return {
-      url: connectUrl,
+    } else {
+      execSync(
+        `docker start ${constraints.defaultPostgresContainer.containerName}`,
+        {
+          encoding: "utf-8",
+        }
+      )
+
+      return {
+        url: connectUrl,
+      }
     }
   }
 

@@ -18,7 +18,7 @@ export const prepareTool = defineTool({
       .string()
       .describe("query to fetch relevant documents and resources"),
   }),
-  execute: async (input) => {
+  execute: async (_config, input) => {
     const { branch, query } = input
     const config = loadConfig(envUtils.getEnv("CONFIG_PATH"))
 
