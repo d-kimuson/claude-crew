@@ -212,6 +212,19 @@ export const editorTools = withConfig((config) => {
       }
     },
 
+    testFile: (filePath: string) => {
+      const absolutePath = toAbsolutePath(config)(filePath)
+      if (!existsSync(absolutePath)) {
+        return {
+          success: false,
+          error: { reason: "No such file or directory", filePath },
+        } as const
+      }
+
+      return execBash(config)(
+        config.commands.testFile.replace("<file>", absolutePath)
+      )
+    },
     checkAll: async () => {
       const checkResults = await Promise.all(
         [...config.commands.checks, config.commands.test].map((command) => {

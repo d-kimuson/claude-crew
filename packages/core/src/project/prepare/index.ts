@@ -1,10 +1,12 @@
 import { execSync } from "child_process"
 import { findRelevantDocuments } from "../../embedding/findRelevantDocuments"
 import { findRelevantResources } from "../../embedding/findRelevantResources"
+import { formatRagContents } from "../../embedding/formatRagContents"
 import { indexCodebase } from "../../embedding/indexCodebase"
 import { runMigrate } from "../../lib/drizzle/runMigrate"
 import { withDb } from "../../lib/drizzle/withDb"
 import { withConfig } from "../../utils/withConfig"
+import { getProjectInfo } from "../getProjectInfo"
 
 export const prepareTask = withConfig((config) =>
   withDb((ctx) => async (branch: string, query: string) => {
@@ -38,13 +40,17 @@ export const prepareTask = withConfig((config) =>
     await indexCodebase(ctx)(config.directory)
     console.log("✅ index codebase done")
 
-    const relevantDocuments = await findRelevantDocuments(ctx)(query)
-    const relevantResources = await findRelevantResources(ctx)(query)
+    const projectInfo = await getProjectInfo(config.directory)
+    const relevantDocuments =
+      await findRelevantDocuments(ctx)(query).then(formatRagContents)
+    const relevantResources =
+      await findRelevantResources(ctx)(query).then(formatRagContents)
 
     return {
       success: true,
       relevantDocuments,
       relevantResources,
+      projectInfo,
     } as const
   })
 )

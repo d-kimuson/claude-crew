@@ -59,11 +59,18 @@ export const testModifiedFiles = withConfig((config) => (files: string[]) => {
         supplement: "No test file exists.",
       } as const
 
-    const testFilePathCandidates = TEST_MIDDLE_EXTENSIONS.flatMap((middleExt) =>
-      FILE_EXTENSIONS.map((ext) =>
-        absolutePath.replace(extension, `${middleExt}${ext}`)
+    const testFilePathCandidates = [
+      ...TEST_MIDDLE_EXTENSIONS.flatMap((middleExt) =>
+        FILE_EXTENSIONS.map((ext) =>
+          absolutePath.replace(extension, `${middleExt}${ext}`)
+        )
+      ),
+      ...(TEST_MIDDLE_EXTENSIONS.some((middleExt) =>
+        absolutePath.endsWith(middleExt + extension)
       )
-    )
+        ? [absolutePath]
+        : []),
+    ]
 
     const testFilePath = testFilePathCandidates.find((path) => existsSync(path))
 

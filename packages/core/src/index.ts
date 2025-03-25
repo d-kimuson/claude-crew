@@ -17,3 +17,7 @@ export { mcpConfig } from "./config/mcp"
 
 // project
 export { prepareTask } from "./project/prepare"
+export { getProjectInfo } from "./project/getProjectInfo"
+
+// prompt
+export { createPrompt } from "./prompt/createPrompt"

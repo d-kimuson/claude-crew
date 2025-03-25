@@ -166,6 +166,9 @@ importers:
       tree-sitter-typescript:
         specifier: ^0.23.2
         version: 0.23.2(tree-sitter@0.22.4)
+      type-safe-prompt:
+        specifier: ^0.0.2
+        version: 0.0.2
       zod:
         specifier: ^3.24.2
         version: 3.24.2
@@ -3801,6 +3804,10 @@ packages:
   type-is@2.0.0:
     resolution: {integrity: sha512-gd0sGezQYCbWSbkZr75mln4YBidWUN60+devscpLF5mtRDUpiaTvKpBNrdaCvel1NdR2k6vclXybU5fBd2i+nw==}
     engines: {node: '>= 0.6'}
+
+  type-safe-prompt@0.0.2:
+    resolution: {integrity: sha512-NOO5OmWIbK9Hml3sR7lm0NXeTLZfpefZ+iFYRO5Con5OvLaeJCSxRGtsp+B5rqLQbIBz/PW1PEhZ/GfctiNg7w==}
+    engines: {node: '>=18'}
 
   typed-array-buffer@1.0.2:
     resolution: {integrity: sha512-gEymJYKZtKXzzBzM4jqa9w6Q1Jjm7x2d+sh19AdsD4wqnMPDYyvwpsIc2Q/835kHuo3BEQ7CjelGhfTsoBb2MQ==}
@@ -7745,6 +7752,8 @@ snapshots:
       content-type: 1.0.5
       media-typer: 1.1.0
       mime-types: 3.0.0
+
+  type-safe-prompt@0.0.2: {}
 
   typed-array-buffer@1.0.2:
     dependencies:

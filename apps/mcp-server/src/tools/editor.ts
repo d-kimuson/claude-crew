@@ -116,6 +116,17 @@ export const editorTools = [
   }),
 
   defineTool({
+    name: "test-file",
+    description: `Run test file`,
+    inputSchema: z.object({
+      filePath: z.string().describe("File path to test"),
+    }),
+    execute: async (config, input) => {
+      return await coreEditorTools(config).testFile(input.filePath)
+    },
+  }),
+
+  defineTool({
     name: `check-all`,
     description: `Run all check commands`,
     inputSchema: z.object({}),

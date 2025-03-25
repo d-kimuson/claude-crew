@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises"
 import { resolve } from "node:path"
-import { mcpConfig, startPostgres } from "@claude-crew/core"
+import { createPrompt, mcpConfig, startPostgres } from "@claude-crew/core"
 import inquirer from "inquirer"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
@@ -171,9 +171,19 @@ const main = async () => {
         JSON.stringify(mcpConfig(config), null, 2)
       )
 
-      // TODO: write instruction
-
-      console.log("Setup completed.")
+      const prompt = await createPrompt(config)
+      await writeFile(
+        resolve(projectDirectory, ".claude-crew", "instruction.md"),
+        prompt
+      )
+      console.log("All setup completed!")
+      console.log("To start task, process the followings.")
+      console.log(
+        `1. copy ${resolve(projectDirectory, ".claude-crew", "mcp.json")} and paste to Claude Desktop's MCP config file.`
+      )
+      console.log(
+        "2. Create Claude Projects for this project, and copy the instruction.md to the Claude Projects's instruction."
+      )
       break
     }
 
