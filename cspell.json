@@ -1,0 +1,36 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "aspida",
+    "automerge",
+    "commitizen",
+    "datamodel",
+    "direnv",
+    "dmmf",
+    "esbenp",
+    "fabbrica",
+    "IIFE",
+    "kimuson",
+    "lefthook",
+    "mise",
+    "neverthrow",
+    "nocheck",
+    "Omittable",
+    "outdir",
+    "preinstall",
+    "syncpack",
+    "tada",
+    "tsbuildinfo",
+    "TSES",
+    "tsup",
+    "typecheck",
+    "Uncapitalize",
+    "ununsed"
+  ],
+  "ignorePaths": [
+    "pnpm-lock.yaml",
+    ".vscode/settings.json",
+    "packages/*/.eslintrc.cjs"
+  ]
+}

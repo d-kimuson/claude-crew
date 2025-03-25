@@ -1,0 +1,38 @@
+_anchors:
+  base-eslint-settings: &base-eslint-settings
+    glob: "*.{ts,tsx,mts,mcs,js,jsx,mjs,cjs}"
+    stage_fixed: true
+    skip:
+      - merge
+      - rebase
+
+pre-commit:
+  parallel: true
+  commands:
+    prettier:
+      glob: "*.{tsx,ts,mts,mcs,mjs,cjs,js,json,md,yml,yaml}"
+      run: |
+        pnpm run:prettier --write {staged_files}
+      stage_fixed: true
+      skip:
+        - merge
+        - rebase
+
+    cspell:
+      glob: "*.{tsx,ts,mts,mcs,mjs,cjs,js,json,md,yml,yaml}"
+      run: pnpm cspell lint --no-must-find-files --gitignore --cache {staged_files}
+      skip:
+        - merge
+        - rebase
+
+    backend-eslint:
+      <<: *base-eslint-settings
+      root: "apps/backend/"
+      run: |
+        pnpm --filter backend run:eslint --fix {staged_files}
+
+    frontend-eslint:
+      <<: *base-eslint-settings
+      root: "apps/frontend/"
+      run: |
+        pnpm --filter frontend run:eslint --fix {staged_files}

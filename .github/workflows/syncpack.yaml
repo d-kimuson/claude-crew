@@ -1,0 +1,23 @@
+name: syncpack
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  syncpack:
+    runs-on: ubuntu-latest
+    name: syncpack
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: ".node-version"
+      - uses: JamieMason/syncpack-github-action@0.2.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          package-manager: "pnpm"
+          lockfile-mismatches: "fix"
+          semver-range-mismatches: "fix"

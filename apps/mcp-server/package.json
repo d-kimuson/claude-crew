@@ -1,0 +1,32 @@
+{
+  "name": "@claude-crew/mcp-server",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm ts:run ./src/index.ts",
+    "lint": "pnpm run:eslint .",
+    "fix": "pnpm lint --fix",
+    "build": "esbuild ./src/index.ts --format=esm --platform=node --bundle --packages=external --outdir=out",
+    "typecheck": "tsc -p ./tsconfig.json --noEmit",
+    "ts:run": "tsx --tsconfig ./tsconfig.src.json -C '@claude-crew/src'",
+    "run:eslint": "eslint --cache --no-error-on-unmatched-pattern"
+  },
+  "dependencies": {
+    "@claude-crew/core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.7.0",
+    "zod": "^3.24.2",
+    "zod-to-json-schema": "^3.24.4"
+  },
+  "devDependencies": {
+    "@claude-crew/eslint-config": "workspace:*",
+    "@claude-crew/tsconfig": "workspace:*",
+    "@types/node": "22.13.1",
+    "@typescript-eslint/eslint-plugin": "8.23.0",
+    "@typescript-eslint/utils": "^8.23.0",
+    "better-typescript-lib": "2.10.1",
+    "esbuild": "^0.25.0",
+    "eslint": "9.20.0",
+    "tsx": "^4.19.2",
+    "typescript": "5.7.3"
+  }
+}

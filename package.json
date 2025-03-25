@@ -1,0 +1,39 @@
+{
+  "name": "claude-crew",
+  "description": "Claude Crew",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "build": "turbo run build",
+    "lint": "pnpm /^lint:.*/",
+    "lint:cspell": "cspell lint './**/*.{tsx,ts,mts,mcs,mjs,cjs,js,json,md,yml,yaml}' --gitignore --cache",
+    "lint:prettier": "pnpm run:prettier . --check",
+    "lint:turbo": "turbo run lint",
+    "fix": "pnpm /^fix:.*/",
+    "fix:prettier": "pnpm run:prettier . --write",
+    "fix:turbo": "turbo run fix",
+    "fix:package-json": "syncpack format",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "preinstall": "pnpm /^setup:.*/",
+    "run:prettier": "prettier --ignore-unknown --no-error-on-unmatched-pattern --cache",
+    "setup:check-manager": "npx -y only-allow pnpm"
+  },
+  "devDependencies": {
+    "cspell": "8.17.3",
+    "lefthook": "1.10.10",
+    "prettier": "3.4.2",
+    "syncpack": "13.0.2",
+    "turbo": "^2.4.0"
+  },
+  "engines": {
+    "npm": "forbidden, use pnpm",
+    "yarn": "forbidden, use pnpm",
+    "pnpm": ">=9.12.3",
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.6.5",
+  "author": "d-kimuson",
+  "keywords": [],
+  "license": "MIT"
+}

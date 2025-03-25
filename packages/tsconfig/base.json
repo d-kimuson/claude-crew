@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@tsconfig/strictest/tsconfig.json",
+  "display": "Default",
+  "compilerOptions": {
+    "composite": false,
+    "incremental": false,
+    "resolveJsonModule": true,
+
+    // linter 責務のルールを無効化
+    "noImplicitReturns": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": false,
+    "exactOptionalPropertyTypes": false,
+
+    // module 解決オプション
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "customConditions": ["@claude-crew/src"],
+    "target": "ES2023"
+  }
+}

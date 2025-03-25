@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@claude-crew/tsconfig/base.json",
+  "compilerOptions": {},
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

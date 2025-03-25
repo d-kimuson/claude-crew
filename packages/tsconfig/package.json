@@ -1,0 +1,8 @@
+{
+  "name": "@claude-crew/tsconfig",
+  "version": "0.0.0",
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.0",
+    "@tsconfig/strictest": "2.0.2"
+  }
+}
