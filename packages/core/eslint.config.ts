@@ -16,7 +16,7 @@ const eslintConfig: FlatConfig.ConfigArray = [
     ],
   },
   ...typescript(import.meta.dirname, {
-    tsconfigPaths: ["./tsconfig.json"],
+    tsconfigPaths: ["./tsconfig.src.json", "./tsconfig.config.json"],
   }),
   ...react(),
 ]

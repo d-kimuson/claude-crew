@@ -121,8 +121,8 @@ export const editorTools = [
     inputSchema: z.object({
       filePath: z.string().describe("File path to test"),
     }),
-    execute: async (config, input) => {
-      return await coreEditorTools(config).testFile(input.filePath)
+    execute: (config, input) => {
+      return coreEditorTools(config).testFile(input.filePath)
     },
   }),
 

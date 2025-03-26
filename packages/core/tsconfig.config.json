@@ -4,5 +4,5 @@
   "compilerOptions": {
     "composite": false
   },
-  "include": ["eslint.config.ts"]
+  "include": ["eslint.config.ts", "tsup.config.ts"]
 }

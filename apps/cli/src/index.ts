@@ -5,9 +5,11 @@ import inquirer from "inquirer"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 import type { Config } from "@claude-crew/core"
+import { startMcpServer } from "./mcp-server"
 
 const commands = {
   setup: "setup",
+  serveMcp: "serve-mcp",
 } as const
 
 const main = async () => {
@@ -187,16 +189,17 @@ const main = async () => {
       break
     }
 
+    case commands.serveMcp: {
+      await startMcpServer()
+      break
+    }
+
     default:
       throw new Error(`Invalid command: ${argv._[0]}`)
   }
 }
 
-await main()
-  .then(() => {
-    process.exit(0)
-  })
-  .catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
+void main().catch((error) => {
+  console.error(error)
+  process.exit(1)
+})

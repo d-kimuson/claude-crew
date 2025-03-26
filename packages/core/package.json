@@ -4,12 +4,15 @@
   "type": "module",
   "exports": {
     ".": {
-      "@claude-crew/src": "./src/index.ts"
+      "@claude-crew/src": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
     "lint": "pnpm run:eslint .",
     "fix": "pnpm lint --fix",
+    "build": "tsup --clean",
     "typecheck": "tsc -p ./tsconfig.json --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx ./src/lib/drizzle/migrate.ts",
@@ -50,6 +53,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
+    "tsup": "^8.4.0",
     "typescript": "^5",
     "typescript-eslint": "^8.24.1"
   }

@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { Server } from "@modelcontextprotocol/sdk/server/index.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import {
@@ -7,7 +5,7 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js"
 import { zodToJsonSchema } from "zod-to-json-schema"
-import { version } from "../package.json"
+import { version } from "../../package.json"
 import { editorTools } from "./tools/editor"
 import { prepareTool } from "./tools/prepare"
 import { ragTools } from "./tools/rag"
@@ -76,5 +74,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 })
 
-const transport = new StdioServerTransport()
-await server.connect(transport)
+export const startMcpServer = async () => {
+  const transport = new StdioServerTransport()
+  await server.connect(transport)
+}
