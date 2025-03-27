@@ -8,9 +8,9 @@ import { withDb } from "../lib/drizzle/withDb"
 import { upsertEmbeddingResource } from "./upsertEmbeddingResource"
 
 /**
- * .gitignoreファイルを読み込み、ignoreインスタンスを返します
- * @param rootDir .gitignoreが配置されているルートディレクトリ
- * @returns .gitignoreルールを含むignoreインスタンス
+ * Reads the .gitignore file and returns an ignore instance
+ * @param rootDir Root directory where .gitignore is located
+ * @returns Ignore instance containing .gitignore rules
  */
 const getGitIgnore = async (rootDir: string): Promise<ignore.Ignore> => {
   const ig = ignore()
@@ -33,12 +33,12 @@ const getGitIgnore = async (rootDir: string): Promise<ignore.Ignore> => {
 const blackList = [".git", ".DS_Store"]
 
 /**
- * ディレクトリを再帰的に走査し、すべてのコードファイルをインデックス化します
- * @param projectId リソースを関連付けるプロジェクトのID
- * @param rootDir 走査を開始するルートディレクトリ
- * @param currentDir 現在走査中のディレクトリ（再帰処理に使用）
- * @param gitIgnore .gitignoreルールを含むignoreインスタンス
- * @returns すべてのファイルがインデックス化されたときに解決されるプロミス
+ * Recursively traverses the directory and indexes all code files
+ * @param projectId ID of the project to associate resources with
+ * @param rootDir Root directory to start traversal
+ * @param currentDir Current directory being traversed (used for recursion)
+ * @param gitIgnore Ignore instance containing .gitignore rules
+ * @returns Promise that resolves when all files are indexed
  */
 const traverseDirectory = withDb(
   (ctx) =>
@@ -67,7 +67,7 @@ const traverseDirectory = withDb(
           entries.map(async (entry) => {
             const entryPath = path.join(currentDir, entry.name)
 
-            // エントリが無視される場合はスキップ
+            // Skip if entry is ignored
             if (
               gitIgnores.some(({ ignore, baseDir }) =>
                 ignore.ignores(path.relative(baseDir, entryPath))
@@ -78,7 +78,7 @@ const traverseDirectory = withDb(
             }
 
             if (entry.isDirectory()) {
-              // サブディレクトリを再帰的に走査
+              // Recursively traverse subdirectory
               const subResults = await traverseDirectory(ctx)(
                 projectId,
                 rootDir,
@@ -88,10 +88,10 @@ const traverseDirectory = withDb(
               results.push(...subResults)
             } else if (entry.isFile()) {
               try {
-                // ファイルの内容を読み込む
+                // Read file content
                 const content = await readFile(entryPath, { encoding: "utf8" })
 
-                // リソースを作成し、埋め込みを生成
+                // Create resource and generate embeddings
                 await upsertEmbeddingResource(ctx)({
                   projectId,
                   filePath: entryPath,
@@ -114,20 +114,20 @@ const traverseDirectory = withDb(
     }
 )
 /**
- * .gitignoreで指定されたパスを除外して、ディレクトリ内のすべてのコードファイルをインデックス化します
- * @param directoryPath インデックス化するディレクトリのパス
- * @returns インデックス化されたファイルパスの配列で解決されるプロミス
+ * Indexes all code files in a directory, excluding paths specified in .gitignore
+ * @param directoryPath Path to the directory to index
+ * @returns Promise that resolves with an array of indexed file paths
  */
 export const indexCodebase = withDb(
   (ctx) =>
     async (directoryPath: string): Promise<string[]> => {
       try {
-        // 絶対パスを解決
+        // Resolve absolute path
         const absolutePath = directoryPath.startsWith("/")
           ? directoryPath
           : path.resolve(process.cwd(), directoryPath)
 
-        // ディレクトリが存在するか確認
+        // Check if directory exists
         if (
           !existsSync(absolutePath) ||
           !(await stat(absolutePath)).isDirectory()
@@ -135,7 +135,7 @@ export const indexCodebase = withDb(
           throw new Error(`Directory not found: ${absolutePath}`)
         }
 
-        // プロジェクトを取得または作成
+        // Get or create project
         const projects = await ctx.db
           .select()
           .from(projectsTable)
@@ -156,7 +156,7 @@ export const indexCodebase = withDb(
           throw new Error(`Failed to create or find project: ${absolutePath}`)
         }
 
-        // ディレクトリを走査し、すべてのコードファイルをインデックス化
+        // Traverse directory and index all code files
         console.log(`Starting indexing of codebase at: ${absolutePath}`)
         const indexedFiles = await traverseDirectory(ctx)(
           project.id,

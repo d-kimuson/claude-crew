@@ -4,7 +4,7 @@ import JavaScript from "tree-sitter-javascript"
 import Python from "tree-sitter-python"
 import TypeScript from "tree-sitter-typescript"
 
-// 拡張子から言語パーサーとチャンクタイプを対応付けるマップ
+// Map that associates language parsers and chunk types based on file extensions
 const LANGUAGE_CONFIG: Record<
   string,
   {
@@ -13,7 +13,7 @@ const LANGUAGE_CONFIG: Record<
     chunkTypes: string[]
   }
 > = {
-  // JavaScript バリアント
+  // JavaScript variants
   js: {
     parser: JavaScript,
     chunkTypes: [
@@ -63,7 +63,7 @@ const LANGUAGE_CONFIG: Record<
       "jsx_element",
     ],
   },
-  // TypeScript バリアント
+  // TypeScript variants
   ts: {
     parser: TypeScript.typescript,
     chunkTypes: [
@@ -144,7 +144,7 @@ const LANGUAGE_CONFIG: Record<
   },
 }
 
-// 行ベースのフォールバックにおける単語数/チャンク
+// Words per chunk for line-based fallback chunking
 const WORDS_PER_CHUNK = 100
 
 type Chunk = {
@@ -155,8 +155,8 @@ type Chunk = {
 }
 
 /**
- * サポートされている言語に対して構文ベースのコードチャンクを生成し、
- * サポートされていない言語に対しては行ベースのチャンキングにフォールバックします
+ * Generates syntax-based code chunks for supported languages,
+ * and falls back to line-based chunking for unsupported languages
  */
 export const generateChunks = (input: string, filePath: string): Chunk[] => {
   if (!input.trim()) return []
@@ -164,7 +164,7 @@ export const generateChunks = (input: string, filePath: string): Chunk[] => {
   const ext = path.extname(filePath).slice(1).toLowerCase()
   const config = LANGUAGE_CONFIG[ext]
 
-  // サポートされている言語であれば、構文ベースのチャンキングを使用
+  // Use syntax-based chunking for supported languages
   if (config) {
     try {
       const parser = new Parser()
@@ -173,7 +173,7 @@ export const generateChunks = (input: string, filePath: string): Chunk[] => {
 
       const tree = parser.parse(input)
 
-      // ノードを再帰的に処理してチャンクを見つける
+      // Process nodes recursively to find chunks
       const processNode = (node: Parser.SyntaxNode): Chunk[] => {
         const nodeChunk = config.chunkTypes.includes(node.type)
           ? {
@@ -191,7 +191,7 @@ export const generateChunks = (input: string, filePath: string): Chunk[] => {
           return [nodeChunk]
         }
 
-        // 子ノードを処理
+        // Process child nodes
         const children = Array.from({
           length: node.childCount,
         })
@@ -202,7 +202,7 @@ export const generateChunks = (input: string, filePath: string): Chunk[] => {
         if (childrenChunks.length !== 0) {
           return childrenChunks
         } else if (nodeChunk !== null) {
-          // 小さいチャンクにしたいが、分割できない場合はまとまりを Chunk にする
+          // If we can't split into smaller chunks, use the entire node as a chunk
           return [nodeChunk]
         }
 
@@ -211,23 +211,23 @@ export const generateChunks = (input: string, filePath: string): Chunk[] => {
 
       const chunks = processNode(tree.rootNode)
 
-      // チャンクが見つかった場合はそれを返す
+      // If chunks were found, return them
       if (chunks.length > 0) {
         return chunks
       }
     } catch (error) {
-      console.error(`${ext}ファイルの構文解析に失敗しました:`, error)
-      // フォールバックチャンキングへ進む
+      console.error(`Failed to parse ${ext} file:`, error)
+      // Proceed to fallback chunking
     }
   }
 
-  // ブレークポイントベースのチャンキング
+  // Breakpoint-based chunking
   const result = breakPointBasedChunking(input, filePath)
   if (result.success) {
     return result.chunks
   }
 
-  // フォールバック: 行ベースのチャンキングと単語数による制限
+  // Fallback: Line-based chunking with word count limit
   return lineBasedChunking(input, filePath, WORDS_PER_CHUNK)
 }
 
@@ -258,14 +258,14 @@ const breakPointBasedChunking = (
 }
 
 /**
- * フォールバック用のチャンキングメソッド：行で分割し単語数でグループ化
+ * Fallback chunking method: splits by line and groups by word count
  */
 const lineBasedChunking = (
   input: string,
   filePath: string,
   wordsPerChunk: number
 ): Chunk[] => {
-  // 行で分割し、空でない行を保持
+  // Split by lines and keep non-empty lines
   const lines = input
     .split("\n")
     .map((content, index) => ({
@@ -284,8 +284,8 @@ const lineBasedChunking = (
   for (const { content, line } of lines) {
     const lineWordCount = content.trim().split(/\s+/).length
 
-    // この行を追加すると目標単語数を超え、すでにコンテンツがある場合は、
-    // 現在のチャンクを完成させて新しいチャンクを開始
+    // If adding this line exceeds the target word count and there's already content,
+    // complete the current chunk and start a new one
     if (wordCount + lineWordCount > wordsPerChunk && currentChunk.length > 0) {
       const firstChunk = currentChunk[0]
       if (firstChunk !== undefined) {
@@ -300,7 +300,7 @@ const lineBasedChunking = (
       wordCount = 0
     }
 
-    // 行を現在のチャンクに追加
+    // Add the line to the current chunk
     currentChunk.push({
       filePath,
       line,
@@ -309,7 +309,7 @@ const lineBasedChunking = (
     wordCount += lineWordCount
   }
 
-  // コンテンツがある場合は最後のチャンクを追加
+  // Add the last chunk if there's content
   if (currentChunk.length > 0) {
     const firstChunk = currentChunk.at(0)
     const lastChunk = currentChunk.at(-1)

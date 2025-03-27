@@ -16,7 +16,7 @@ export const upsertEmbeddingResource = withDb(
         const embeddings = await generateEmbeddings(content, filePath)
 
         if (documentExtensions.some((ext) => filePath.endsWith(ext))) {
-          // ドキュメント knowledge に格納
+          // Store in document knowledge
           // clear past embeddings
           const pastDocuments = await db
             .select()
@@ -58,7 +58,7 @@ export const upsertEmbeddingResource = withDb(
             }))
           )
         } else {
-          // リソースに格納
+          // Store in resources
           // clear past embeddings
           const pastResources = await db
             .select()
