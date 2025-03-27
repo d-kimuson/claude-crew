@@ -18,8 +18,8 @@ Claude Crew は、LLM の性能を最大限に引き出すために、以下の3
 ## 必要要件
 
 - Claude Desktop
-- Embedding 用の OpenAI API キー
-- Docker および Docker Compose
+- Embedding 用の OpenAI API キー（オプション：Xenova を使用したローカルエンベディングも利用可能）
+- Docker および Docker Compose（カスタムデータベース使用時は不要）
 - Node.js >= v20
 
 ## 特徴
@@ -29,8 +29,9 @@ Claude Crew は、LLM の性能を最大限に引き出すために、以下の3
 - 📝 Claude Projects 用の指示書自動生成
 - 🛠️ プロジェクトワークフローのカスタマイズ可能なコマンド
 - 🌐 多言語対応（TypeScript完全サポート、その他言語は基本的なファイル操作のみ）
-- 🔍 ローカルエンベッディングによる文脈理解の向上
+- 🔍 ローカルエンベッディングによる文脈理解の向上（OpenAIとXenovaの両方をサポート）
 - 💪 型情報を活用した高精度な TypeScript サポート
+- 🔌 Docker の代わりにカスタム PostgreSQL データベースのサポート
 
 ## Quick Start
 
@@ -88,30 +89,32 @@ Claude Crew は以下のような流れでタスクを処理します：
 
 `.claude-crew/config.json` で以下の設定をカスタマイズできます：
 
-| カテゴリ         | 設定項目                   | デフォルト値                                                           | 説明                                                                  |
-| ---------------- | -------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| カテゴリ         | 設定項目                    | デフォルト値                                                           | 説明                                                                     |
+| ---------------- | --------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | **基本設定**     |
-|                  | `name`                     | プロジェクト名                                                         | プロジェクト名                                                        |
-|                  | `directory`                | カレントディレクトリ                                                   | プロジェクトのルートディレクトリ                                      |
-|                  | `language`                 | "日本語"                                                               | Claude との対話言語                                                   |
+|                  | `name`                      | プロジェクト名                                                         | プロジェクト名                                                           |
+|                  | `directory`                 | カレントディレクトリ                                                   | プロジェクトのルートディレクトリ                                         |
+|                  | `language`                  | "日本語"                                                               | Claude との対話言語                                                      |
 | **コマンド**     |
-|                  | `commands.install`         | "pnpm i"                                                               | 依存関係のインストールコマンド                                        |
-|                  | `commands.build`           | "pnpm build"                                                           | ビルドコマンド                                                        |
-|                  | `commands.test`            | "pnpm test"                                                            | テスト実行コマンド                                                    |
-|                  | `commands.testFile`        | "pnpm vitest run <file>"                                               | 単一ファイルのテストコマンド。<file> が絶対パスに置換されます。       |
-|                  | `commands.checks`          | ["pnpm tsc -p . --noEmit"]                                             | 型チェックなどの検証コマンド                                          |
-|                  | `commands.checkFiles`      | ["pnpm eslint <files>"]                                                | 特定ファイルの検証コマンド。<files>が絶体パスの一覧に置換されます。   |
+|                  | `commands.install`          | "pnpm i"                                                               | 依存関係のインストールコマンド                                           |
+|                  | `commands.build`            | "pnpm build"                                                           | ビルドコマンド                                                           |
+|                  | `commands.test`             | "pnpm test"                                                            | テスト実行コマンド                                                       |
+|                  | `commands.testFile`         | "pnpm vitest run <file>"                                               | 単一ファイルのテストコマンド。<file> が絶対パスに置換されます。          |
+|                  | `commands.checks`           | ["pnpm tsc -p . --noEmit"]                                             | 型チェックなどの検証コマンド                                             |
+|                  | `commands.checkFiles`       | ["pnpm eslint <files>"]                                                | 特定ファイルの検証コマンド。<files>が絶体パスの一覧に置換されます。      |
 | **Git設定**      |
-|                  | `git.defaultBranch`        | "main"                                                                 | デフォルトブランチ名                                                  |
-|                  | `git.branchPrefix`         | "claude-crew/"                                                         | 作業ブランチのプレフィックス                                          |
+|                  | `git.defaultBranch`         | "main"                                                                 | デフォルトブランチ名                                                     |
+|                  | `git.branchPrefix`          | "claude-crew/"                                                         | 作業ブランチのプレフィックス                                             |
 | **GitHub設定**   |
-|                  | `github.createPullRequest` | "draft"                                                                | PRの作成方法（always/draft/never）                                    |
+|                  | `github.createPullRequest`  | "draft"                                                                | PRの作成方法（always/draft/never）                                       |
 | **データベース** |
-|                  | `database.url`             | "postgresql://postgres:postgres@127.0.0.1:6432/claude-crew-embeddings" | PostgreSQL接続URL。カスタムDBを利用しない場合は変更しないでください。 |
-|                  | `database.port`            | 6432                                                                   | ポート番号                                                            |
-|                  | `database.customDb`        | false                                                                  | カスタムDB使用フラグ                                                  |
+|                  | `database.url`              | "postgresql://postgres:postgres@127.0.0.1:6432/claude-crew-embeddings" | PostgreSQL接続URL。customDbがtrueの場合は自前のDB URLを指定します        |
+|                  | `database.port`             | 6432                                                                   | 内蔵Docker DB用ポート番号（customDbがtrueの場合は無視されます）          |
+|                  | `database.customDb`         | false                                                                  | trueに設定するとDockerの代わりに自前のPostgreSQLデータベースを使用します |
 | **Embedding**    |
-|                  | `embedding.openAiKey`      | -                                                                      | OpenAI API キー（必須）                                               |
+|                  | `embedding.provider.type`   | "openai" または "xenova"                                               | エンベディングプロバイダーの種類                                         |
+|                  | `embedding.provider.apiKey` | -                                                                      | OpenAI API キー（タイプが"openai"の場合に必要）                          |
+|                  | `embedding.provider.model`  | "text-embedding-ada-002"                                               | OpenAI エンベディングモデル（タイプが"openai"の場合に使用）              |
 
 ## コントリビューション
 

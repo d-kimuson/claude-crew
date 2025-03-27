@@ -18,8 +18,8 @@ Claude Crew focuses on three key elements to maximize LLM performance:
 ## Requirements
 
 - Claude Desktop
-- OpenAI API key for embedding
-- Docker and Docker Compose
+- OpenAI API key for embedding (Optional: can use local embedding with Xenova instead)
+- Docker and Docker Compose (Not required when using custom database)
 - Node.js >= v20
 
 ## Features
@@ -29,8 +29,9 @@ Claude Crew focuses on three key elements to maximize LLM performance:
 - 📝 Automatic instruction generation for Claude Projects
 - 🛠️ Customizable project workflow commands
 - 🌐 Multi-language support (Full TypeScript support, basic file operations for other languages)
-- 🔍 Enhanced context understanding through local embedding
+- 🔍 Enhanced context understanding through local embedding (supports both OpenAI and Xenova)
 - 💪 High-precision TypeScript support utilizing type information
+- 🔌 Support for custom PostgreSQL database instead of Docker
 
 ## Quick Start
 
@@ -88,30 +89,32 @@ Information obtained at each step is optimized for efficient use of the LLM's co
 
 The following settings can be customized in `.claude-crew/config.json`:
 
-| Category      | Setting                    | Default Value                                                          | Description                                                            |
-| ------------- | -------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Category      | Setting                     | Default Value                                                          | Description                                                            |
+| ------------- | --------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | **Basic**     |
-|               | `name`                     | Project name                                                           | Project name                                                           |
-|               | `directory`                | Current directory                                                      | Project root directory                                                 |
-|               | `language`                 | "日本語"                                                               | Language for Claude interaction                                        |
+|               | `name`                      | Project name                                                           | Project name                                                           |
+|               | `directory`                 | Current directory                                                      | Project root directory                                                 |
+|               | `language`                  | "日本語"                                                               | Language for Claude interaction                                        |
 | **Commands**  |
-|               | `commands.install`         | "pnpm i"                                                               | Command to install dependencies                                        |
-|               | `commands.build`           | "pnpm build"                                                           | Build command                                                          |
-|               | `commands.test`            | "pnpm test"                                                            | Test execution command                                                 |
-|               | `commands.testFile`        | "pnpm vitest run <file>"                                               | Single file test command. <file> is replaced with absolute path        |
-|               | `commands.checks`          | ["pnpm tsc -p . --noEmit"]                                             | Validation commands like type checking                                 |
-|               | `commands.checkFiles`      | ["pnpm eslint <files>"]                                                | File-specific validation commands. <files> is replaced with paths list |
+|               | `commands.install`          | "pnpm i"                                                               | Command to install dependencies                                        |
+|               | `commands.build`            | "pnpm build"                                                           | Build command                                                          |
+|               | `commands.test`             | "pnpm test"                                                            | Test execution command                                                 |
+|               | `commands.testFile`         | "pnpm vitest run <file>"                                               | Single file test command. <file> is replaced with absolute path        |
+|               | `commands.checks`           | ["pnpm tsc -p . --noEmit"]                                             | Validation commands like type checking                                 |
+|               | `commands.checkFiles`       | ["pnpm eslint <files>"]                                                | File-specific validation commands. <files> is replaced with paths list |
 | **Git**       |
-|               | `git.defaultBranch`        | "main"                                                                 | Default branch name                                                    |
-|               | `git.branchPrefix`         | "claude-crew/"                                                         | Working branch prefix                                                  |
+|               | `git.defaultBranch`         | "main"                                                                 | Default branch name                                                    |
+|               | `git.branchPrefix`          | "claude-crew/"                                                         | Working branch prefix                                                  |
 | **GitHub**    |
-|               | `github.createPullRequest` | "draft"                                                                | PR creation method (always/draft/never)                                |
+|               | `github.createPullRequest`  | "draft"                                                                | PR creation method (always/draft/never)                                |
 | **Database**  |
-|               | `database.url`             | "postgresql://postgres:postgres@127.0.0.1:6432/claude-crew-embeddings" | PostgreSQL connection URL. Don't change unless using custom DB         |
-|               | `database.port`            | 6432                                                                   | Port number                                                            |
-|               | `database.customDb`        | false                                                                  | Custom DB usage flag                                                   |
+|               | `database.url`              | "postgresql://postgres:postgres@127.0.0.1:6432/claude-crew-embeddings" | PostgreSQL connection URL. Use your own DB URL when customDb is true   |
+|               | `database.port`             | 6432                                                                   | Port number for built-in Docker DB (ignored when customDb is true)     |
+|               | `database.customDb`         | false                                                                  | Set to true to use your own PostgreSQL database instead of Docker      |
 | **Embedding** |
-|               | `embedding.openAiKey`      | -                                                                      | OpenAI API key (required)                                              |
+|               | `embedding.provider.type`   | "openai" or "xenova"                                                   | Embedding provider type                                                |
+|               | `embedding.provider.apiKey` | -                                                                      | OpenAI API key (required when type is "openai")                        |
+|               | `embedding.provider.model`  | "text-embedding-ada-002"                                               | OpenAI embedding model (used when type is "openai")                    |
 
 ## Contributing
 
