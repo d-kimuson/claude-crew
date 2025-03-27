@@ -1,72 +1,125 @@
-# pnpm boilerplate
+# Claude Crew 🤖
 
-## Setup Repository
+[![npm version](https://badge.fury.io/js/claude-crew.svg)](https://badge.fury.io/js/claude-crew)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-```bash
-git clone git@github.com:d-kimuson/claude-crew.git my-app
-cd my-app
-./scripts/setup_repository.sh
-```
+[English](README.md) | [日本語](README.ja.md)
 
----
+Claude Crew is a tool for creating autonomous coding agents like OpenHands using Claude Desktop and Model Context Protocol (MCP). Unlike coding assistants like Cline that focus on real-time collaboration, Claude Crew aims to create agents that can process tasks autonomously.
 
-## セットアップ
+## Concept
 
-- [direnv](https://github.com/direnv/direnv)
+Claude Crew focuses on three key elements to maximize LLM performance:
 
-を事前にインストールしておく必要があります。
+- 🎯 Maximizing cost efficiency through efficient context window usage
+- 🧪 Prioritizing operation verification through unit testing over browser integration for better token cost performance
+- 🔄 Providing project-optimized MCP and context information rather than generic filesystem operations and shell MCP
 
-```bash
-$ ./scripts/setup.sh
-```
+## Requirements
 
-- apps 毎の node がインストールされる
-- すべてのパッケージの依存関係がインストールされる
+- Claude Desktop
+- OpenAI API key for embedding
+- Docker and Docker Compose
+- Node.js >= v20
 
-## 開発する
+## Features
 
-```bash
-$ pnpm dev
-```
+- 🚀 Easy setup through interactive dialog
+- 🔄 Smooth integration with Claude Desktop
+- 📝 Automatic instruction generation for Claude Projects
+- 🛠️ Customizable project workflow commands
+- 🌐 Multi-language support (Full TypeScript support, basic file operations for other languages)
+- 🔍 Enhanced context understanding through local embedding
+- 💪 High-precision TypeScript support utilizing type information
 
-ワークスペースに属するすべてのパッケージの開発サーバーを起動します。
+## Quick Start
 
-```bash
-# 単一のパッケージのみ建てたい場合
-$ pnpm --filter "パッケージ名" dev
-# すべてのパッケージと単一の app のみ建てたい場合
-$ pnpm --filter "./packages/**" dev
-$ pnpm --filter "app名" dev
-```
+### Project Setup
 
-## ビルドする
+Move to your project directory and run the setup:
 
 ```bash
-$ pnpm build
+cd /path/to/your-project
+npx claude-crew setup
 ```
 
-## linter を実行する
+Configuration files will be generated under `.claude-crew` through an interactive setup process.
 
-```bash
-$ pnpm lint # チェックのみ
-$ pnpm fix  # 自動修正も行う
-```
+### Claude Desktop Setup
 
-## その他の開発補助ツールについて
+1. Add the MCP settings from `.claude-crew/mcp.json` to `~/Library/Application Support/Claude/claude_desktop_config.json`
+2. Launch Claude Desktop and create a new Project
+3. Add the content of `.claude-crew/instruction.md` to the project's custom instructions
 
-### lefthook
+Setup complete! 🎉
 
-- デフォルトでコミット時に差分に対してlinterの自動修正、commitizenを使った対話型でのコミットメッセージ作成、コミットメッセージのスペルチェックが行われます
-- 個人的に一部の処理を無効にしたり追加したりしたい場合にはプロジェクトルートに `lefthook-local.yml` を設置して設定してください
-  - 参考: https://github.com/evilmartians/lefthook/blob/master/docs/usage.md#local-config
+## How it works
 
-### cspell
+Claude Crew processes tasks in the following flow:
 
-スペルチェックを[cspell](https://cspell.org/)で行っています。辞書にない単語が使われているとコミット時やCIで弾かれるので一括で追加したい場合には
+1. **Task Reception**
 
-```bash
-$ pnpm fixAll:cspell
-```
+   - Receive task requests from users
 
-します。
-`cspell.json` に追加された単語がスペルミスでないことを確認してからコミットしてください。
+2. **Project Information Provision**
+
+   - `prepare` tool is automatically invoked to:
+     - Create a working branch
+     - Update project to latest state
+     - Resolve dependencies
+   - Provide LLM with:
+     - Project structure
+     - Related source code
+     - Related documentation
+     - Test environment information
+
+3. **Autonomous Task Execution**
+   - LLM starts working based on provided information
+   - Automatic file operations include:
+     - Linter code quality checks
+     - Unit test execution
+     - Type checking
+   - Implement necessary corrections based on feedback results
+   - Create commits and propose pull requests
+
+Information obtained at each step is optimized for efficient use of the LLM's context window.
+
+## Configuration
+
+The following settings can be customized in `.claude-crew/config.json`:
+
+| Category      | Setting                    | Default Value                                                          | Description                                                            |
+| ------------- | -------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| **Basic**     |
+|               | `name`                     | Project name                                                           | Project name                                                           |
+|               | `directory`                | Current directory                                                      | Project root directory                                                 |
+|               | `language`                 | "日本語"                                                               | Language for Claude interaction                                        |
+| **Commands**  |
+|               | `commands.install`         | "pnpm i"                                                               | Command to install dependencies                                        |
+|               | `commands.build`           | "pnpm build"                                                           | Build command                                                          |
+|               | `commands.test`            | "pnpm test"                                                            | Test execution command                                                 |
+|               | `commands.testFile`        | "pnpm vitest run <file>"                                               | Single file test command. <file> is replaced with absolute path        |
+|               | `commands.checks`          | ["pnpm tsc -p . --noEmit"]                                             | Validation commands like type checking                                 |
+|               | `commands.checkFiles`      | ["pnpm eslint <files>"]                                                | File-specific validation commands. <files> is replaced with paths list |
+| **Git**       |
+|               | `git.defaultBranch`        | "main"                                                                 | Default branch name                                                    |
+|               | `git.branchPrefix`         | "claude-crew/"                                                         | Working branch prefix                                                  |
+| **GitHub**    |
+|               | `github.createPullRequest` | "draft"                                                                | PR creation method (always/draft/never)                                |
+| **Database**  |
+|               | `database.url`             | "postgresql://postgres:postgres@127.0.0.1:6432/claude-crew-embeddings" | PostgreSQL connection URL. Don't change unless using custom DB         |
+|               | `database.port`            | 6432                                                                   | Port number                                                            |
+|               | `database.customDb`        | false                                                                  | Custom DB usage flag                                                   |
+| **Embedding** |
+|               | `embedding.openAiKey`      | -                                                                      | OpenAI API key (required)                                              |
+
+## Contributing
+
+Contributions are welcome! You can participate in the following ways:
+
+- Report bugs and feature requests via Issues
+- Submit improvements via Pull Requests
+
+## License
+
+This project is released under the MIT License. See [LICENSE](LICENSE) file for details.
