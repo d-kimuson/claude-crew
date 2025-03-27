@@ -10,15 +10,14 @@ export const prepareTool = defineTool({
   description: "Prepare the project for the next task",
   inputSchema: z.object({
     branch: z.string().describe("branch name for the task"),
-    query: z
-      .string()
-      .describe("query to fetch relevant documents and resources"),
+    documentQuery: z.string().describe("query to fetch relevant documents"),
+    resourceQuery: z.string().describe("query to fetch relevant resources"),
   }),
   execute: async ({ config, configPath }, input) => {
-    const { branch, query } = input
+    const { branch, documentQuery, resourceQuery } = input
     await startPostgres(configPath, config)
     const updatedConfig = loadConfig(configPath)
     const ctx = createDbContext(updatedConfig.database.url)
-    await prepareTask(updatedConfig)(ctx)(branch, query)
+    await prepareTask(updatedConfig)(ctx)(branch, documentQuery, resourceQuery)
   },
 })

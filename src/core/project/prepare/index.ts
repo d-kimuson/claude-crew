@@ -9,44 +9,51 @@ import { withConfig } from "../../utils/withConfig"
 import { getProjectInfo } from "../getProjectInfo"
 
 export const prepareTask = withConfig((config) =>
-  withDb((ctx) => async (branch: string, query: string) => {
-    if (
-      execSync("git status -s", {
-        cwd: config.directory,
-        encoding: "utf-8",
-      }).length !== 0
-    ) {
-      // skip pull
-      execSync(
-        `git switch ${config.git.defaultBranch} && git pull --rebase origin ${config.git.defaultBranch}`,
-        {
-          cwd: config.directory,
-          encoding: "utf-8",
+  withDb(
+    (ctx) =>
+      async (branch: string, documentQuery: string, resourceQuery: string) => {
+        if (
+          execSync("git status -s", {
+            cwd: config.directory,
+            encoding: "utf-8",
+          }).length !== 0
+        ) {
+          // skip pull
+          execSync(
+            `git switch ${config.git.defaultBranch} && git pull --rebase origin ${config.git.defaultBranch}`,
+            {
+              cwd: config.directory,
+              encoding: "utf-8",
+            }
+          )
+
+          execSync(`git switch -c ${config.git.branchPrefix}${branch}`, {
+            cwd: config.directory,
+            encoding: "utf-8",
+          })
         }
-      )
 
-      execSync(`git switch -c ${config.git.branchPrefix}${branch}`, {
-        cwd: config.directory,
-        encoding: "utf-8",
-      })
-    }
+        await runMigrate(ctx.databaseUrl)
+        console.log("✅ migrate done")
+        await indexCodebase(ctx)(config.directory)
+        console.log("✅ index codebase done")
 
-    await runMigrate(ctx.databaseUrl)
-    console.log("✅ migrate done")
-    await indexCodebase(ctx)(config.directory)
-    console.log("✅ index codebase done")
+        const projectInfo = await getProjectInfo(config.directory)
+        const relevantDocuments =
+          await findRelevantDocuments(ctx)(documentQuery).then(
+            formatRagContents
+          )
+        const relevantResources =
+          await findRelevantResources(ctx)(resourceQuery).then(
+            formatRagContents
+          )
 
-    const projectInfo = await getProjectInfo(config.directory)
-    const relevantDocuments =
-      await findRelevantDocuments(ctx)(query).then(formatRagContents)
-    const relevantResources =
-      await findRelevantResources(ctx)(query).then(formatRagContents)
-
-    return {
-      success: true,
-      relevantDocuments,
-      relevantResources,
-      projectInfo,
-    } as const
-  })
+        return {
+          success: true,
+          relevantDocuments,
+          relevantResources,
+          projectInfo,
+        } as const
+      }
+  )
 )
