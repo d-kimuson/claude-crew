@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/release-it/schema/release-it.json",
+  "plugins": {
+    "release-it-pnpm": {
+      "inFile": "CHANGELOG.md",
+      "disableRelease": false,
+      "header": "# Changelog",
+      "publishCommand": "pnpm -r publish --access public --no-git-checks --tag $tag"
+    }
+  },
+  "git": {
+    "commitMessage": "chore: release ${version}",
+    "tagName": "${version}"
+  }
+}

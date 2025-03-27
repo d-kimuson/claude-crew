@@ -2,15 +2,22 @@
   "name": "claude-crew",
   "description": "Claude Crew",
   "version": "0.0.0",
+  "license": "MIT",
   "type": "module",
+  "files": [
+    "dist",
+    "package.json"
+  ],
   "bin": {
     "claude-crew": "./dist/cli.js"
   },
+  "sideEffects": false,
   "scripts": {
     "cli": "pnpm ts:run ./src/cli.ts",
     "build": "run-p build:*",
     "build:tsup": "tsup --clean",
     "build:schema": "pnpm ts:run ./src/scripts/buildConfigSchema.ts",
+    "release": "release-it",
     "typecheck": "tsc -p ./tsconfig.test.json --noEmit",
     "lint": "run-s lint:*",
     "lint:cspell": "cspell lint './**/*.{tsx,ts,mts,mcs,mjs,cjs,js,json,md,yml,yaml}' --gitignore --cache",
@@ -67,18 +74,27 @@
     "lefthook": "1.10.10",
     "npm-run-all2": "^7.0.2",
     "prettier": "3.4.2",
+    "release-it": "^18.1.2",
+    "release-it-pnpm": "^4.6.4",
     "tsup": "^8.4.0",
     "typescript-eslint": "^8.28.0",
     "vitest": "^3.0.9"
   },
-  "engines": {
-    "npm": "forbidden, use pnpm",
-    "yarn": "forbidden, use pnpm",
-    "pnpm": ">=9.12.3",
-    "node": ">=22"
-  },
-  "packageManager": "pnpm@10.6.5",
   "author": "d-kimuson",
-  "keywords": [],
-  "license": "MIT"
+  "homepage": "https://github.com/d-kimuson/claude-crew#readme",
+  "bugs": "https://github.com/d-kimuson/claude-crew/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d-kimuson/claude-crew.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "llm",
+    "claude",
+    "ai",
+    "agent"
+  ],
+  "packageManager": "pnpm@10.6.5"
 }
