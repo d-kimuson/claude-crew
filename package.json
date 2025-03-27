@@ -17,7 +17,7 @@
     "build": "run-p build:*",
     "build:tsup": "tsup --clean",
     "build:schema": "pnpm ts:run ./src/scripts/buildConfigSchema.ts",
-    "release": "release-it",
+    "release": "pnpm build && pnpm release-it",
     "typecheck": "tsc -p ./tsconfig.test.json --noEmit",
     "lint": "run-s lint:*",
     "lint:cspell": "cspell lint './**/*.{tsx,ts,mts,mcs,mjs,cjs,js,json,md,yml,yaml}' --gitignore --cache",
