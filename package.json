@@ -8,7 +8,9 @@
   },
   "scripts": {
     "cli": "pnpm ts:run ./src/cli.ts",
-    "build": "tsup --clean",
+    "build": "pnpm build:tsup && pnpm build:schema",
+    "build:tsup": "tsup --clean",
+    "build:schema": "pnpm ts:run ./src/scripts/buildConfigSchema.ts",
     "typecheck": "tsc -p ./tsconfig.json --noEmit",
     "lint": "pnpm /^lint:.*/",
     "lint:cspell": "cspell lint './**/*.{tsx,ts,mts,mcs,mjs,cjs,js,json,md,yml,yaml}' --gitignore --cache",

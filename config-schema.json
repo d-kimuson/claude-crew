@@ -1,0 +1,163 @@
+{
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "directory": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string",
+          "default": "日本語"
+        },
+        "commands": {
+          "type": "object",
+          "properties": {
+            "install": {
+              "type": "string",
+              "default": "pnpm i"
+            },
+            "build": {
+              "type": "string",
+              "default": "pnpm build"
+            },
+            "test": {
+              "type": "string",
+              "default": "pnpm test"
+            },
+            "testFile": {
+              "type": "string",
+              "default": "pnpm test <file>"
+            },
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": [
+                "pnpm tsc -p . --noEmit"
+              ]
+            },
+            "checkFiles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": [
+                "pnpm eslint --fix <files>"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "shell": {
+          "type": "object",
+          "properties": {
+            "enable": {
+              "type": "boolean",
+              "default": true
+            },
+            "allowedCommands": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": [
+                "pnpm"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "default": {}
+        },
+        "git": {
+          "type": "object",
+          "properties": {
+            "defaultBranch": {
+              "type": "string",
+              "default": "main"
+            },
+            "branchPrefix": {
+              "type": "string",
+              "default": "claude-crew/"
+            }
+          },
+          "additionalProperties": false,
+          "default": {}
+        },
+        "github": {
+          "type": "object",
+          "properties": {
+            "createPullRequest": {
+              "type": "string",
+              "enum": [
+                "always",
+                "draft",
+                "never"
+              ],
+              "default": "draft"
+            }
+          },
+          "additionalProperties": false,
+          "default": {}
+        },
+        "embedding": {
+          "type": "object",
+          "properties": {
+            "openAiKey": {
+              "type": "string",
+              "description": "openai key"
+            }
+          },
+          "required": [
+            "openAiKey"
+          ],
+          "additionalProperties": false
+        },
+        "database": {
+          "type": "object",
+          "properties": {
+            "customDb": {
+              "type": "boolean",
+              "default": false
+            },
+            "port": {
+              "type": "number"
+            },
+            "url": {
+              "type": "string",
+              "description": "postgres url"
+            }
+          },
+          "required": [
+            "port",
+            "url"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "name",
+        "directory",
+        "commands",
+        "embedding",
+        "database"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "$schema"
+      ]
+    }
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

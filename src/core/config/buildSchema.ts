@@ -3,9 +3,9 @@ import { z } from "zod"
 import zodToJsonSchema from "zod-to-json-schema"
 import { configSchema } from "./schema"
 
-export const buildJsonSchema = async () => {
+export const buildJsonSchema = async (outputPath: string) => {
   await writeFile(
-    "./dist/schema.json",
+    outputPath,
     JSON.stringify(
       zodToJsonSchema(
         z.intersection(

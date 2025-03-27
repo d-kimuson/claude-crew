@@ -8,5 +8,16 @@ export const writeConfig = async (path: string, config: Config) => {
   if (!existsSync(dir)) {
     await mkdir(dir, { recursive: true })
   }
-  await writeFile(path, JSON.stringify(config, null, 2))
+  await writeFile(
+    path,
+    JSON.stringify(
+      {
+        $schema:
+          "https://raw.githubusercontent.com/d-kimuson/claude-crew/refs/heads/main/config-schema.json",
+        ...config,
+      },
+      null,
+      2
+    )
+  )
 }
