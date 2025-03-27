@@ -34,6 +34,7 @@ export const configSchema = z.object({
   }),
   database: z.object({
     customDb: z.boolean().default(false),
+    port: z.number(),
     url: z.string().describe("postgres url"),
   }),
 })

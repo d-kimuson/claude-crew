@@ -5,7 +5,8 @@ import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 import type { Config } from "./core/config/schema"
 import { mcpConfig } from "./core/config/mcp"
-import { startPostgres } from "./core/lib/postgres/startPostgres"
+import { writeConfig } from "./core/config/writeConfig"
+import { createPostgresConfig } from "./core/lib/postgres/startPostgres"
 import { createPrompt } from "./core/prompt/createPrompt"
 import { startMcpServer } from "./mcp-server"
 
@@ -15,7 +16,7 @@ const commands = {
 } as const
 
 const main = async () => {
-  const argv = await yargs(hideBin(process.argv))
+  const cli = yargs(hideBin(process.argv))
     .command(commands.setup, "Setup the project", (setup) => {
       setup
         .option("container", {
@@ -29,10 +30,22 @@ const main = async () => {
         })
         .help()
     })
-    .command(commands.serveMcp, "Serve the MCP server", (serveMcp) => {
-      serveMcp.help()
-    })
-    .help().argv
+    .command(
+      `${commands.serveMcp} <config-path>`,
+      "Serve the MCP server",
+      (serveMcp) => {
+        serveMcp
+          .positional("config-path", {
+            type: "string",
+            description: "Configuration file path",
+            demandOption: true,
+          })
+          .help()
+      }
+    )
+    .help()
+
+  const argv = await cli.argv
 
   switch (argv._[0]) {
     case commands.setup: {
@@ -126,7 +139,7 @@ const main = async () => {
       ])
 
       // TODO: support container
-      const url = await startPostgres().then(({ url }) => url)
+      const postgresConfig = await createPostgresConfig()
 
       /* eslint-disable */
       const projectDirectory: string = answers.directory.startsWith("/")
@@ -157,7 +170,8 @@ const main = async () => {
           createPullRequest: answers.githubPullRequest,
         },
         database: {
-          url,
+          url: postgresConfig.url,
+          port: postgresConfig.port,
           customDb: false,
         },
         embedding: {
@@ -169,9 +183,9 @@ const main = async () => {
       await mkdir(resolve(projectDirectory, ".claude-crew"), {
         recursive: true,
       })
-      await writeFile(
+      await writeConfig(
         resolve(projectDirectory, ".claude-crew", "config.json"),
-        JSON.stringify(config, null, 2)
+        config
       )
       await writeFile(
         resolve(projectDirectory, ".claude-crew", "mcp.json"),
@@ -195,12 +209,14 @@ const main = async () => {
     }
 
     case commands.serveMcp: {
-      await startMcpServer()
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const configPath = argv["configPath"] as string
+      await startMcpServer(configPath)
       break
     }
 
     default:
-      throw new Error(`Invalid command: ${argv._[0]}`)
+      cli.showHelp()
   }
 }
 

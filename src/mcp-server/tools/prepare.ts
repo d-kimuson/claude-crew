@@ -2,7 +2,10 @@ import { writeFile } from "fs/promises"
 import { z } from "zod"
 import { loadConfig } from "../../core/config/loadConfig"
 import { createDbContext } from "../../core/lib/drizzle/createDbContext"
-import { startPostgres } from "../../core/lib/postgres/startPostgres"
+import {
+  createPostgresConfig,
+  startPostgres,
+} from "../../core/lib/postgres/startPostgres"
 import { prepareTask } from "../../core/project/prepare"
 import { envUtils } from "../envUtils"
 import { defineTool } from "../utils/defineTool"
@@ -16,32 +19,11 @@ export const prepareTool = defineTool({
       .string()
       .describe("query to fetch relevant documents and resources"),
   }),
-  execute: async (_config, input) => {
+  execute: async ({ config, configPath }, input) => {
     const { branch, query } = input
-    const config = loadConfig(envUtils.getEnv("CONFIG_PATH"))
-
-    const url = config.database.customDb
-      ? config.database.url
-      : await startPostgres().then(({ url }) => url)
-
-    if (url !== config.database.url) {
-      await writeFile(
-        envUtils.getEnv("CONFIG_PATH"),
-        JSON.stringify(
-          {
-            ...config,
-            database: {
-              ...config.database,
-              url,
-            },
-          },
-          null,
-          2
-        )
-      )
-    }
-
-    const ctx = createDbContext(url)
-    await prepareTask(config)(ctx)(branch, query)
+    await startPostgres(configPath, config)
+    const updatedConfig = loadConfig(configPath)
+    const ctx = createDbContext(updatedConfig.database.url)
+    await prepareTask(updatedConfig)(ctx)(branch, query)
   },
 })

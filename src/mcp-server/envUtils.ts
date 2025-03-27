@@ -1,10 +1,6 @@
 import { z } from "zod"
 
-const envSchema = z
-  .object({
-    CONFIG_PATH: z.string(),
-  })
-  .partial()
+const envSchema = z.object({}).partial()
 
 type Env = z.infer<typeof envSchema>
 
@@ -17,7 +13,7 @@ export const envUtils = (() => {
 
       const value = env[key]
       if (value === undefined) {
-        throw new Error(`Environment variable ${key} is required`)
+        throw new Error(`Environment variable ${String(key)} is required`)
       }
 
       return value

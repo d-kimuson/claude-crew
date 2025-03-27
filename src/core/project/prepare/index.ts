@@ -16,24 +16,20 @@ export const prepareTask = withConfig((config) =>
         encoding: "utf-8",
       }).length !== 0
     ) {
-      return {
-        success: false,
-        error: "Remaining uncommitted changes in the project",
-      } as const
-    }
+      // skip pull
+      execSync(
+        `git switch ${config.git.defaultBranch} && git pull --rebase origin ${config.git.defaultBranch}`,
+        {
+          cwd: config.directory,
+          encoding: "utf-8",
+        }
+      )
 
-    execSync(
-      `git switch ${config.git.defaultBranch} && git pull --rebase origin ${config.git.defaultBranch}`,
-      {
+      execSync(`git switch -c ${config.git.branchPrefix}${branch}`, {
         cwd: config.directory,
         encoding: "utf-8",
-      }
-    )
-
-    execSync(`git switch -c ${config.git.branchPrefix}${branch}`, {
-      cwd: config.directory,
-      encoding: "utf-8",
-    })
+      })
+    }
 
     await runMigrate(ctx.databaseUrl)
     console.log("✅ migrate done")
