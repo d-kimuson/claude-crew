@@ -43,6 +43,10 @@ export const createPostgresConfig = async () => {
 }
 
 export const startPostgres = async (configPath: string, config: Config) => {
+  if (config.database.customDb) {
+    return
+  }
+
   // create volume if not exists
   execSync(
     `docker volume inspect ${constraints.defaultPostgresContainer.volumeName} >/dev/null 2>&1 || docker volume create ${constraints.defaultPostgresContainer.volumeName}`,

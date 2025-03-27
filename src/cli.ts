@@ -49,7 +49,34 @@ const main = async () => {
 
   switch (argv._[0]) {
     case commands.setup: {
-      const answers = await inquirer.prompt([
+      type SetupAnswers = {
+        directory: string
+        name: string
+        language: string
+        installCommand: string
+        buildCommand: string
+        testCommand: string
+        testFileCommand: string
+        checkCommand: string
+        checkFilesCommand: string
+        defaultBranch: string
+        branchPrefix: string
+        githubPullRequest: "always" | "draft" | "never"
+        runtime: "local" | "container"
+      } & (
+        | {
+            customDb: true
+            databaseUrl: string
+            databasePort: number
+          }
+        | {
+            customDb: false
+            databaseUrl?: undefined
+            databasePort?: undefined
+          }
+      )
+
+      const answers = await inquirer.prompt<SetupAnswers>([
         {
           type: "input",
           name: "directory",
@@ -131,12 +158,20 @@ const main = async () => {
           choices: ["local", "container"],
           default: "local",
         },
+        {
+          type: "confirm",
+          name: "customDb",
+          message: "Use custom database?",
+          default: false,
+        },
+        {
+          type: "input",
+          name: "databaseUrl",
+          message: "Input database URL",
+          when: (answers) => answers.customDb,
+        },
       ])
 
-      // TODO: support container
-      const postgresConfig = await createPostgresConfig()
-
-      /* eslint-disable */
       const projectDirectory: string = answers.directory.startsWith("/")
         ? answers.directory
         : resolve(process.cwd(), answers.directory)
@@ -164,18 +199,21 @@ const main = async () => {
         github: {
           createPullRequest: answers.githubPullRequest,
         },
-        database: {
-          url: postgresConfig.url,
-          port: postgresConfig.port,
-          customDb: false,
-        },
+        database: answers.customDb
+          ? {
+              customDb: true,
+              url: answers.databaseUrl,
+            }
+          : {
+              customDb: false,
+              ...(await createPostgresConfig()),
+            },
         embedding: {
           provider: {
             type: "xenova",
           },
         },
       }
-      /* eslint-enable */
 
       await mkdir(resolve(projectDirectory, ".claude-crew"), {
         recursive: true,

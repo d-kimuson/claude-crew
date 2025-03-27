@@ -41,11 +41,17 @@ export const configSchema = z.object({
       }),
     ]),
   }),
-  database: z.object({
-    customDb: z.boolean().default(false),
-    port: z.number(),
-    url: z.string().describe("postgres url"),
-  }),
+  database: z.union([
+    z.object({
+      customDb: z.literal(true),
+      url: z.string().describe("postgres url"),
+    }),
+    z.object({
+      customDb: z.literal(false),
+      port: z.number(),
+      url: z.string().describe("postgres url"),
+    }),
+  ]),
 })
 
 export type Config = z.infer<typeof configSchema>
