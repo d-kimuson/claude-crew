@@ -36,6 +36,6 @@
     "pgdata",
     "xenova"
   ],
-  "ignoreWords": [],
+  "ignoreWords": ["kimsuon"],
   "ignorePaths": ["pnpm-lock.yaml", ".vscode/settings.json"]
 }
