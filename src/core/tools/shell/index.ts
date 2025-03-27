@@ -80,7 +80,13 @@ export const shellTools = (config: Config) => {
         (error) => ({
           success: false as const,
           command,
-          error: error.code === "EXEC_BASH_FAILED" ? error.data : error,
+          error:
+            error.code === "EXEC_BASH_FAILED"
+              ? {
+                  message: error.message,
+                  ...error.details,
+                }
+              : error,
         })
       )
     },
@@ -99,7 +105,13 @@ export const shellTools = (config: Config) => {
             (error) => ({
               success: false as const,
               command,
-              error: error.code === "EXEC_BASH_FAILED" ? error.data : error,
+              error:
+                error.code === "EXEC_BASH_FAILED"
+                  ? {
+                      message: error.message,
+                      ...error.details,
+                    }
+                  : error,
             })
           )
         })
@@ -115,7 +127,13 @@ export const shellTools = (config: Config) => {
         (error) => ({
           success: false as const,
           command: testCommand,
-          error: error.code === "EXEC_BASH_FAILED" ? error.data : error,
+          error:
+            error.code === "EXEC_BASH_FAILED"
+              ? {
+                  message: error.message,
+                  ...error.details,
+                }
+              : error,
         })
       )
 
@@ -137,7 +155,13 @@ export const shellTools = (config: Config) => {
         (error) => ({
           success: false as const,
           command,
-          error: error.code === "EXEC_BASH_FAILED" ? error.data : error,
+          error:
+            error.code === "EXEC_BASH_FAILED"
+              ? {
+                  message: error.message,
+                  ...error.details,
+                }
+              : error,
         })
       )
     },
@@ -154,7 +178,13 @@ export const shellTools = (config: Config) => {
         (error) => ({
           success: false as const,
           command,
-          error: error.code === "EXEC_BASH_FAILED" ? error.data : error,
+          error:
+            error.code === "EXEC_BASH_FAILED"
+              ? {
+                  message: error.message,
+                  ...error.details,
+                }
+              : error,
         })
       )
     },

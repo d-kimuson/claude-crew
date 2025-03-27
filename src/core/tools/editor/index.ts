@@ -23,7 +23,13 @@ export const editorTools = withConfig((config) => {
           ({
             success: false,
             command,
-            error: error.code === "EXEC_BASH_FAILED" ? error.data : error,
+            error:
+              error.code === "EXEC_BASH_FAILED"
+                ? {
+                    message: error.message,
+                    ...error.details,
+                  }
+                : error,
           }) as const
       )
     },
@@ -182,14 +188,14 @@ export const editorTools = withConfig((config) => {
 
               const matchedLines = lines.flatMap((line, index) =>
                 regex.test(line)
-                  ? []
-                  : [
+                  ? [
                       {
                         file: absolutePath,
                         line: index + 1,
                         content: line,
                       } as const,
                     ]
+                  : []
               )
 
               return matchedLines
@@ -239,7 +245,13 @@ export const editorTools = withConfig((config) => {
               ({
                 success: false,
                 command,
-                error: error.code === "EXEC_BASH_FAILED" ? error.data : error,
+                error:
+                  error.code === "EXEC_BASH_FAILED"
+                    ? {
+                        message: error.message,
+                        ...error.details,
+                      }
+                    : error,
               }) as const
           )
         })

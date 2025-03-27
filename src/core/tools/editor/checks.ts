@@ -10,25 +10,26 @@ export const checkModifiedFiles = withConfig((config) => (files: string[]) => {
       commandTemplate.replace("<files>", absolutePaths.join(" "))
     )
     .map((command) =>
-      execBash(config)(command)
-        .map((output) => ({
-          command: command,
-          stdout: output,
-        }))
-        .match(
-          (output) =>
-            ({
-              success: true,
-              command,
-              stdout: output,
-            }) as const,
-          (error) =>
-            ({
-              success: false,
-              command,
-              error: error.code === "EXEC_BASH_FAILED" ? error.data : error,
-            }) as const
-        )
+      execBash(config)(command).match(
+        (stdout) =>
+          ({
+            success: true,
+            command,
+            stdout,
+          }) as const,
+        (error) =>
+          ({
+            success: false,
+            command,
+            error:
+              error.code === "EXEC_BASH_FAILED"
+                ? {
+                    message: error.message,
+                    ...error.details,
+                  }
+                : error,
+          }) as const
+      )
     )
 
   return outputs
@@ -100,7 +101,10 @@ export const testModifiedFiles = withConfig((config) => (files: string[]) => {
       hasError: true,
       error:
         result.error.code === "EXEC_BASH_FAILED"
-          ? result.error.data
+          ? {
+              message: result.error.message,
+              ...result.error.details,
+            }
           : result.error,
     } as const
   })

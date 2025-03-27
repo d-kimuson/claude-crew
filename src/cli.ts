@@ -15,7 +15,7 @@ const commands = {
   serveMcp: "serve-mcp",
 } as const
 
-const main = async () => {
+export const main = async () => {
   const cli = yargs(hideBin(process.argv))
     .command(commands.setup, "Setup the project", (setup) => {
       setup

@@ -3,12 +3,10 @@ export class DiscriminatedError<
   Details,
   E,
 > extends Error {
-  public readonly details: Details | undefined = undefined
-
   constructor(
     public readonly code: Code,
     message: string,
-    public data: Details,
+    public readonly details: Details,
     cause?: E
   ) {
     super(message)

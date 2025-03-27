@@ -1,5 +1,4 @@
 import { fillPrompt } from "type-safe-prompt"
-import { getProjectInfo } from "../project/getProjectInfo"
 import { withConfig } from "../utils/withConfig"
 
 const promptTemplate = /* markdown */ `

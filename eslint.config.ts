@@ -13,7 +13,7 @@ const tsconfigPaths = [
 
 export default tsEslint.config(
   {
-    ignores: ["dist", "scripts", ".prettierrc.js"],
+    ignores: ["dist", "scripts", "coverage", ".prettierrc.js"],
   },
   eslint.configs.recommended,
   tsEslint.configs.recommendedTypeChecked,
@@ -103,6 +103,13 @@ export default tsEslint.config(
       "@typescript-eslint/no-explicit-any": ["error"],
       "@typescript-eslint/consistent-type-definitions": ["error", "type"],
       "@typescript-eslint/method-signature-style": ["error", "property"],
+    },
+  },
+  {
+    files: ["src/**/*.test.ts"],
+    rules: {
+      "@typescript-eslint/consistent-type-assertions": "off",
+      "@typescript-eslint/unbound-method": "off",
     },
   }
 )
