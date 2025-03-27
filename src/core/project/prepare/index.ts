@@ -16,9 +16,10 @@ export const prepareTask = withConfig((config) =>
           execSync("git status -s", {
             cwd: config.directory,
             encoding: "utf-8",
-          }).length === 0
+          })
+            .split("\n")
+            .filter((line) => line.trim() !== "").length === 0
         ) {
-          // skip pull
           execSync(
             `git switch ${config.git.defaultBranch} && git pull --rebase origin ${config.git.defaultBranch}`,
             {
