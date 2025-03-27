@@ -16,7 +16,7 @@ export const prepareTask = withConfig((config) =>
           execSync("git status -s", {
             cwd: config.directory,
             encoding: "utf-8",
-          }).length !== 0
+          }).length === 0
         ) {
           // skip pull
           execSync(
