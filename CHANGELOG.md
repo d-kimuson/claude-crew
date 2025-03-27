@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.0.2
+
+### &nbsp;&nbsp;&nbsp;Features
+
+- Add think tool &nbsp;-&nbsp; by **d-kimsuon** [<samp>(0fb35)</samp>](https://github.com/d-kimuson/claude-crew/commit/0fb351d)
+- Add project info response for prepare tool &nbsp;-&nbsp; by **d-kimsuon** [<samp>(dcdb3)</samp>](https://github.com/d-kimuson/claude-crew/commit/dcdb3e4)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/d-kimuson/claude-crew/compare/0.0.1...0.0.2)
+
 ## 0.0.1
 
 ### &nbsp;&nbsp;&nbsp;Features
