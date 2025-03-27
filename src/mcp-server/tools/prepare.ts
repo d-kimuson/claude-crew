@@ -18,6 +18,12 @@ export const prepareTool = defineTool({
     await startPostgres(configPath, config)
     const updatedConfig = loadConfig(configPath)
     const ctx = createDbContext(updatedConfig.database.url)
-    await prepareTask(updatedConfig)(ctx)(branch, documentQuery, resourceQuery)
+    const result = await prepareTask(updatedConfig)(ctx)(
+      branch,
+      documentQuery,
+      resourceQuery
+    )
+
+    return result
   },
 })

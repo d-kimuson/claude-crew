@@ -170,8 +170,8 @@ const main = async () => {
           customDb: false,
         },
         embedding: {
-          model: {
-            provider: "@xenova/transformers",
+          provider: {
+            type: "xenova",
           },
         },
       }
@@ -189,7 +189,7 @@ const main = async () => {
         JSON.stringify(mcpConfig(config), null, 2)
       )
 
-      const prompt = await createPrompt(config)
+      const prompt = createPrompt(config)
       await writeFile(
         resolve(projectDirectory, ".claude-crew", "instruction.md"),
         prompt
