@@ -10,8 +10,9 @@ import { loadConfig } from "../core/config/loadConfig"
 import { editorTools } from "./tools/editor"
 import { prepareTool } from "./tools/prepare"
 import { ragTools } from "./tools/rag"
+import { think } from "./tools/think"
 
-const declaredTools = [prepareTool, ...editorTools, ...ragTools] as const
+const declaredTools = [prepareTool, think, ...editorTools, ...ragTools] as const
 
 const server = (configPath: string) => {
   const config = loadConfig(configPath)
