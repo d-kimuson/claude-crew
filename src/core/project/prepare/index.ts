@@ -35,16 +35,16 @@ export const prepareTask = withConfig((config) =>
 
         await runMigrate(ctx.databaseUrl)
         console.log("✅ migrate done")
-        await indexCodebase(ctx)(config.directory)
+        await indexCodebase(config)(ctx)(config.directory)
         console.log("✅ index codebase done")
 
         const projectInfo = await getProjectInfo(config.directory)
         const relevantDocuments =
-          await findRelevantDocuments(ctx)(documentQuery).then(
+          await findRelevantDocuments(config)(ctx)(documentQuery).then(
             formatRagContents
           )
         const relevantResources =
-          await findRelevantResources(ctx)(resourceQuery).then(
+          await findRelevantResources(config)(ctx)(resourceQuery).then(
             formatRagContents
           )
 

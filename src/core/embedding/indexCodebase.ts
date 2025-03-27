@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm"
 import ignore from "ignore"
 import { projectsTable } from "../lib/drizzle/schema/projects"
 import { withDb } from "../lib/drizzle/withDb"
+import { withConfig } from "../utils/withConfig"
 import { upsertEmbeddingResource } from "./upsertEmbeddingResource"
 
 /**
@@ -40,136 +41,140 @@ const blackList = [".git", ".DS_Store"]
  * @param gitIgnore Ignore instance containing .gitignore rules
  * @returns Promise that resolves when all files are indexed
  */
-const traverseDirectory = withDb(
-  (ctx) =>
-    async (
-      projectId: string,
-      rootDir: string,
-      currentDir: string = rootDir,
-      gitIgnoresRec: {
-        baseDir: string
-        ignore: ignore.Ignore
-      }[] = []
-    ): Promise<string[]> => {
-      const results: string[] = []
-      const gitIgnores = [
-        ...gitIgnoresRec,
-        {
-          baseDir: currentDir,
-          ignore: await getGitIgnore(currentDir),
-        },
-      ]
+const traverseDirectory = withConfig((config) =>
+  withDb(
+    (ctx) =>
+      async (
+        projectId: string,
+        rootDir: string,
+        currentDir: string = rootDir,
+        gitIgnoresRec: {
+          baseDir: string
+          ignore: ignore.Ignore
+        }[] = []
+      ): Promise<string[]> => {
+        const results: string[] = []
+        const gitIgnores = [
+          ...gitIgnoresRec,
+          {
+            baseDir: currentDir,
+            ignore: await getGitIgnore(currentDir),
+          },
+        ]
 
-      try {
-        const entries = await readdir(currentDir, { withFileTypes: true })
+        try {
+          const entries = await readdir(currentDir, { withFileTypes: true })
 
-        await Promise.all(
-          entries.map(async (entry) => {
-            const entryPath = path.join(currentDir, entry.name)
+          await Promise.all(
+            entries.map(async (entry) => {
+              const entryPath = path.join(currentDir, entry.name)
 
-            // Skip if entry is ignored
-            if (
-              gitIgnores.some(({ ignore, baseDir }) =>
-                ignore.ignores(path.relative(baseDir, entryPath))
-              ) ||
-              blackList.includes(entry.name)
-            ) {
-              return
-            }
-
-            if (entry.isDirectory()) {
-              // Recursively traverse subdirectory
-              const subResults = await traverseDirectory(ctx)(
-                projectId,
-                rootDir,
-                entryPath,
-                gitIgnores
-              )
-              results.push(...subResults)
-            } else if (entry.isFile()) {
-              try {
-                // Read file content
-                const content = await readFile(entryPath, { encoding: "utf8" })
-
-                // Create resource and generate embeddings
-                await upsertEmbeddingResource(ctx)({
-                  projectId,
-                  filePath: entryPath,
-                  content,
-                })
-
-                results.push(entryPath)
-                console.log(`Indexed: ${entryPath}`)
-              } catch (error) {
-                console.error(`Error indexing file ${entryPath}:`, error)
+              // Skip if entry is ignored
+              if (
+                gitIgnores.some(({ ignore, baseDir }) =>
+                  ignore.ignores(path.relative(baseDir, entryPath))
+                ) ||
+                blackList.includes(entry.name)
+              ) {
+                return
               }
-            }
-          })
-        )
-      } catch (error) {
-        console.error(`Error traversing directory ${currentDir}:`, error)
-      }
 
-      return results
-    }
+              if (entry.isDirectory()) {
+                // Recursively traverse subdirectory
+                const subResults = await traverseDirectory(config)(ctx)(
+                  projectId,
+                  rootDir,
+                  entryPath,
+                  gitIgnores
+                )
+                results.push(...subResults)
+              } else if (entry.isFile()) {
+                try {
+                  // Read file content
+                  const content = await readFile(entryPath, {
+                    encoding: "utf8",
+                  })
+
+                  // Create resource and generate embeddings
+                  await upsertEmbeddingResource(config)(ctx)({
+                    projectId,
+                    filePath: entryPath,
+                    content,
+                  })
+
+                  results.push(entryPath)
+                  console.log(`Indexed: ${entryPath}`)
+                } catch (error) {
+                  console.error(`Error indexing file ${entryPath}:`, error)
+                }
+              }
+            })
+          )
+        } catch (error) {
+          console.error(`Error traversing directory ${currentDir}:`, error)
+        }
+
+        return results
+      }
+  )
 )
+
 /**
  * Indexes all code files in a directory, excluding paths specified in .gitignore
  * @param directoryPath Path to the directory to index
  * @returns Promise that resolves with an array of indexed file paths
  */
-export const indexCodebase = withDb(
-  (ctx) =>
-    async (directoryPath: string): Promise<string[]> => {
-      try {
-        // Resolve absolute path
-        const absolutePath = directoryPath.startsWith("/")
-          ? directoryPath
-          : path.resolve(process.cwd(), directoryPath)
+export const indexCodebase = withConfig((config) =>
+  withDb((ctx) => async (directoryPath: string): Promise<string[]> => {
+    try {
+      // Resolve absolute path
+      const absolutePath = directoryPath.startsWith("/")
+        ? directoryPath
+        : path.resolve(process.cwd(), directoryPath)
 
-        // Check if directory exists
-        if (
-          !existsSync(absolutePath) ||
-          !(await stat(absolutePath)).isDirectory()
-        ) {
-          throw new Error(`Directory not found: ${absolutePath}`)
-        }
-
-        // Get or create project
-        const projects = await ctx.db
-          .select()
-          .from(projectsTable)
-          .where(eq(projectsTable.name, absolutePath))
-          .limit(1)
-
-        let project = projects[0]
-
-        if (!project) {
-          const [newProject] = await ctx.db
-            .insert(projectsTable)
-            .values({ name: absolutePath })
-            .returning()
-          project = newProject
-        }
-
-        if (!project) {
-          throw new Error(`Failed to create or find project: ${absolutePath}`)
-        }
-
-        // Traverse directory and index all code files
-        console.log(`Starting indexing of codebase at: ${absolutePath}`)
-        const indexedFiles = await traverseDirectory(ctx)(
-          project.id,
-          absolutePath,
-          absolutePath,
-          []
-        )
-        console.log(`Indexing complete. Indexed ${indexedFiles.length} files.`)
-
-        return indexedFiles
-      } catch (error) {
-        console.error("Error indexing codebase:", error)
-        throw error
+      // Check if directory exists
+      if (
+        !existsSync(absolutePath) ||
+        !(await stat(absolutePath)).isDirectory()
+      ) {
+        throw new Error(`Directory not found: ${absolutePath}`)
       }
+
+      // Get or create project
+      const projects = await ctx.db
+        .select()
+        .from(projectsTable)
+        .where(eq(projectsTable.name, absolutePath))
+        .limit(1)
+
+      let project = projects[0]
+
+      if (!project) {
+        const [newProject] = await ctx.db
+          .insert(projectsTable)
+          .values({ name: absolutePath })
+          .returning()
+        project = newProject
+      }
+
+      if (!project) {
+        throw new Error(`Failed to create or find project: ${absolutePath}`)
+      }
+
+      // Traverse directory and index all code files
+      console.log(`Starting indexing of codebase at: ${absolutePath}`)
+      const indexedFiles = await traverseDirectory(config)(ctx)(
+        project.id,
+        absolutePath,
+        absolutePath,
+        []
+      )
+      console.log(`Indexing complete. Indexed ${indexedFiles.length} files.`)
+
+      return indexedFiles
+    } catch (error) {
+      console.error("Error indexing codebase:", error)
+      throw error
     }
+  })
 )

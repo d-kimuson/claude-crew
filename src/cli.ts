@@ -125,11 +125,6 @@ const main = async () => {
           default: "draft",
         },
         {
-          type: "input",
-          name: "openaiKey",
-          message: "Input your OpenAI API Key for create embedding.",
-        },
-        {
           type: "select",
           name: "runtime",
           message: "Select runtime (local is recommended)",
@@ -175,7 +170,9 @@ const main = async () => {
           customDb: false,
         },
         embedding: {
-          openAiKey: answers.openaiKey,
+          model: {
+            provider: "@xenova/transformers",
+          },
         },
       }
       /* eslint-enable */

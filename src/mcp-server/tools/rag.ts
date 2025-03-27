@@ -13,9 +13,9 @@ export const ragTools = [
     execute: async ({ config }, input) => {
       try {
         const dbContext = createDbContext(config.database.url)
-        const result = await coreRagTools(dbContext).findRelevantDocuments(
-          input.query
-        )
+        const result = await coreRagTools(config)(
+          dbContext
+        ).findRelevantDocuments(input.query)
         return result
       } catch (error) {
         console.error("Error in find-relevant-documents:", error)
@@ -36,9 +36,9 @@ export const ragTools = [
     execute: async ({ config }, input) => {
       try {
         const dbContext = createDbContext(config.database.url)
-        const result = await coreRagTools(dbContext).findRelevantResources(
-          input.query
-        )
+        const result = await coreRagTools(config)(
+          dbContext
+        ).findRelevantResources(input.query)
         return result
       } catch (error) {
         console.error("Error in find-relevant-resources:", error)

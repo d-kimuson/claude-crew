@@ -30,7 +30,16 @@ export const configSchema = z.object({
     })
     .default({}),
   embedding: z.object({
-    openAiKey: z.string().describe("openai key"),
+    provider: z.union([
+      z.object({
+        type: z.literal("xenova"),
+      }),
+      z.object({
+        type: z.literal("openai"),
+        apiKey: z.string(),
+        model: z.string().default("text-embedding-ada-002"),
+      }),
+    ]),
   }),
   database: z.object({
     customDb: z.boolean().default(false),

@@ -33,7 +33,8 @@
     "ankane",
     "hnsw",
     "ankane",
-    "pgdata"
+    "pgdata",
+    "xenova"
   ],
   "ignoreWords": [],
   "ignorePaths": ["pnpm-lock.yaml", ".vscode/settings.json"]

@@ -4,7 +4,7 @@ import { generateChunks } from "./generateChunks"
 
 const embeddingModel = openai.embedding("text-embedding-ada-002")
 
-export const generateEmbedding = async (value: string): Promise<number[]> => {
+const generateEmbedding = async (value: string): Promise<number[]> => {
   const input = value.replaceAll("\\n", " ")
   const { embedding } = await embed({
     model: embeddingModel,
@@ -13,7 +13,7 @@ export const generateEmbedding = async (value: string): Promise<number[]> => {
   return embedding
 }
 
-export const generateEmbeddings = async (
+const generateEmbeddings = async (
   value: string,
   filePath: string
 ): Promise<
