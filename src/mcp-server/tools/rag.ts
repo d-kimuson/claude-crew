@@ -10,7 +10,7 @@ export const ragTools = [
     inputSchema: z.object({
       query: z.string().describe("Search query"),
     }),
-    execute: async (config, input) => {
+    execute: async ({ config }, input) => {
       try {
         const dbContext = createDbContext(config.database.url)
         const result = await coreRagTools(dbContext).findRelevantDocuments(
@@ -33,7 +33,7 @@ export const ragTools = [
     inputSchema: z.object({
       query: z.string().describe("Search query"),
     }),
-    execute: async (config, input) => {
+    execute: async ({ config }, input) => {
       try {
         const dbContext = createDbContext(config.database.url)
         const result = await coreRagTools(dbContext).findRelevantResources(

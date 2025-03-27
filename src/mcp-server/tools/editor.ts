@@ -9,7 +9,7 @@ export const editorTools = [
     inputSchema: z.object({
       filePath: z.string().describe("file path to edit"),
     }),
-    execute: async (config, input) => {
+    execute: async ({ config }, input) => {
       return await coreEditorTools(config).mkdir(input.filePath)
     },
   }),
@@ -20,7 +20,7 @@ export const editorTools = [
     inputSchema: z.object({
       command: z.string().describe("Command to execute"),
     }),
-    execute: (config, input) => {
+    execute: ({ config }, input) => {
       return coreEditorTools(config).execBash(input.command)
     },
   }),
@@ -39,7 +39,7 @@ export const editorTools = [
         .optional()
         .describe("Line offset to start reading from"),
     }),
-    execute: async (config, input) => {
+    execute: async ({ config }, input) => {
       return await coreEditorTools(config).readFile(
         input.filePath,
         input.maxLine,
@@ -55,7 +55,7 @@ export const editorTools = [
       filePath: z.string().describe("File path to write to"),
       content: z.string().describe("Content to write"),
     }),
-    execute: async (config, input) => {
+    execute: async ({ config }, input) => {
       return await coreEditorTools(config).writeFile(
         input.filePath,
         input.content
@@ -71,7 +71,7 @@ export const editorTools = [
       pattern: z.string().describe("Regex pattern to match"),
       replace: z.string().describe("Replacement string"),
     }),
-    execute: async (config, input) => {
+    execute: async ({ config }, input) => {
       return await coreEditorTools(config).replaceFile(
         input.filePath,
         input.pattern,
@@ -87,7 +87,7 @@ export const editorTools = [
       pattern: z.string().describe("Glob pattern to match"),
       cwd: z.string().optional().describe("Working directory for the search"),
     }),
-    execute: async (config, input) => {
+    execute: async ({ config }, input) => {
       return await coreEditorTools(config).glob(input.pattern, input.cwd)
     },
   }),
@@ -110,7 +110,7 @@ export const editorTools = [
         })
         .optional(),
     }),
-    execute: async (config, input) => {
+    execute: async ({ config }, input) => {
       return await coreEditorTools(config).grep(input.pattern, input.options)
     },
   }),
@@ -121,7 +121,7 @@ export const editorTools = [
     inputSchema: z.object({
       filePath: z.string().describe("File path to test"),
     }),
-    execute: (config, input) => {
+    execute: ({ config }, input) => {
       return coreEditorTools(config).testFile(input.filePath)
     },
   }),
@@ -130,7 +130,7 @@ export const editorTools = [
     name: `check-all`,
     description: `Run all check commands`,
     inputSchema: z.object({}),
-    execute: async (config) => {
+    execute: async ({ config }) => {
       return await coreEditorTools(config).checkAll()
     },
   }),

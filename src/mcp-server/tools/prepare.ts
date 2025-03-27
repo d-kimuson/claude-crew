@@ -1,13 +1,8 @@
-import { writeFile } from "fs/promises"
 import { z } from "zod"
 import { loadConfig } from "../../core/config/loadConfig"
 import { createDbContext } from "../../core/lib/drizzle/createDbContext"
-import {
-  createPostgresConfig,
-  startPostgres,
-} from "../../core/lib/postgres/startPostgres"
+import { startPostgres } from "../../core/lib/postgres/startPostgres"
 import { prepareTask } from "../../core/project/prepare"
-import { envUtils } from "../envUtils"
 import { defineTool } from "../utils/defineTool"
 
 export const prepareTool = defineTool({
