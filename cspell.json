@@ -36,9 +36,5 @@
     "pgdata"
   ],
   "ignoreWords": [],
-  "ignorePaths": [
-    "pnpm-lock.yaml",
-    ".vscode/settings.json",
-    "packages/*/.eslintrc.cjs"
-  ]
+  "ignorePaths": ["pnpm-lock.yaml", ".vscode/settings.json"]
 }

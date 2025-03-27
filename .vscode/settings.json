@@ -13,9 +13,8 @@
   "typescript.preferences.importModuleSpecifier": "relative",
   // eslint
   "eslint.workingDirectories": [
-    { "pattern": "./packages/*/" },
     {
-      "pattern": "./apps/*/"
+      "directory": "."
     }
   ],
   // prettier

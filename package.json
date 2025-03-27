@@ -22,11 +22,12 @@
     "test": "vitest run --shard ${TEST_SHARD:-1/1}",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx ./src/lib/drizzle/migrate.ts",
-    "preinstall": "pnpm /^setup:.*/",
     "run:prettier": "prettier --ignore-unknown --no-error-on-unmatched-pattern --cache",
     "run:eslint": "eslint --cache --no-error-on-unmatched-pattern",
     "ts:run": "tsx --tsconfig ./tsconfig.src.json",
-    "setup:check-manager": "npx -y only-allow pnpm"
+    "setup:lefthook": "lefthook install",
+    "preinstall": "npx -y only-allow pnpm",
+    "postinstall": "run-s setup:*"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.3",
