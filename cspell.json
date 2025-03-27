@@ -26,8 +26,16 @@
     "tsup",
     "typecheck",
     "Uncapitalize",
-    "ununsed"
+    "ununsed",
+    "modelcontextprotocol",
+    "unhandle",
+    "pgvector",
+    "ankane",
+    "hnsw",
+    "ankane",
+    "pgdata"
   ],
+  "ignoreWords": [],
   "ignorePaths": [
     "pnpm-lock.yaml",
     ".vscode/settings.json",
