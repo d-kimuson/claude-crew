@@ -5,7 +5,11 @@ import ununsedImports from "eslint-plugin-unused-imports"
 import tsEslint from "typescript-eslint"
 import type { ESLint } from "eslint"
 
-const tsconfigPaths = ["./tsconfig.src.json", "./tsconfig.config.json"]
+const tsconfigPaths = [
+  "./tsconfig.src.json",
+  "./tsconfig.config.json",
+  "./tsconfig.test.json",
+]
 
 export default tsEslint.config(
   {

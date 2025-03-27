@@ -11,7 +11,7 @@
     "build": "pnpm build:tsup && pnpm build:schema",
     "build:tsup": "tsup --clean",
     "build:schema": "pnpm ts:run ./src/scripts/buildConfigSchema.ts",
-    "typecheck": "tsc -p ./tsconfig.src.json --noEmit",
+    "typecheck": "tsc -p ./tsconfig.test.json --noEmit",
     "lint": "pnpm /^lint:.*/",
     "lint:cspell": "cspell lint './**/*.{tsx,ts,mts,mcs,mjs,cjs,js,json,md,yml,yaml}' --gitignore --cache",
     "lint:prettier": "pnpm run:prettier . --check",
@@ -19,6 +19,7 @@
     "fix": "pnpm /^fix:.*/",
     "fix:prettier": "pnpm run:prettier . --write",
     "fix:eslint": "pnpm lint --fix",
+    "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx ./src/lib/drizzle/migrate.ts",
     "preinstall": "pnpm /^setup:.*/",
@@ -65,7 +66,8 @@
     "lefthook": "1.10.10",
     "prettier": "3.4.2",
     "tsup": "^8.4.0",
-    "typescript-eslint": "^8.28.0"
+    "typescript-eslint": "^8.28.0",
+    "vitest": "^3.0.9"
   },
   "engines": {
     "npm": "forbidden, use pnpm",
