@@ -40,7 +40,7 @@ Claude Crew は、LLM の性能を最大限に引き出すために、以下の3
 
 ```bash
 cd /path/to/your-project
-npx claude-crew setup
+npx claude-crew@latest setup
 ```
 
 対話形式で各種設定を入力すると、`.claude-crew` 以下に設定ファイルが生成されます。

@@ -8,7 +8,7 @@ export const mcpConfig = withConfig((config) => {
       command: execSync("which npx", { encoding: "utf-8" }).trim(),
       args: [
         "-y",
-        "claude-crew",
+        "claude-crew@latest",
         resolve(config.directory, ".claude-crew", "config.json"),
       ],
     },

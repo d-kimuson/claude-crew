@@ -40,7 +40,7 @@ Move to your project directory and run the setup:
 
 ```bash
 cd /path/to/your-project
-npx claude-crew setup
+npx claude-crew@latest setup
 ```
 
 Configuration files will be generated under `.claude-crew` through an interactive setup process.
