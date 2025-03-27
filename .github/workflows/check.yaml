@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check_lint_and_test:
+  check:
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -35,6 +35,11 @@ jobs:
       - name: lint
         if: matrix.shard == '2/2'
         run: pnpm lint
+
+      - name: build and check successfully execute with npx
+        if: matrix.shard == '2/2'
+        run: |
+          ./scripts/test-npx.sh
 
       - name: test
         env:

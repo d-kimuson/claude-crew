@@ -9,7 +9,7 @@
     "package.json"
   ],
   "bin": {
-    "claude-crew": "./dist/cli.js"
+    "claude-crew": "dist/cli.js"
   },
   "sideEffects": false,
   "scripts": {
@@ -34,7 +34,7 @@
     "ts:run": "tsx --tsconfig ./tsconfig.src.json",
     "setup:lefthook": "lefthook install",
     "preinstall": "npx -y only-allow pnpm",
-    "postinstall": "run-s setup:*"
+    "prepare": "run-s setup:*"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.3",

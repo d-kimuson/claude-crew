@@ -9,4 +9,7 @@ export default defineConfig({
   bundle: true,
   minify: true,
   target: "node20",
+  banner: {
+    js: "#!/usr/bin/env node",
+  },
 })
