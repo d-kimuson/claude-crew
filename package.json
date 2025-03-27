@@ -19,7 +19,7 @@
     "fix": "pnpm /^fix:.*/",
     "fix:prettier": "pnpm run:prettier . --write",
     "fix:eslint": "pnpm lint --fix",
-    "test": "vitest run",
+    "test": "vitest run --shard ${TEST_SHARD:-1/1}",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx ./src/lib/drizzle/migrate.ts",
     "preinstall": "pnpm /^setup:.*/",
