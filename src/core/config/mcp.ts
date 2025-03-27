@@ -9,6 +9,7 @@ export const mcpConfig = withConfig((config) => {
       args: [
         "-y",
         "claude-crew@latest",
+        "serve-mcp",
         resolve(config.directory, ".claude-crew", "config.json"),
       ],
     },
