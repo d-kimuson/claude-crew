@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.3
+
+_No significant changes_
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/d-kimuson/claude-crew/compare/0.0.2...0.0.3)
+
 ## 0.0.2
 
 ### &nbsp;&nbsp;&nbsp;Features
