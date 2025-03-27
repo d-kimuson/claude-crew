@@ -1,10 +1,12 @@
 import { mkdir, writeFile } from "node:fs/promises"
 import { resolve } from "node:path"
-import { createPrompt, mcpConfig, startPostgres } from "@claude-crew/core"
 import inquirer from "inquirer"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
-import type { Config } from "@claude-crew/core"
+import type { Config } from "./core/config/schema"
+import { mcpConfig } from "./core/config/mcp"
+import { startPostgres } from "./core/lib/postgres/startPostgres"
+import { createPrompt } from "./core/prompt/createPrompt"
 import { startMcpServer } from "./mcp-server"
 
 const commands = {
@@ -26,6 +28,9 @@ const main = async () => {
           description: "postgres url",
         })
         .help()
+    })
+    .command(commands.serveMcp, "Serve the MCP server", (serveMcp) => {
+      serveMcp.help()
     })
     .help().argv
 

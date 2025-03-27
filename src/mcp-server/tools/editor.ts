@@ -1,5 +1,5 @@
-import { editorTools as coreEditorTools } from "@claude-crew/core"
 import { z } from "zod"
+import { editorTools as coreEditorTools } from "../../core/tools/editor"
 import { defineTool } from "../utils/defineTool"
 
 export const editorTools = [

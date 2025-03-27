@@ -1,7 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@tsconfig/strictest/tsconfig.json",
-  "display": "Default",
   "compilerOptions": {
     "composite": false,
     "incremental": false,
@@ -17,7 +16,7 @@
     // module 解決オプション
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "customConditions": ["@claude-crew/src"],
     "target": "ES2023"
-  }
+  },
+  "include": ["src"]
 }

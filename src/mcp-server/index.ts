@@ -27,18 +27,22 @@ const server = new Server(
 
 server.setRequestHandler(ListToolsRequestSchema, () => {
   return {
-    tools: tools.map((declare) => ({
-      name: declare.name,
-      description: declare.description,
-      inputSchema: zodToJsonSchema(declare.inputSchema),
-    })),
+    tools: tools
+      .map((declareFn) => declareFn())
+      .map((declare) => ({
+        name: declare.name,
+        description: declare.description,
+        inputSchema: zodToJsonSchema(declare.inputSchema),
+      })),
   }
 })
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     const { name, arguments: _args } = request.params
-    const tool = tools.find((declare) => declare.name === name)
+    const tool = tools
+      .map((declareFn) => declareFn())
+      .find((declare) => declare.name === name)
 
     if (!tool) {
       throw new Error(`Unknown tool: ${name}`)

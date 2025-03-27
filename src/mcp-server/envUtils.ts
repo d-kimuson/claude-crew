@@ -1,8 +1,10 @@
 import { z } from "zod"
 
-const envSchema = z.object({
-  CONFIG_PATH: z.string(),
-})
+const envSchema = z
+  .object({
+    CONFIG_PATH: z.string(),
+  })
+  .partial()
 
 type Env = z.infer<typeof envSchema>
 
@@ -11,9 +13,7 @@ export const envUtils = (() => {
 
   return {
     getEnv: <K extends keyof Env>(key: K): NonNullable<Env[K]> => {
-      if (env === null) {
-        env = envSchema.parse(process.env)
-      }
+      env ??= envSchema.parse(process.env)
 
       const value = env[key]
       if (value === undefined) {

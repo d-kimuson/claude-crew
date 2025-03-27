@@ -1,8 +1,4 @@
 import { fillPrompt } from "type-safe-prompt"
-import { findRelevantDocuments } from "../embedding/findRelevantDocuments"
-import { findRelevantResources } from "../embedding/findRelevantResources"
-import { formatRagContents } from "../embedding/formatRagContents"
-import { withDb } from "../lib/drizzle/withDb"
 import { getProjectInfo } from "../project/getProjectInfo"
 import { withConfig } from "../utils/withConfig"
 

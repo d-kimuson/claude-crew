@@ -1,9 +1,0 @@
-{
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@claude-crew/tsconfig/config.json",
-  "compilerOptions": {
-    "composite": false,
-    "allowJs": true
-  },
-  "include": ["eslint.config.ts"]
-}

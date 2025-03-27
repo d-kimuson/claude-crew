@@ -1,5 +1,6 @@
-import { createDbContext, ragTools as coreRagTools } from "@claude-crew/core"
 import { z } from "zod"
+import { createDbContext } from "../../core/lib/drizzle/createDbContext"
+import { ragTools as coreRagTools } from "../../core/tools/rag"
 import { defineTool } from "../utils/defineTool"
 
 export const ragTools = [
