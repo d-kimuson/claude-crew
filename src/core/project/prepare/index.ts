@@ -1,4 +1,5 @@
 import { execSync } from "child_process"
+import { logger } from "../../../lib/logger"
 import { findRelevantDocuments } from "../../embedding/findRelevantDocuments"
 import { findRelevantResources } from "../../embedding/findRelevantResources"
 import { formatRagContents } from "../../embedding/formatRagContents"
@@ -35,9 +36,9 @@ export const prepareTask = withConfig((config) =>
         }
 
         await runMigrate(ctx.databaseUrl)
-        console.log("✅ migrate done")
+        logger.info("✅ migrate done")
         await indexCodebase(config)(ctx)(config.directory)
-        console.log("✅ index codebase done")
+        logger.info("✅ index codebase done")
 
         const projectInfo = await getProjectInfo(config.directory)
         const relevantDocuments =

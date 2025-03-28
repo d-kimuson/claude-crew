@@ -3,6 +3,7 @@ import { sql } from "drizzle-orm"
 import { drizzle } from "drizzle-orm/postgres-js"
 import { migrate } from "drizzle-orm/postgres-js/migrator"
 import postgres from "postgres"
+import { logger } from "../../../lib/logger"
 
 const getMigrationsFolder = () => {
   return resolve(import.meta.dirname, "migrations")
@@ -13,7 +14,7 @@ export const runMigrate = async (databaseUrl: string) => {
 
   const db = drizzle(connection)
 
-  console.log("⏳ Running migrations...")
+  logger.info("⏳ Running migrations...")
 
   const start = Date.now()
 
@@ -24,7 +25,7 @@ export const runMigrate = async (databaseUrl: string) => {
 
   const end = Date.now()
 
-  console.log("✅ Migrations completed in", end - start, "ms")
+  logger.info(`✅ Migrations completed in ${end - start}ms`)
 
   process.exit(0)
 }

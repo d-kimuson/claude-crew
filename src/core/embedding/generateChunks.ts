@@ -3,6 +3,7 @@ import Parser from "tree-sitter"
 import JavaScript from "tree-sitter-javascript"
 import Python from "tree-sitter-python"
 import TypeScript from "tree-sitter-typescript"
+import { logger } from "../../lib/logger"
 
 // Map that associates language parsers and chunk types based on file extensions
 const LANGUAGE_CONFIG: Record<
@@ -216,7 +217,7 @@ export const generateChunks = (input: string, filePath: string): Chunk[] => {
         return chunks
       }
     } catch (error) {
-      console.error(`Failed to parse ${ext} file:`, error)
+      logger.error(`Failed to parse ${ext} file:`, error)
       // Proceed to fallback chunking
     }
   }

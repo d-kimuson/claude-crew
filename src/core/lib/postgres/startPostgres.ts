@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process"
 import getPort from "get-port"
 import type { Config } from "../../config/schema"
+import { logger } from "../../../lib/logger"
 import { writeConfig } from "../../config/writeConfig"
 import { constraints } from "../../constraints"
 
@@ -63,7 +64,7 @@ export const startPostgres = async (configPath: string, config: Config) => {
   if (dockerPsStdout !== "") {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (JSON.parse(dockerPsStdout).State === "running") {
-      console.log("Postgres Container is already running")
+      logger.info("Postgres Container is already running")
     } else {
       execSync(
         `docker start ${constraints.defaultPostgresContainer.containerName}`,

@@ -1,4 +1,5 @@
 import { eq, inArray } from "drizzle-orm"
+import { logger } from "../../lib/logger"
 import { embeddingsTable } from "../lib/drizzle/schema/embeddings"
 import { projectsTable } from "../lib/drizzle/schema/projects"
 import { resourcesTable } from "../lib/drizzle/schema/resources"
@@ -31,6 +32,6 @@ export const resetIndex = withDb(
         .delete(resourcesTable)
         .where(eq(resourcesTable.projectId, project.id))
 
-      console.log(`Index for ${projectDirectory} is successfully deleted.`)
+      logger.info(`Index for ${projectDirectory} is successfully deleted.`)
     }
 )

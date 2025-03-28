@@ -2,6 +2,7 @@
 import { existsSync } from "node:fs"
 import { readFile } from "node:fs/promises"
 import { resolve } from "node:path"
+import { logger } from "../../lib/logger"
 
 export const getProjectInfo = async (projectDirectory: string) => {
   const { dependencyText, packageJson } = await readFile(
@@ -23,7 +24,7 @@ export const getProjectInfo = async (projectDirectory: string) => {
       }
     })
     .catch((e) => {
-      console.warn(e)
+      logger.warn("Failed to get package.json", e)
       return {
         dependencyText: "Failed to get package.json",
         packageJson: null,

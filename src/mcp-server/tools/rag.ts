@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { createDbContext } from "../../core/lib/drizzle/createDbContext"
 import { ragTools as coreRagTools } from "../../core/tools/rag"
+import { logger } from "../../lib/logger"
 import { defineTool } from "../utils/defineTool"
 
 export const ragTools = [
@@ -18,7 +19,7 @@ export const ragTools = [
         ).findRelevantDocuments(input.query)
         return result
       } catch (error) {
-        console.error("Error in find-relevant-documents:", error)
+        logger.error("Error in find-relevant-documents:", error)
         return {
           success: false,
           error: "Failed to find relevant documents",
@@ -41,7 +42,7 @@ export const ragTools = [
         ).findRelevantResources(input.query)
         return result
       } catch (error) {
-        console.error("Error in find-relevant-resources:", error)
+        logger.error("Error in find-relevant-resources:", error)
         return {
           success: false,
           error: "Failed to find relevant resources",

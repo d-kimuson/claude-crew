@@ -1,5 +1,6 @@
 import { eq, inArray } from "drizzle-orm/sql"
 import type { NewResourceParams } from "../lib/drizzle/schema/resources"
+import { logger } from "../../lib/logger"
 import { documentEmbeddingsTable } from "../lib/drizzle/schema/documentEmbeddings"
 import { documentsTable } from "../lib/drizzle/schema/documents"
 import { embeddingsTable } from "../lib/drizzle/schema/embeddings"
@@ -45,7 +46,7 @@ export const upsertEmbeddingResource = withConfig((config) =>
               .returning()
 
             if (document === undefined) {
-              console.warn(
+              logger.warn(
                 `Failed to insert document. skipping embeddings. ${filePath}`
               )
               return

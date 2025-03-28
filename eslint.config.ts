@@ -103,6 +103,7 @@ export default tsEslint.config(
       "@typescript-eslint/no-explicit-any": ["error"],
       "@typescript-eslint/consistent-type-definitions": ["error", "type"],
       "@typescript-eslint/method-signature-style": ["error", "property"],
+      "no-console": "error",
     },
   },
   {

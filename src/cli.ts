@@ -8,6 +8,7 @@ import { mcpConfig } from "./core/config/mcp"
 import { writeConfig } from "./core/config/writeConfig"
 import { createPostgresConfig } from "./core/lib/postgres/startPostgres"
 import { createPrompt } from "./core/prompt/createPrompt"
+import { logger } from "./lib/logger"
 import { startMcpServer } from "./mcp-server"
 
 const commands = {
@@ -46,6 +47,8 @@ export const main = async () => {
     .help()
 
   const argv = await cli.argv
+
+  logger.setRuntime("cli")
 
   switch (argv._[0]) {
     case commands.setup: {
@@ -232,18 +235,20 @@ export const main = async () => {
         resolve(projectDirectory, ".claude-crew", "instruction.md"),
         prompt
       )
-      console.log("All setup completed!")
-      console.log("To start task, process the followings.")
-      console.log(
+      logger.info("All setup completed!")
+      logger.info("To start task, process the followings.")
+      logger.info(
         `1. copy ${resolve(projectDirectory, ".claude-crew", "mcp.json")} and paste to Claude Desktop's MCP config file.`
       )
-      console.log(
+      logger.info(
         "2. Create Claude Projects for this project, and copy the instruction.md to the Claude Projects's instruction."
       )
       break
     }
 
     case commands.serveMcp: {
+      logger.setRuntime("mcp-server")
+
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const configPath = argv["configPath"] as string
       await startMcpServer(configPath)
@@ -256,6 +261,6 @@ export const main = async () => {
 }
 
 void main().catch((error) => {
-  console.error(error)
+  logger.error("Error in CLI", error)
   process.exit(1)
 })

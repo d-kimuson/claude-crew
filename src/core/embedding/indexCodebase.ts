@@ -3,6 +3,7 @@ import { readFile, readdir, stat } from "node:fs/promises"
 import path from "node:path"
 import { eq } from "drizzle-orm"
 import ignore from "ignore"
+import { logger } from "../../lib/logger"
 import { projectsTable } from "../lib/drizzle/schema/projects"
 import { withDb } from "../lib/drizzle/withDb"
 import { withConfig } from "../utils/withConfig"
@@ -25,7 +26,7 @@ const getGitIgnore = async (rootDir: string): Promise<ignore.Ignore> => {
       ig.add(gitignoreContent)
     }
   } catch (error) {
-    console.error("Error reading .gitignore file:", error)
+    logger.error("Error reading .gitignore file:", error)
   }
 
   return ig
@@ -103,15 +104,15 @@ const traverseDirectory = withConfig((config) =>
                   })
 
                   results.push(entryPath)
-                  console.log(`Indexed: ${entryPath}`)
+                  logger.info(`Indexed: ${entryPath}`)
                 } catch (error) {
-                  console.error(`Error indexing file ${entryPath}:`, error)
+                  logger.error(`Error indexing file ${entryPath}:`, error)
                 }
               }
             })
           )
         } catch (error) {
-          console.error(`Error traversing directory ${currentDir}:`, error)
+          logger.error(`Error traversing directory ${currentDir}:`, error)
         }
 
         return results
@@ -162,18 +163,18 @@ export const indexCodebase = withConfig((config) =>
       }
 
       // Traverse directory and index all code files
-      console.log(`Starting indexing of codebase at: ${absolutePath}`)
+      logger.info(`Starting indexing of codebase at: ${absolutePath}`)
       const indexedFiles = await traverseDirectory(config)(ctx)(
         project.id,
         absolutePath,
         absolutePath,
         []
       )
-      console.log(`Indexing complete. Indexed ${indexedFiles.length} files.`)
+      logger.info(`Indexing complete. Indexed ${indexedFiles.length} files.`)
 
       return indexedFiles
     } catch (error) {
-      console.error("Error indexing codebase:", error)
+      logger.error("Error indexing codebase:", error)
       throw error
     }
   })
