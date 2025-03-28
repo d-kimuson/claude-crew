@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.6
+
+### &nbsp;&nbsp;&nbsp;Bug Fixes
+
+- Fix bug that logger calls maximum calls &nbsp;-&nbsp; by **d-kimsuon** [<samp>(8f6c0)</samp>](https://github.com/d-kimuson/claude-crew/commit/8f6c011)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/d-kimuson/claude-crew/compare/0.0.5...0.0.6)
+
 ## 0.0.5
 
 ### &nbsp;&nbsp;&nbsp;Features
