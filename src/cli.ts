@@ -4,9 +4,16 @@ import inquirer from "inquirer"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 import type { Config } from "./core/config/schema"
+import { loadConfig } from "./core/config/loadConfig"
 import { mcpConfig } from "./core/config/mcp"
 import { writeConfig } from "./core/config/writeConfig"
-import { createPostgresConfig } from "./core/lib/postgres/startPostgres"
+import { indexCodebase } from "./core/embedding/indexCodebase"
+import { createDbContext } from "./core/lib/drizzle/createDbContext"
+import { runMigrate } from "./core/lib/drizzle/runMigrate"
+import {
+  createPostgresConfig,
+  startPostgres,
+} from "./core/lib/postgres/startPostgres"
 import { createPrompt } from "./core/prompt/createPrompt"
 import { logger } from "./lib/logger"
 import { startMcpServer } from "./mcp-server"
@@ -14,6 +21,7 @@ import { startMcpServer } from "./mcp-server"
 const commands = {
   setup: "setup",
   serveMcp: "serve-mcp",
+  setupDb: "setup-db",
 } as const
 
 export const main = async () => {
@@ -41,6 +49,15 @@ export const main = async () => {
             description: "Configuration file path",
             demandOption: true,
           })
+          .help()
+      }
+    )
+    .command(
+      `${commands.setupDb} <config-path>`,
+      "Setup the database",
+      (setupDb) => {
+        setupDb
+          .positional("config-path", { type: "string", demandOption: true })
           .help()
       }
     )
@@ -252,6 +269,22 @@ export const main = async () => {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const configPath = argv["configPath"] as string
       await startMcpServer(configPath)
+      break
+    }
+
+    case commands.setupDb: {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const configPath = argv["configPath"] as string
+      const config = loadConfig(configPath)
+
+      await startPostgres(configPath, config)
+      const updatedConfig = loadConfig(configPath)
+      const ctx = createDbContext(updatedConfig.database.url)
+
+      await runMigrate(ctx.databaseUrl)
+      logger.info("✅ migrate done")
+      await indexCodebase(config)(ctx)(config.directory)
+      logger.info("✅ index codebase done")
       break
     }
 
