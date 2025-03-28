@@ -258,7 +258,7 @@ export const main = async () => {
         `1. copy ${resolve(projectDirectory, ".claude-crew", "mcp.json")} and paste to Claude Desktop's MCP config file.`
       )
       logger.info(
-        "2. Create Claude Projects for this project, and copy the instruction.md to the Claude Projects's instruction."
+        `2. Create Claude Projects for this project, and copy the ${resolve(projectDirectory, ".claude-crew", "instruction.md")} to the Claude Projects's instruction.`
       )
       break
     }
