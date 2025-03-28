@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.7
+
+### &nbsp;&nbsp;&nbsp;Bug Fixes
+
+- Error that find-relevant-resources duplicated &nbsp;-&nbsp; by **d-kimsuon** [<samp>(39c16)</samp>](https://github.com/d-kimuson/claude-crew/commit/39c1631)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/d-kimuson/claude-crew/compare/0.0.6...0.0.7)
+
 ## 0.0.6
 
 ### &nbsp;&nbsp;&nbsp;Bug Fixes
