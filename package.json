@@ -1,7 +1,7 @@
 {
   "name": "claude-crew",
   "description": "A CLI tool for enhancing Claude Desktop with additional capabilities and workflows",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "type": "module",
   "files": [

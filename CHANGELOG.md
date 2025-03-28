@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.0.4
+
+### &nbsp;&nbsp;&nbsp;Features
+
+- Support custom db &nbsp;-&nbsp; by **d-kimsuon** [<samp>(8a342)</samp>](https://github.com/d-kimuson/claude-crew/commit/8a34243)
+
+### &nbsp;&nbsp;&nbsp;Bug Fixes
+
+- Fix mcpConfig's command to be valid &nbsp;-&nbsp; by **d-kimsuon** [<samp>(a7d7c)</samp>](https://github.com/d-kimuson/claude-crew/commit/a7d7c4d)
+- Git status check missed &nbsp;-&nbsp; by **d-kimsuon** [<samp>(46fbe)</samp>](https://github.com/d-kimuson/claude-crew/commit/46fbe6a)
+- Migration not working &nbsp;-&nbsp; by **d-kimsuon** [<samp>(87633)</samp>](https://github.com/d-kimuson/claude-crew/commit/876336c)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/d-kimuson/claude-crew/compare/0.0.3...0.0.4)
+
 ## 0.0.3
 
 _No significant changes_
