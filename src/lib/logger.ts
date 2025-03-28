@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 export type Runtime = "mcp-server" | "cli" | "debug"
 
 export type Logger = {
@@ -16,17 +17,17 @@ export const logger = ((): Logger => {
     },
     info: (code, structuredData) => {
       if (runtimeState !== "mcp-server") {
-        logger.info(code, structuredData)
+        console.info(code, structuredData ?? "")
       }
     },
     error: (code, structuredData) => {
       if (runtimeState !== "mcp-server") {
-        logger.error(code, structuredData)
+        console.error(code, structuredData ?? "")
       }
     },
     warn: (code, structuredData) => {
       if (runtimeState !== "mcp-server") {
-        logger.warn(code, structuredData)
+        console.warn(code, structuredData ?? "")
       }
     },
   }
