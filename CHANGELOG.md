@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.5
+
+### &nbsp;&nbsp;&nbsp;Features
+
+- Add setup-db command (for manually setup) &nbsp;-&nbsp; by **d-kimsuon** [<samp>(0237a)</samp>](https://github.com/d-kimuson/claude-crew/commit/0237a1f)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/d-kimuson/claude-crew/compare/0.0.4...0.0.5)
+
 ## 0.0.4
 
 ### &nbsp;&nbsp;&nbsp;Features
