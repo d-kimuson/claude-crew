@@ -36,6 +36,10 @@ jobs:
         if: matrix.shard == '2/2'
         run: pnpm lint
 
+      - name: typecheck
+        if: matrix.shard == '2/2'
+        run: pnpm typecheck
+
       - name: build and check successfully execute with npx
         if: matrix.shard == '2/2'
         run: |
