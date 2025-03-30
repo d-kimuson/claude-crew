@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { formatRagContents } from "../../core/embedding/formatRagContents"
 import { createDbContext } from "../../core/lib/drizzle/createDbContext"
 import { ragTools as coreRagTools } from "../../core/tools/rag"
 import { logger } from "../../lib/logger"
@@ -20,7 +21,7 @@ export const ragTools = [
           ).findRelevantDocuments(input.query)
           return {
             isError: false,
-            content: [{ type: "text", text: JSON.stringify(result) }],
+            content: [{ type: "text", text: formatRagContents(result) }],
           }
         } catch (error) {
           logger.error("Error in find-relevant-documents:", error)
@@ -50,7 +51,7 @@ export const ragTools = [
           ).findRelevantResources(input.query)
           return {
             isError: false,
-            content: [{ type: "text", text: JSON.stringify(result) }],
+            content: [{ type: "text", text: formatRagContents(result) }],
           }
         } catch (error) {
           logger.error("Error in find-relevant-resources:", error)
