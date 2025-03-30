@@ -1,18 +1,16 @@
 import { resolve } from "node:path"
 import { sql } from "drizzle-orm"
 import { migrate } from "drizzle-orm/postgres-js/migrator"
+import type { DB } from "."
 import { logger } from "../../../lib/logger"
 import { serializeError } from "../../errors/serializeError"
-import { createDbClient } from "."
 
 const getMigrationsFolder = () => {
   return resolve(import.meta.dirname, "migrations")
 }
 
-export const runMigrate = async (databaseUrl: string) => {
+export const runMigrate = async (db: DB) => {
   try {
-    const { db } = createDbClient(databaseUrl)
-
     logger.info("⏳ Running migrations...")
 
     const start = Date.now()

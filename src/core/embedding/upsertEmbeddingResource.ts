@@ -76,7 +76,7 @@ export const upsertEmbeddingResource = withContext(
               },
             })),
           })
-          logger.info(`Indexed: ${filePath}`)
+          logger.info(`Indexed(document): ${filePath}`)
         } else {
           let resourceId: string | undefined
 
@@ -139,7 +139,7 @@ export const upsertEmbeddingResource = withContext(
             })),
           })
 
-          logger.info(`Indexed: ${filePath}`)
+          logger.info(`Indexed(resource): ${filePath}`)
         }
       } catch (e) {
         logger.error("Error upsert embedding resource", e)

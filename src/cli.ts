@@ -278,13 +278,15 @@ export const main = async () => {
 
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const configPath = argv["configPath"] as string
-      const context = await createContext(configPath)
+      const { context, db } = await createContext(configPath, {
+        enableQueryLogging: true,
+      })
 
       logger.setLogFilePath(
         resolve(context.config.directory, ".claude-crew", "mcp-server.log")
       )
 
-      await runMigrate(context.config.database.url)
+      await runMigrate(db)
       await indexCodebase(context)
 
       await startMcpServer(context)
@@ -294,10 +296,12 @@ export const main = async () => {
     case commands.setupDb: {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const configPath = argv["configPath"] as string
-      const context = await createContext(configPath)
+      const { context, db, clean } = await createContext(configPath)
 
-      await runMigrate(context.config.database.url)
+      await runMigrate(db)
       await indexCodebase(context)
+
+      await clean()
       break
     }
 
@@ -306,7 +310,7 @@ export const main = async () => {
   }
 }
 
-void main().catch((error) => {
+await main().catch((error) => {
   logger.error("Error in CLI", error)
   process.exit(1)
 })
