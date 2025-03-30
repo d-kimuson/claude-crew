@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1743068074353,
-      "tag": "0000_messy_phantom_reporter",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1743307573542,
-      "tag": "0001_sloppy_praxagora",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1743322682787,
-      "tag": "0002_overrated_triton",
+      "when": 1743329307111,
+      "tag": "0000_classy_praxagora",
       "breakpoints": true
     }
   ]

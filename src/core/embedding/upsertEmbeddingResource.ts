@@ -1,18 +1,27 @@
 import { stat } from "fs/promises"
-import type { NewResourceParams } from "../lib/drizzle/schema/resources"
 import { logger } from "../../lib/logger"
 import { withContext } from "../context/withContext"
 import { resolveEmbeddingAdapter } from "./adapter/resolver"
+import { hashFile } from "./hashFile"
 
 const documentExtensions = [".md", ".txt", ".mdx", ".mdc"]
 
 export const upsertEmbeddingResource = withContext(
   (ctx) =>
-    async ({ projectId, filePath, content }: NewResourceParams) => {
+    async ({
+      projectId,
+      filePath,
+      content,
+    }: {
+      projectId: string
+      filePath: string
+      content: string
+    }) => {
       try {
-        const stats = await stat(filePath)
-
         const adapter = resolveEmbeddingAdapter(ctx)
+
+        const stats = await stat(filePath)
+        const contentHash = await hashFile(filePath)
 
         let documentId: string | undefined
 
@@ -26,7 +35,7 @@ export const upsertEmbeddingResource = withContext(
 
           if (pastDocument !== undefined) {
             documentId = pastDocument.id
-            if (pastDocument.updatedAt.getTime() === stats.mtime.getTime()) {
+            if (pastDocument.contentHash === contentHash) {
               logger.info(`Skipped: ${filePath}. Reason: not modified.`)
               return
             }
@@ -37,7 +46,7 @@ export const upsertEmbeddingResource = withContext(
 
             await ctx.queries.documents.updateContent.execute({
               documentId: pastDocument.id,
-              content,
+              contentHash,
               mtime: stats.mtime,
             })
           } else {
@@ -45,7 +54,8 @@ export const upsertEmbeddingResource = withContext(
             const [document] = await ctx.queries.documents.insert.execute({
               projectId,
               filePath,
-              content,
+              contentHash,
+              mtime: stats.mtime,
             })
 
             if (document === undefined) {
@@ -89,7 +99,7 @@ export const upsertEmbeddingResource = withContext(
 
           if (pastResource !== undefined) {
             resourceId = pastResource.id
-            if (pastResource.updatedAt.getTime() === stats.mtime.getTime()) {
+            if (pastResource.contentHash === contentHash) {
               logger.info(`Skipped (not modified): ${filePath}`)
               return
             }
@@ -100,7 +110,7 @@ export const upsertEmbeddingResource = withContext(
 
             await ctx.queries.resources.updateContentByFilePath.execute({
               filePath,
-              content,
+              contentHash,
               mtime: stats.mtime,
             })
           } else {
@@ -108,7 +118,8 @@ export const upsertEmbeddingResource = withContext(
             const [resource] = await ctx.queries.resources.insert.execute({
               projectId,
               filePath,
-              content,
+              contentHash,
+              mtime: stats.mtime,
             })
 
             if (resource === undefined) {

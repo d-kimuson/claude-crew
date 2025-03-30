@@ -23,7 +23,8 @@ export const documentQueries = (db: DB) =>
         args: {
           projectId: string
           filePath: string
-          content: string
+          contentHash: string
+          mtime: Date
         }
       ) => {
         return await db
@@ -31,7 +32,8 @@ export const documentQueries = (db: DB) =>
           .values({
             projectId: args.projectId,
             filePath: args.filePath,
-            content: args.content,
+            contentHash: args.contentHash,
+            mtime: args.mtime,
           })
           .returning()
       }
@@ -40,11 +42,11 @@ export const documentQueries = (db: DB) =>
     updateContent: defineQuery(
       async (
         db,
-        args: { documentId: string; content: string; mtime: Date }
+        args: { documentId: string; contentHash: string; mtime: Date }
       ) => {
         return await db
           .update(documentsTable)
-          .set({ content: args.content, updatedAt: args.mtime })
+          .set({ contentHash: args.contentHash, mtime: args.mtime })
           .where(eq(documentsTable.id, args.documentId))
       }
     ).registerDb(db),

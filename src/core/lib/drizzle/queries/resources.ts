@@ -23,7 +23,8 @@ export const resourceQueries = (db: DB) =>
         args: {
           projectId: string
           filePath: string
-          content: string
+          contentHash: string
+          mtime: Date
         }
       ) => {
         return await db
@@ -31,17 +32,21 @@ export const resourceQueries = (db: DB) =>
           .values({
             projectId: args.projectId,
             filePath: args.filePath,
-            content: args.content,
+            contentHash: args.contentHash,
+            mtime: args.mtime,
           })
           .returning()
       }
     ).registerDb(db),
 
     updateContentByFilePath: defineQuery(
-      async (db, args: { filePath: string; content: string; mtime: Date }) => {
+      async (
+        db,
+        args: { filePath: string; contentHash: string; mtime: Date }
+      ) => {
         return await db
           .update(resourcesTable)
-          .set({ content: args.content, updatedAt: args.mtime })
+          .set({ contentHash: args.contentHash, mtime: args.mtime })
           .where(eq(resourcesTable.filePath, args.filePath))
       }
     ).registerDb(db),

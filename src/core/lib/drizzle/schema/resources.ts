@@ -1,11 +1,4 @@
-import { sql } from "drizzle-orm"
-import {
-  text,
-  varchar,
-  timestamp,
-  pgTable,
-  uniqueIndex,
-} from "drizzle-orm/pg-core"
+import { varchar, timestamp, pgTable, uniqueIndex } from "drizzle-orm/pg-core"
 import { createSelectSchema } from "drizzle-zod"
 import { nanoid } from "nanoid"
 import type { z } from "zod"
@@ -21,23 +14,14 @@ export const resourcesTable = pgTable(
       .references(() => projectsTable.id)
       .notNull(),
     filePath: varchar("file_path", { length: 1024 }).notNull(),
-    content: text("content").notNull(),
-    updatedAt: timestamp("updated_at")
-      .notNull()
-      .default(sql`now()`),
+    contentHash: varchar("content_hash", { length: 191 }).notNull(),
+    mtime: timestamp("mtime", { withTimezone: true }).notNull(),
   },
   (t) => [
     uniqueIndex("resources-file-path-project-id").on(t.filePath, t.projectId),
   ]
 )
 
-// Schema for resources - used to validate API requests
-export const insertResourceSchema = createSelectSchema(resourcesTable)
-  .extend({})
-  .omit({
-    id: true,
-    updatedAt: true,
-  })
+export const resourceInputSchema = createSelectSchema(resourcesTable).extend({})
 
-// Type for resources - used to type API request params and within Components
-export type NewResourceParams = z.infer<typeof insertResourceSchema>
+export type ResourceInput = z.infer<typeof resourceInputSchema>
