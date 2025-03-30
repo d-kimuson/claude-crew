@@ -7,6 +7,7 @@ import type { Config } from "./core/config/schema"
 import { loadConfig } from "./core/config/loadConfig"
 import { mcpConfig } from "./core/config/mcp"
 import { writeConfig } from "./core/config/writeConfig"
+import { createContext } from "./core/context/createContext"
 import { indexCodebase } from "./core/embedding/indexCodebase"
 import { createDbContext } from "./core/lib/drizzle/createDbContext"
 import { runMigrate } from "./core/lib/drizzle/runMigrate"
@@ -268,23 +269,21 @@ export const main = async () => {
 
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const configPath = argv["configPath"] as string
-      await startMcpServer(configPath)
+      const context = await createContext(configPath)
+      await runMigrate(context.config.database.url)
+      await indexCodebase(context)
+
+      await startMcpServer(context)
       break
     }
 
     case commands.setupDb: {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const configPath = argv["configPath"] as string
-      const config = loadConfig(configPath)
+      const context = await createContext(configPath)
 
-      await startPostgres(configPath, config)
-      const updatedConfig = loadConfig(configPath)
-      const ctx = createDbContext(updatedConfig.database.url)
-
-      await runMigrate(ctx.databaseUrl)
-      logger.info("✅ migrate done")
-      await indexCodebase(config)(ctx)(config.directory)
-      logger.info("✅ index codebase done")
+      await runMigrate(context.config.database.url)
+      await indexCodebase(context)
       break
     }
 

@@ -6,6 +6,7 @@ import { glob } from "glob"
 import { err } from "neverthrow"
 import { describe, it, expect, vi } from "vitest"
 import type { Config } from "../../config/schema"
+import { contextFactory } from "../../../../test/helpers/context"
 import { DiscriminatedError } from "../../errors/DiscriminatedError"
 import { editorTools } from "./index"
 import { execBash } from "./bash"
@@ -22,42 +23,9 @@ vi.mock("./checks")
 vi.mock("./toAbsolutePath")
 
 describe("editorTools", () => {
-  const mockConfig: Config = {
-    name: "test-project",
-    directory: "/test/project",
-    language: "日本語",
-    commands: {
-      install: "pnpm i",
-      build: "pnpm build",
-      test: "pnpm test",
-      testFile: "pnpm vitest run <file>",
-      checks: ["pnpm tsc -p . --noEmit"],
-      checkFiles: ["pnpm eslint <files>"],
-    },
-    shell: {
-      enable: false,
-      allowedCommands: [],
-    },
-    git: {
-      defaultBranch: "main",
-      branchPrefix: "claude-crew/",
-    },
-    github: {
-      createPullRequest: "draft",
-    },
-    database: {
-      customDb: false,
-      url: "postgresql://localhost:5432/test",
-      port: 5432,
-    },
-    embedding: {
-      provider: {
-        type: "xenova",
-      },
-    },
-  }
+  const mockContext = contextFactory()
 
-  const tools = editorTools(mockConfig)
+  const tools = editorTools(mockContext)
 
   beforeEach(() => {
     vi.mocked(toAbsolutePath).mockReturnValue((path: string) =>

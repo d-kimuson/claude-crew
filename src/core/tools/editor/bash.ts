@@ -1,9 +1,9 @@
 import { execSync } from "node:child_process"
 import { Result } from "neverthrow"
 import { z } from "zod"
+import { withContext } from "../../context/withContext"
 import { DiscriminatedError } from "../../errors/DiscriminatedError"
 import { unhandledError } from "../../errors/unhandleError"
-import { withConfig } from "../../utils/withConfig"
 
 const execSyncErrorSchema = z.object({
   status: z.number(),
@@ -21,11 +21,11 @@ const execBashError = (error: ExecSyncError) =>
     stderr: error.stderr === "" ? null : error.stderr,
   })
 
-export const execBash = withConfig((config) =>
+export const execBash = withContext((ctx) =>
   Result.fromThrowable(
     (command: string) =>
       execSync(command, {
-        cwd: config.directory,
+        cwd: ctx.config.directory,
         encoding: "utf-8",
       }),
     (error) => {

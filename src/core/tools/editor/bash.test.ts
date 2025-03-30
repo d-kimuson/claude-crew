@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process"
 import { describe, it, expect, vi } from "vitest"
 import type { Config } from "../../config/schema"
+import { contextFactory } from "../../../../test/helpers/context"
 import { execBash } from "./bash"
 
 vi.mock("node:child_process")
@@ -19,42 +20,9 @@ class ExecSyncMockError extends Error {
 }
 
 describe("execBash", () => {
-  const mockConfig: Config = {
-    name: "test-project",
-    directory: "/test/project",
-    language: "日本語",
-    commands: {
-      install: "pnpm i",
-      build: "pnpm build",
-      test: "pnpm test",
-      testFile: "pnpm vitest run <file>",
-      checks: ["pnpm tsc -p . --noEmit"],
-      checkFiles: ["pnpm eslint <files>"],
-    },
-    shell: {
-      enable: false,
-      allowedCommands: [],
-    },
-    git: {
-      defaultBranch: "main",
-      branchPrefix: "claude-crew/",
-    },
-    github: {
-      createPullRequest: "draft",
-    },
-    database: {
-      customDb: false,
-      url: "postgresql://localhost:5432/test",
-      port: 5432,
-    },
-    embedding: {
-      provider: {
-        type: "xenova",
-      },
-    },
-  }
+  const mockContext = contextFactory()
 
-  const execBashWithConfig = execBash(mockConfig)
+  const execBashWithConfig = execBash(mockContext)
 
   describe("Given a bash command", () => {
     describe("When the command executes successfully", () => {
@@ -69,7 +37,7 @@ describe("execBash", () => {
           expect(result.value).toBe(expectedOutput)
         }
         expect(execSync).toHaveBeenCalledWith("echo 'test'", {
-          cwd: mockConfig.directory,
+          cwd: mockContext.config.directory,
           encoding: "utf-8",
         })
       })

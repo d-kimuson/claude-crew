@@ -1,16 +1,16 @@
 import { existsSync } from "node:fs"
-import { withConfig } from "../../utils/withConfig"
+import { withContext } from "../../context/withContext"
 import { execBash } from "./bash"
 import { toAbsolutePath } from "./toAbsolutePath"
 
-export const checkModifiedFiles = withConfig((config) => (files: string[]) => {
-  const absolutePaths = files.map(toAbsolutePath(config))
-  const outputs = config.commands.checkFiles
+export const checkModifiedFiles = withContext((ctx) => (files: string[]) => {
+  const absolutePaths = files.map(toAbsolutePath(ctx))
+  const outputs = ctx.config.commands.checkFiles
     .map((commandTemplate) =>
       commandTemplate.replace("<files>", absolutePaths.join(" "))
     )
     .map((command) =>
-      execBash(config)(command).match(
+      execBash(ctx)(command).match(
         (stdout) =>
           ({
             success: true,
@@ -48,9 +48,9 @@ const FILE_EXTENSIONS = [
 
 const TEST_MIDDLE_EXTENSIONS = [".test", ".spec"]
 
-export const testModifiedFiles = withConfig((config) => (files: string[]) => {
+export const testModifiedFiles = withContext((ctx) => (files: string[]) => {
   const outputs = files.map((file) => {
-    const absolutePath = toAbsolutePath(config)(file)
+    const absolutePath = toAbsolutePath(ctx)(file)
     const extension = FILE_EXTENSIONS.find((ext) => absolutePath.endsWith(ext))
 
     if (extension === undefined)
@@ -82,8 +82,8 @@ export const testModifiedFiles = withConfig((config) => (files: string[]) => {
         supplement: "No test file exists.",
       } as const
     }
-    const result = execBash(config)(
-      config.commands.testFile.replace("<file>", testFilePath)
+    const result = execBash(ctx)(
+      ctx.config.commands.testFile.replace("<file>", testFilePath)
     )
 
     if (result.isOk()) {

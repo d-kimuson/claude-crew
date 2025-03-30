@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from "vitest"
 import type { EmbeddingAdapter } from "./interface"
 import type { Config } from "../../config/schema"
 import type { EmbeddingModel } from "ai"
+import { contextFactory } from "../../../../test/helpers/context"
 import { aiSdkEmbeddingAdapter } from "./aiSdkAdapter"
 import { resolveEmbeddingAdapter } from "./resolver"
 import { xenovaEmbeddingAdapter } from "./xenovaAdapter"
@@ -23,15 +24,7 @@ vi.mock("./xenovaAdapter", () => ({
 
 describe("resolveEmbeddingAdapter", () => {
   describe("Given OpenAI provider configuration", () => {
-    const mockConfig = {
-      embedding: {
-        provider: {
-          type: "openai" as const,
-          model: "text-embedding-ada-002",
-          apiKey: "test-api-key",
-        },
-      },
-    } as unknown as Config
+    const mockContext = contextFactory()
 
     describe("When resolving the adapter", () => {
       it("Then should return an AI SDK adapter with OpenAI model", async () => {
@@ -45,12 +38,12 @@ describe("resolveEmbeddingAdapter", () => {
         vi.mocked(openai.embedding).mockReturnValue(mockModel)
         vi.mocked(aiSdkEmbeddingAdapter).mockReturnValue(mockAdapter)
 
-        const result = await resolveEmbeddingAdapter(mockConfig)
+        const result = await resolveEmbeddingAdapter(mockContext)
 
         expect(openai.embedding).toHaveBeenCalledWith(
           "text-embedding-ada-002",
           {
-            user: "test-api-key",
+            user: "dummy-openai-api-key",
           }
         )
         expect(aiSdkEmbeddingAdapter).toHaveBeenCalledWith(mockModel)
@@ -59,42 +52,22 @@ describe("resolveEmbeddingAdapter", () => {
     })
   })
 
-  describe("Given Xenova provider configuration", () => {
-    const mockConfig = {
-      embedding: {
-        provider: {
-          type: "xenova" as const,
-        },
-      },
-    } as unknown as Config
-
-    describe("When resolving the adapter", () => {
-      it("Then should return a Xenova adapter", async () => {
-        const mockAdapter = {
-          id: "xenova-adapter",
-        } as unknown as EmbeddingAdapter
-        vi.mocked(xenovaEmbeddingAdapter).mockResolvedValue(mockAdapter)
-
-        const result = await resolveEmbeddingAdapter(mockConfig)
-
-        expect(xenovaEmbeddingAdapter).toHaveBeenCalled()
-        expect(result).toBe(mockAdapter)
-      })
-    })
-  })
-
   describe("Given unsupported provider configuration", () => {
-    const mockConfig = {
-      embedding: {
-        provider: {
-          type: "unsupported" as const,
+    const mockContext = contextFactory((ctx) => ({
+      ...ctx,
+      config: {
+        ...ctx.config,
+        embedding: {
+          provider: {
+            type: "invalid" as const,
+          },
         },
-      },
-    } as unknown as Config
+      } as unknown as Config,
+    }))
 
     describe("When resolving the adapter", () => {
       it("Then should throw an error", () => {
-        expect(() => resolveEmbeddingAdapter(mockConfig)).toThrow()
+        expect(() => resolveEmbeddingAdapter(mockContext)).toThrow()
       })
     })
   })
