@@ -40,7 +40,9 @@ describe("writeConfig", () => {
     },
     embedding: {
       provider: {
-        type: "xenova",
+        type: "openai",
+        apiKey: "test-api-key",
+        model: "text-embedding-ada-002",
       },
     },
   }

@@ -65,6 +65,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.23.0",
+    "@modelcontextprotocol/inspector": "^0.7.0",
     "@tsconfig/node22": "^22.0.1",
     "@tsconfig/strictest": "^2.0.5",
     "@types/diff": "^7.0.2",

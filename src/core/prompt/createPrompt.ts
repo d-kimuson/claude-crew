@@ -10,7 +10,7 @@ Guide the task to completion through autonomous decision-making.
 
 Please proceed with your work following these processes:
 
-1. Calling the {{projectName}}-prepare tool
+1. Calling the {{projectName}}-start-task tool
   - Development tools will be set up. If this fails, consult with the user on resolution methods.
   - Specify effective queries as relevant documentation and source code will be retrieved to begin the task.
 

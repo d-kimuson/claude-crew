@@ -104,7 +104,6 @@ const traverseDirectory = withConfig((config) =>
                   })
 
                   results.push(entryPath)
-                  logger.info(`Indexed: ${entryPath}`)
                 } catch (error) {
                   logger.error(`Error indexing file ${entryPath}:`, error)
                 }

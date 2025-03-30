@@ -18,7 +18,7 @@ Claude Crew focuses on three key elements to maximize LLM performance:
 ## Requirements
 
 - Claude Desktop
-- OpenAI API key for embedding (Optional: can use local embedding with Xenova instead)
+- OpenAI API key for embedding
 - Docker and Docker Compose (Not required when using custom database)
 - Node.js >= v20
 
@@ -29,7 +29,7 @@ Claude Crew focuses on three key elements to maximize LLM performance:
 - 📝 Automatic instruction generation for Claude Projects
 - 🛠️ Customizable project workflow commands
 - 🌐 Multi-language support (Full TypeScript support, basic file operations for other languages)
-- 🔍 Enhanced context understanding through local embedding (supports both OpenAI and Xenova)
+- 🔍 Enhanced context understanding through OpenAI embedding
 - 💪 High-precision TypeScript support utilizing type information
 - 🔌 Support for custom PostgreSQL database instead of Docker
 
@@ -45,6 +45,28 @@ npx claude-crew@latest setup
 ```
 
 Configuration files will be generated under `.claude-crew` through an interactive setup process.
+
+> **Note**: Claude Crew can be used with multiple projects simultaneously. Each project generates its own unique configuration, and tool settings are created with project-specific naming to prevent conflicts. For example:
+
+```json
+// Project A: /path/to/project-a/.claude-crew/mcp.json
+{
+  "tools": {
+    "project_a_run_test": { ... },
+    "project_a_check_types": { ... }
+  }
+}
+
+// Project B: /path/to/project-b/.claude-crew/mcp.json
+{
+  "tools": {
+    "project_b_run_test": { ... },
+    "project_b_check_types": { ... }
+  }
+}
+```
+
+> **Tip**: For easier project management, we recommend cloning projects that use Claude Crew into separate repositories. This allows you to manage the configuration and state of each project independently.
 
 ### Claude Desktop Setup
 
@@ -112,9 +134,9 @@ The following settings can be customized in `.claude-crew/config.json`:
 |               | `database.port`             | 6432                                                                   | Port number for built-in Docker DB (ignored when customDb is true)     |
 |               | `database.customDb`         | false                                                                  | Set to true to use your own PostgreSQL database instead of Docker      |
 | **Embedding** |
-|               | `embedding.provider.type`   | "openai" or "xenova"                                                   | Embedding provider type                                                |
-|               | `embedding.provider.apiKey` | -                                                                      | OpenAI API key (required when type is "openai")                        |
-|               | `embedding.provider.model`  | "text-embedding-ada-002"                                               | OpenAI embedding model (used when type is "openai")                    |
+|               | `embedding.provider.type`   | "openai"                                                               | Embedding provider type                                                |
+|               | `embedding.provider.apiKey` | -                                                                      | OpenAI API key                                                         |
+|               | `embedding.provider.model`  | "text-embedding-ada-002"                                               | OpenAI embedding model                                                 |
 
 ## Contributing
 

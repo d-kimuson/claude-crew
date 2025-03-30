@@ -4,28 +4,32 @@ import { drizzle } from "drizzle-orm/postgres-js"
 import { migrate } from "drizzle-orm/postgres-js/migrator"
 import postgres from "postgres"
 import { logger } from "../../../lib/logger"
+import { serializeError } from "../../errors/serializeError"
+import { createDbClient } from "."
 
 const getMigrationsFolder = () => {
   return resolve(import.meta.dirname, "migrations")
 }
 
 export const runMigrate = async (databaseUrl: string) => {
-  const connection = postgres(databaseUrl, { max: 1 })
+  try {
+    const { db } = createDbClient(databaseUrl)
 
-  const db = drizzle(connection)
+    logger.info("⏳ Running migrations...")
 
-  logger.info("⏳ Running migrations...")
+    const start = Date.now()
 
-  const start = Date.now()
+    await db.execute(sql`CREATE EXTENSION IF NOT EXISTS vector;`)
+    await migrate(db, {
+      migrationsFolder: getMigrationsFolder(),
+    })
 
-  await db.execute(sql`CREATE EXTENSION IF NOT EXISTS vector;`)
-  await migrate(db, {
-    migrationsFolder: getMigrationsFolder(),
-  })
+    const end = Date.now()
 
-  const end = Date.now()
-
-  logger.info(`✅ Migrations completed in ${end - start}ms`)
-
-  process.exit(0)
+    logger.info(`✅ Migrations completed in ${end - start}ms`)
+  } catch (error) {
+    logger.error("Failed to runMigrations", {
+      error: serializeError(error),
+    })
+  }
 }

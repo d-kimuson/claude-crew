@@ -30,16 +30,12 @@ export const configSchema = z.object({
     })
     .default({}),
   embedding: z.object({
-    provider: z.union([
-      z.object({
-        type: z.literal("xenova"),
-      }),
-      z.object({
-        type: z.literal("openai"),
-        apiKey: z.string(),
-        model: z.string().default("text-embedding-ada-002"),
-      }),
-    ]),
+    // want to provide providers that can be used completely locally
+    provider: z.object({
+      type: z.literal("openai"),
+      apiKey: z.string(),
+      model: z.string().default("text-embedding-ada-002"),
+    }),
   }),
   database: z.union([
     z.object({

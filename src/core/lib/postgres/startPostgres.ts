@@ -61,9 +61,18 @@ export const startPostgres = async (configPath: string, config: Config) => {
     }
   )
 
-  if (dockerPsStdout !== "") {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (JSON.parse(dockerPsStdout).State === "running") {
+  const dockerPsJson = ((): Record<string, unknown> | undefined => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const json: Record<string, unknown> = JSON.parse(dockerPsStdout)
+      return json
+    } catch {
+      return undefined
+    }
+  })()
+
+  if (dockerPsJson !== undefined) {
+    if (dockerPsJson["State"] === "running") {
       logger.info("Postgres Container is already running")
     } else {
       execSync(

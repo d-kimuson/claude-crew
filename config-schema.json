@@ -108,42 +108,25 @@
           "type": "object",
           "properties": {
             "provider": {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "const": "xenova"
-                    }
-                  },
-                  "required": [
-                    "type"
-                  ],
-                  "additionalProperties": false
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "const": "openai"
                 },
-                {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "const": "openai"
-                    },
-                    "apiKey": {
-                      "type": "string"
-                    },
-                    "model": {
-                      "type": "string",
-                      "default": "text-embedding-ada-002"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "apiKey"
-                  ],
-                  "additionalProperties": false
+                "apiKey": {
+                  "type": "string"
+                },
+                "model": {
+                  "type": "string",
+                  "default": "text-embedding-ada-002"
                 }
-              ]
+              },
+              "required": [
+                "type",
+                "apiKey"
+              ],
+              "additionalProperties": false
             }
           },
           "required": [

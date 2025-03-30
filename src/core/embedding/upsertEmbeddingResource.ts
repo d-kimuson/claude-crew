@@ -1,4 +1,5 @@
-import { eq, inArray } from "drizzle-orm/sql"
+import { stat } from "fs/promises"
+import { eq } from "drizzle-orm/sql"
 import type { NewResourceParams } from "../lib/drizzle/schema/resources"
 import { logger } from "../../lib/logger"
 import { documentEmbeddingsTable } from "../lib/drizzle/schema/documentEmbeddings"
@@ -16,45 +17,63 @@ export const upsertEmbeddingResource = withConfig((config) =>
     ({ db }) =>
       async ({ projectId, filePath, content }: NewResourceParams) => {
         try {
-          const adapter = await resolveEmbeddingAdapter(config)
-          const embeddings = await adapter.generateFileEmbeddings(
-            content,
-            filePath
-          )
+          const stats = await stat(filePath)
+
+          const adapter = resolveEmbeddingAdapter(config)
+
+          let documentId: string | undefined
 
           if (documentExtensions.some((ext) => filePath.endsWith(ext))) {
             // Store in document knowledge
             // clear past embeddings
-            const pastDocuments = await db
-              .select()
-              .from(documentsTable)
-              .where(eq(documentsTable.filePath, filePath))
-            await db.delete(documentEmbeddingsTable).where(
-              inArray(
-                documentEmbeddingsTable.documentId,
-                pastDocuments.map((document) => document.id)
-              )
-            )
-            await db
-              .delete(documentsTable)
-              .where(eq(documentsTable.filePath, filePath))
+            const pastDocument = await db.query.documents.findFirst({
+              where: eq(documentsTable.filePath, filePath),
+            })
 
-            // insert document and embeddings
-            const [document] = await db
-              .insert(documentsTable)
-              .values({ projectId, filePath, content })
-              .returning()
+            if (pastDocument !== undefined) {
+              documentId = pastDocument.id
+              if (pastDocument.updatedAt.getTime() === stats.mtime.getTime()) {
+                logger.info(`Skipped: ${filePath}. Reason: not modified.`)
+                return
+              }
 
-            if (document === undefined) {
-              logger.warn(
-                `Failed to insert document. skipping embeddings. ${filePath}`
-              )
-              return
+              await db
+                .delete(documentEmbeddingsTable)
+                .where(eq(documentEmbeddingsTable.documentId, pastDocument.id))
+
+              await db
+                .update(documentsTable)
+                .set({
+                  content,
+                  updatedAt: stats.mtime,
+                })
+                .where(eq(documentsTable.filePath, filePath))
+            } else {
+              // insert document and embeddings
+              const [document] = await db
+                .insert(documentsTable)
+                .values({ projectId, filePath, content })
+                .returning()
+
+              if (document === undefined) {
+                logger.warn(
+                  `Failed to insert document. skipping embeddings. ${filePath}`
+                )
+                return
+              }
+
+              documentId = document.id
             }
+
+            const embeddings = await adapter.generateFileEmbeddings(
+              content,
+              filePath
+            )
 
             await db.insert(documentEmbeddingsTable).values(
               embeddings.map((embedding) => ({
-                documentId: document.id,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                documentId: documentId!,
                 content: embedding.content,
                 embedding: embedding.embedding,
                 metadata: {
@@ -64,29 +83,59 @@ export const upsertEmbeddingResource = withConfig((config) =>
                 },
               }))
             )
+            logger.info(`Indexed: ${filePath}`)
           } else {
+            let resourceId: string | undefined
+
             // Store in resources
             // clear past embeddings
-            const pastResources = await db
-              .select()
-              .from(resourcesTable)
-              .where(eq(resourcesTable.filePath, filePath))
-            await db.delete(embeddingsTable).where(
-              inArray(
-                embeddingsTable.resourceId,
-                pastResources.map((resource) => resource.id)
-              )
-            )
+            const pastResource = await db.query.resources.findFirst({
+              where: eq(resourcesTable.filePath, filePath),
+            })
 
-            // insert resource and embeddings
-            const [resource] = await db
-              .insert(resourcesTable)
-              .values({ projectId, filePath, content })
-              .returning()
+            if (pastResource !== undefined) {
+              resourceId = pastResource.id
+              if (pastResource.updatedAt.getTime() === stats.mtime.getTime()) {
+                logger.info(`Skipped (not modified): ${filePath}`)
+                return
+              }
+
+              await db
+                .delete(embeddingsTable)
+                .where(eq(embeddingsTable.resourceId, pastResource.id))
+
+              await db
+                .update(resourcesTable)
+                .set({
+                  content,
+                  updatedAt: stats.mtime,
+                })
+                .where(eq(resourcesTable.filePath, filePath))
+            } else {
+              // insert resource and embeddings
+              const [resource] = await db
+                .insert(resourcesTable)
+                .values({ projectId, filePath, content })
+                .returning()
+
+              if (resource === undefined) {
+                logger.warn(
+                  `Failed to insert resource. skipping embeddings. ${filePath}`
+                )
+                return
+              }
+
+              resourceId = resource.id
+            }
+
+            const embeddings = await adapter.generateFileEmbeddings(
+              content,
+              filePath
+            )
 
             await db.insert(embeddingsTable).values(
               embeddings.map((embedding) => ({
-                resourceId: resource?.id,
+                resourceId: resourceId,
                 content: embedding.content,
                 embedding: embedding.embedding,
                 metadata: {
@@ -96,12 +145,12 @@ export const upsertEmbeddingResource = withConfig((config) =>
                 },
               }))
             )
-          }
 
-          return "Resource successfully created and embedded."
+            logger.info(`Indexed: ${filePath}`)
+          }
         } catch (e) {
-          if (e instanceof Error)
-            return e.message.length > 0 ? e.message : "Error, please try again."
+          logger.error("Error upsert embedding resource", e)
+          return
         }
       }
   )

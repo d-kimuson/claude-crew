@@ -12,7 +12,15 @@ import { getProjectInfo } from "../getProjectInfo"
 export const prepareTask = withConfig((config) =>
   withDb(
     (ctx) =>
-      async (branch: string, documentQuery: string, resourceQuery: string) => {
+      async (
+        branch: string,
+        documentQuery: string,
+        resourceQuery: string,
+        options?: {
+          skipDbSetup?: boolean
+        }
+      ) => {
+        const { skipDbSetup = false } = options ?? {}
         if (
           execSync("git status -s", {
             cwd: config.directory,
@@ -35,10 +43,12 @@ export const prepareTask = withConfig((config) =>
           })
         }
 
-        await runMigrate(ctx.databaseUrl)
-        logger.info("✅ migrate done")
-        await indexCodebase(config)(ctx)(config.directory)
-        logger.info("✅ index codebase done")
+        if (!skipDbSetup) {
+          await runMigrate(ctx.databaseUrl)
+          logger.info("✅ migrate done")
+          await indexCodebase(config)(ctx)(config.directory)
+          logger.info("✅ index codebase done")
+        }
 
         const projectInfo = await getProjectInfo(config.directory)
         const relevantDocuments =

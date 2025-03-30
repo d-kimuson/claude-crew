@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { loadConfig } from "../../core/config/loadConfig"
+import { serializeError } from "../../core/errors/serializeError"
 import { createDbContext } from "../../core/lib/drizzle/createDbContext"
 import { startPostgres } from "../../core/lib/postgres/startPostgres"
 import { prepareTask } from "../../core/project/prepare"
@@ -38,7 +39,12 @@ export const prepareTool = defineTool(({ server, config, configPath }) =>
       } catch (error) {
         return {
           isError: true,
-          content: [{ type: "text", text: `Error: ${JSON.stringify(error)}` }],
+          content: [
+            {
+              type: "text",
+              text: `Error: ${JSON.stringify(serializeError(error))}`,
+            },
+          ],
         }
       }
     }
