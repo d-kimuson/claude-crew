@@ -3,11 +3,17 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { version } from "../../package.json"
 import { loadConfig } from "../core/config/loadConfig"
 import { editorTools } from "./tools/editor"
-import { prepareTool } from "./tools/prepare"
 import { ragTools } from "./tools/rag"
+import { startTaskTool } from "./tools/startTask"
 import { think } from "./tools/think"
 
-const tools = [prepareTool, think, ...editorTools, ...ragTools] as const
+const tools = [
+  /* prepareTool */
+  startTaskTool,
+  think,
+  ...editorTools,
+  ...ragTools,
+] as const
 
 const server = (configPath: string) => {
   const config = loadConfig(configPath)

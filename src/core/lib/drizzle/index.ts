@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js"
+import { logger } from "../../../lib/logger"
 import { documentEmbeddingsTable } from "./schema/documentEmbeddings"
 import { documentsTable } from "./schema/documents"
 import { embeddingsTable } from "./schema/embeddings"
@@ -20,6 +21,11 @@ export const createDbClient = (databaseUrl: string) => {
 
   const db: PostgresJsDatabase<typeof schema> = drizzle(client, {
     schema: schema,
+    logger: {
+      logQuery: (query, params) => {
+        logger.info("query", { query, params })
+      },
+    },
   })
 
   return {

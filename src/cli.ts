@@ -83,6 +83,7 @@ export const main = async () => {
         branchPrefix: string
         githubPullRequest: "always" | "draft" | "never"
         runtime: "local" | "container"
+        openaiApiKey: string
       } & (
         | {
             customDb: true
@@ -190,6 +191,17 @@ export const main = async () => {
           message: "Input database URL",
           when: (answers) => answers.customDb,
         },
+        {
+          type: "password",
+          name: "openaiApiKey",
+          message: "Input your OpenAI API key",
+          validate: (input: string) => {
+            if (!input) return "API key is required"
+            if (!input.startsWith("sk-"))
+              return "Invalid API key format. OpenAI API keys start with 'sk-'"
+            return true
+          },
+        },
       ])
 
       const projectDirectory: string = answers.directory.startsWith("/")
@@ -230,7 +242,9 @@ export const main = async () => {
             },
         embedding: {
           provider: {
-            type: "xenova",
+            type: "openai",
+            apiKey: answers.openaiApiKey,
+            model: "text-embedding-ada-002",
           },
         },
       }
@@ -268,6 +282,10 @@ export const main = async () => {
 
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const configPath = argv["configPath"] as string
+      const config = loadConfig(configPath)
+      logger.setLogFilePath(
+        resolve(config.directory, ".claude-crew", "mcp-server.log")
+      )
       await startMcpServer(configPath)
       break
     }

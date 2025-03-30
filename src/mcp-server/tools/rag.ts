@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { serializeError } from "../../core/errors/serializeError"
 import { createDbContext } from "../../core/lib/drizzle/createDbContext"
 import { ragTools as coreRagTools } from "../../core/tools/rag"
 import { logger } from "../../lib/logger"
@@ -27,7 +28,10 @@ export const ragTools = [
           return {
             isError: true,
             content: [
-              { type: "text", text: `Error: ${JSON.stringify(error)}` },
+              {
+                type: "text",
+                text: `Error: ${JSON.stringify(serializeError(error))}`,
+              },
             ],
           }
         }
@@ -57,7 +61,10 @@ export const ragTools = [
           return {
             isError: true,
             content: [
-              { type: "text", text: `Error: ${JSON.stringify(error)}` },
+              {
+                type: "text",
+                text: `Error: ${JSON.stringify(serializeError(error))}`,
+              },
             ],
           }
         }

@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { serializeError } from "../../core/errors/serializeError"
 import { editorTools as coreEditorTools } from "../../core/tools/editor"
 import { defineTool } from "../utils/defineTool"
 
@@ -21,7 +22,10 @@ export const editorTools = [
           return {
             isError: true,
             content: [
-              { type: "text", text: `Error: ${JSON.stringify(error)}` },
+              {
+                type: "text",
+                text: `Error: ${JSON.stringify(serializeError(error))}`,
+              },
             ],
           }
         }
@@ -47,7 +51,10 @@ export const editorTools = [
           return {
             isError: true,
             content: [
-              { type: "text", text: `Error: ${JSON.stringify(error)}` },
+              {
+                type: "text",
+                text: `Error: ${JSON.stringify(serializeError(error))}`,
+              },
             ],
           }
         }
@@ -85,7 +92,10 @@ export const editorTools = [
           return {
             isError: true,
             content: [
-              { type: "text", text: `Error: ${JSON.stringify(error)}` },
+              {
+                type: "text",
+                text: `Error: ${JSON.stringify(serializeError(error))}`,
+              },
             ],
           }
         }
@@ -112,7 +122,10 @@ export const editorTools = [
           return {
             isError: true,
             content: [
-              { type: "text", text: `Error: ${JSON.stringify(error)}` },
+              {
+                type: "text",
+                text: `Error: ${JSON.stringify(serializeError(error))}`,
+              },
             ],
           }
         }
@@ -144,7 +157,10 @@ export const editorTools = [
           return {
             isError: true,
             content: [
-              { type: "text", text: `Error: ${JSON.stringify(error)}` },
+              {
+                type: "text",
+                text: `Error: ${JSON.stringify(serializeError(error))}`,
+              },
             ],
           }
         }
@@ -174,7 +190,10 @@ export const editorTools = [
           return {
             isError: true,
             content: [
-              { type: "text", text: `Error: ${JSON.stringify(error)}` },
+              {
+                type: "text",
+                text: `Error: ${JSON.stringify(serializeError(error))}`,
+              },
             ],
           }
         }
@@ -215,7 +234,10 @@ export const editorTools = [
           return {
             isError: true,
             content: [
-              { type: "text", text: `Error: ${JSON.stringify(error)}` },
+              {
+                type: "text",
+                text: `Error: ${JSON.stringify(serializeError(error))}`,
+              },
             ],
           }
         }
@@ -241,7 +263,10 @@ export const editorTools = [
           return {
             isError: true,
             content: [
-              { type: "text", text: `Error: ${JSON.stringify(error)}` },
+              {
+                type: "text",
+                text: `Error: ${JSON.stringify(serializeError(error))}`,
+              },
             ],
           }
         }

@@ -6,15 +6,10 @@ import { startPostgres } from "../../core/lib/postgres/startPostgres"
 import { prepareTask } from "../../core/project/prepare"
 import { defineTool } from "../utils/defineTool"
 
-/**
- * @deprecated Currently not recommended to use via MCP as there's no way to avoid timeouts
- * Use CLI and startTask tool instead
- * Ideally we want to run this via MCP, so we'd like to revert this when possible
- */
-export const prepareTool = defineTool(({ server, config, configPath }) =>
+export const startTaskTool = defineTool(({ server, config, configPath }) =>
   server.tool(
-    `${config.name}-prepare`,
-    "Prepare the project for the next task",
+    `${config.name}-start-task`,
+    "Start the task",
     {
       branch: z.string().describe("branch name for the task"),
       documentQuery: z.string().describe("query to fetch relevant documents"),
@@ -29,7 +24,10 @@ export const prepareTool = defineTool(({ server, config, configPath }) =>
         const result = await prepareTask(updatedConfig)(ctx)(
           branch,
           documentQuery,
-          resourceQuery
+          resourceQuery,
+          {
+            skipDbSetup: true,
+          }
         )
 
         return {
