@@ -21,11 +21,7 @@ export const createDbClient = (databaseUrl: string) => {
 
   const db: PostgresJsDatabase<typeof schema> = drizzle(client, {
     schema: schema,
-    logger: {
-      logQuery: (query, params) => {
-        logger.info("query", { query, params })
-      },
-    },
+    logger: false,
   })
 
   return {
