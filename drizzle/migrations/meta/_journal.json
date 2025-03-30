@@ -15,6 +15,13 @@
       "when": 1743307573542,
       "tag": "0001_sloppy_praxagora",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1743322682787,
+      "tag": "0002_overrated_triton",
+      "breakpoints": true
     }
   ]
 }
