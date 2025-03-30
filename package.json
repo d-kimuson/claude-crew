@@ -84,6 +84,7 @@
     "release-it": "^18.1.2",
     "release-it-pnpm": "^4.6.4",
     "tsup": "^8.4.0",
+    "type-fest": "^4.38.0",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.28.0",
     "vitest": "^3.0.9"

@@ -1,6 +1,4 @@
-import { cosineDistance, sql, gt, desc } from "drizzle-orm"
 import { withContext } from "../context/withContext"
-import { embeddingsTable } from "../lib/drizzle/schema/embeddings"
 import { resolveEmbeddingAdapter } from "./adapter/resolver"
 
 export const findRelevantResources = withContext(
@@ -16,23 +14,13 @@ export const findRelevantResources = withContext(
 
       const adapter = resolveEmbeddingAdapter(ctx)
       const userQueryEmbedded = await adapter.embed(userQuery)
-      const similarity = sql<number>`1 - (${cosineDistance(
-        embeddingsTable.embedding,
-        userQueryEmbedded
-      )})`
-      const similarContents = await ctx.db
-        .select({
-          id: embeddingsTable.id,
-          resourceId: embeddingsTable.resourceId,
-          content: embeddingsTable.content,
-          embedding: embeddingsTable.embedding,
-          metadata: embeddingsTable.metadata,
-          similarity,
+      const similarContents =
+        await ctx.queries.embeddings.searchRelevant.execute({
+          queryEmbedding: userQueryEmbedded,
+          threshold,
+          limit,
         })
-        .from(embeddingsTable)
-        .where(gt(similarity, threshold))
-        .orderBy((t) => desc(t.similarity))
-        .limit(limit)
+
       return similarContents
     }
 )

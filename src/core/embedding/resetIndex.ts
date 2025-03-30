@@ -1,35 +1,35 @@
-import { eq, inArray } from "drizzle-orm"
 import { logger } from "../../lib/logger"
 import { withContext } from "../context/withContext"
-import { embeddingsTable } from "../lib/drizzle/schema/embeddings"
-import { projectsTable } from "../lib/drizzle/schema/projects"
-import { resourcesTable } from "../lib/drizzle/schema/resources"
 
 export const resetIndex = withContext(
   (ctx) => async (projectDirectory: string) => {
-    const [project] = await ctx.db
-      .select()
-      .from(projectsTable)
-      .where(eq(projectsTable.name, projectDirectory))
-      .limit(1)
+    const project = await ctx.queries.projects.getByDirectory.execute({
+      directory: projectDirectory,
+    })
     if (project === undefined) {
       return
     }
 
-    const resources = await ctx.db
-      .select()
-      .from(resourcesTable)
-      .where(eq(resourcesTable.projectId, project.id))
+    const resources = await ctx.queries.resources.getByProject.execute({
+      projectId: project.id,
+    })
+    const documents = await ctx.queries.documents.getByProject.execute({
+      projectId: project.id,
+    })
 
-    await ctx.db.delete(embeddingsTable).where(
-      inArray(
-        embeddingsTable.resourceId,
-        resources.map((r) => r.id)
-      )
-    )
-    await ctx.db
-      .delete(resourcesTable)
-      .where(eq(resourcesTable.projectId, project.id))
+    await ctx.queries.embeddings.deleteByResources.execute({
+      resourceIds: resources.map((r) => r.id),
+    })
+    await ctx.queries.documentEmbeddings.deleteByDocuments.execute({
+      documentIds: documents.map((d) => d.id),
+    })
+
+    await ctx.queries.resources.deleteByProject.execute({
+      projectId: project.id,
+    })
+    await ctx.queries.documents.deleteByProject.execute({
+      projectId: project.id,
+    })
 
     logger.info(`Index for ${projectDirectory} is successfully deleted.`)
   }

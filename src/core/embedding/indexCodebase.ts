@@ -1,11 +1,9 @@
 import { existsSync } from "node:fs"
 import { readFile, readdir, stat } from "node:fs/promises"
 import path from "node:path"
-import { eq } from "drizzle-orm"
 import ignore from "ignore"
 import { logger } from "../../lib/logger"
 import { withContext } from "../context/withContext"
-import { projectsTable } from "../lib/drizzle/schema/projects"
 import { upsertEmbeddingResource } from "./upsertEmbeddingResource"
 
 /**
@@ -134,19 +132,14 @@ export const indexCodebase = withContext(async (ctx): Promise<string[]> => {
     }
 
     // Get or create project
-    const projects = await ctx.db
-      .select()
-      .from(projectsTable)
-      .where(eq(projectsTable.name, ctx.config.directory))
-      .limit(1)
-
-    let project = projects[0]
+    let project = await ctx.queries.projects.getByDirectory.execute({
+      directory: ctx.config.directory,
+    })
 
     if (!project) {
-      const [newProject] = await ctx.db
-        .insert(projectsTable)
-        .values({ name: ctx.config.directory })
-        .returning()
+      const [newProject] = await ctx.queries.projects.insert.execute({
+        directory: ctx.config.directory,
+      })
       project = newProject
     }
 

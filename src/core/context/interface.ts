@@ -1,10 +1,8 @@
 import type { Config } from "../config/schema"
-import type { DB } from "../lib/drizzle"
-import type postgres from "postgres"
+import type { Queries } from "../lib/drizzle/queries"
 
 export type Context = {
   configPath: string
   config: Config
-  db: DB
-  dbClient: postgres.Sql<Record<string, never>>
+  queries: Queries
 }

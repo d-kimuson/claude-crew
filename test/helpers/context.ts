@@ -1,5 +1,6 @@
 import type { Config } from "../../src/core/config/schema"
 import type { Context } from "../../src/core/context/interface"
+import type { PartialDeep } from "type-fest"
 
 const defaultConfig: Config = {
   name: "test-project",
@@ -44,22 +45,18 @@ export const configFactory = (
   return changes ? changes(defaultConfig) : defaultConfig
 }
 
+type CompleteKeys = "config" | "configPath"
+type MockContextType = Pick<Context, CompleteKeys> &
+  PartialDeep<Pick<Context, Exclude<keyof Context, CompleteKeys>>>
+
 const defaultContext = {
   configPath: `${defaultConfig.directory}/.claude-crew/config.json`,
   config: defaultConfig,
-  db: {},
-  dbClient: {},
-} as const
+  queries: {},
+} as const satisfies MockContextType
 
 export const contextFactory = (
-  changes?: (
-    baseContext: Pick<Context, "config" | "configPath"> & {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      db: any
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      dbClient: any
-    }
-  ) => Partial<Context>
+  changes?: (baseContext: MockContextType) => MockContextType
 ): Context => {
   const context = changes ? changes(defaultContext) : defaultContext
   return context as Context
