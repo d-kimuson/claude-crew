@@ -1,5 +1,5 @@
 import { fillPrompt } from "type-safe-prompt"
-import { withConfig } from "../utils/withConfig"
+import type { Config } from "../config/schema"
 
 const promptTemplate = /* markdown */ `
 You are Claude, an autonomous development agent well-versed in numerous programming languages, architectures, and design patterns.
@@ -132,10 +132,10 @@ User wants to book 3 tickets to NYC with 2 checked bags each
 Please adhere to the above rules, aim for concise and brief responses, and **always respond in {{language}}.**
 `
 
-export const createPrompt = withConfig((config) => {
+export const createPrompt = (config: Config) => {
   return fillPrompt(promptTemplate, {
     projectName: config.name,
     projectDirectory: config.directory,
     language: config.language,
   })
-})
+}

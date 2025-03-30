@@ -1,4 +1,4 @@
-import { appendFileSync, writeFileSync } from "node:fs"
+import { appendFileSync } from "node:fs"
 
 /* eslint-disable no-console */
 export type Runtime = "mcp-server" | "cli" | "debug"

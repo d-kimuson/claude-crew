@@ -1,14 +1,11 @@
 import { z } from "zod"
-import { loadConfig } from "../../core/config/loadConfig"
 import { serializeError } from "../../core/errors/serializeError"
-import { createDbContext } from "../../core/lib/drizzle/createDbContext"
-import { startPostgres } from "../../core/lib/postgres/startPostgres"
 import { prepareTask } from "../../core/project/prepare"
 import { defineTool } from "../utils/defineTool"
 
-export const prepareTool = defineTool(({ server, config, configPath }) =>
+export const prepareTool = defineTool(({ server, ...ctx }) =>
   server.tool(
-    `${config.name}-prepare`,
+    `${ctx.config.name}-prepare`,
     "Prepare the project for the next task",
     {
       branch: z.string().describe("branch name for the task"),
@@ -18,10 +15,7 @@ export const prepareTool = defineTool(({ server, config, configPath }) =>
     async (args) => {
       try {
         const { branch, documentQuery, resourceQuery } = args
-        await startPostgres(configPath, config)
-        const updatedConfig = loadConfig(configPath)
-        const ctx = createDbContext(updatedConfig.database.url)
-        const result = await prepareTask(updatedConfig)(ctx)(
+        const result = await prepareTask(ctx)(
           branch,
           documentQuery,
           resourceQuery

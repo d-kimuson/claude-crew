@@ -1,6 +1,10 @@
-import type { Config } from "../../core/config/schema"
+import type { Context } from "../../core/context/interface"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
 export const defineTool = <T>(
-  cb: (ctx: { server: McpServer; config: Config; configPath: string }) => T
+  cb: (
+    ctx: Context & {
+      server: McpServer
+    }
+  ) => T
 ) => cb

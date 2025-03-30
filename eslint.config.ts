@@ -107,7 +107,7 @@ export default tsEslint.config(
     },
   },
   {
-    files: ["src/**/*.test.ts"],
+    files: ["src/**/*.test.ts", "test/**/*.ts"],
     rules: {
       "@typescript-eslint/consistent-type-assertions": "off",
       "@typescript-eslint/unbound-method": "off",

@@ -4,16 +4,16 @@ import { editorTools as coreEditorTools } from "../../core/tools/editor"
 import { defineTool } from "../utils/defineTool"
 
 export const editorTools = [
-  defineTool(({ server, config }) =>
+  defineTool(({ server, ...ctx }) =>
     server.tool(
-      `${config.name}-mkdir`,
+      `${ctx.config.name}-mkdir`,
       `Create a directory`,
       {
         filePath: z.string().describe("file path to edit"),
       },
       async (input) => {
         try {
-          await coreEditorTools(config).mkdir(input.filePath)
+          await coreEditorTools(ctx).mkdir(input.filePath)
           return {
             isError: false,
             content: [{ type: "text", text: `success` }],
@@ -33,16 +33,16 @@ export const editorTools = [
     )
   ),
 
-  defineTool(({ server, config }) =>
+  defineTool(({ server, ...ctx }) =>
     server.tool(
-      `${config.name}-exec-bash`,
+      `${ctx.config.name}-exec-bash`,
       `Execute a bash command`,
       {
         command: z.string().describe("Command to execute"),
       },
       (input) => {
         try {
-          const stdout = coreEditorTools(config).execBash(input.command)
+          const stdout = coreEditorTools(ctx).execBash(input.command)
           return {
             isError: false,
             content: [{ type: "text", text: JSON.stringify(stdout) }],
@@ -62,9 +62,9 @@ export const editorTools = [
     )
   ),
 
-  defineTool(({ server, config }) =>
+  defineTool(({ server, ...ctx }) =>
     server.tool(
-      `${config.name}-read-file`,
+      `${ctx.config.name}-read-file`,
       `Read the contents of a file`,
       {
         filePath: z.string().describe("File path to read"),
@@ -79,7 +79,7 @@ export const editorTools = [
       },
       async (input) => {
         try {
-          const content = await coreEditorTools(config).readFile(
+          const content = await coreEditorTools(ctx).readFile(
             input.filePath,
             input.maxLine,
             input.offset
@@ -103,9 +103,9 @@ export const editorTools = [
     )
   ),
 
-  defineTool(({ server, config }) =>
+  defineTool(({ server, ...ctx }) =>
     server.tool(
-      `${config.name}-write-file`,
+      `${ctx.config.name}-write-file`,
       `Write content to a file`,
       {
         filePath: z.string().describe("File path to write to"),
@@ -113,7 +113,7 @@ export const editorTools = [
       },
       async (input) => {
         try {
-          await coreEditorTools(config).writeFile(input.filePath, input.content)
+          await coreEditorTools(ctx).writeFile(input.filePath, input.content)
           return {
             isError: false,
             content: [{ type: "text", text: `success` }],
@@ -133,9 +133,9 @@ export const editorTools = [
     )
   ),
 
-  defineTool(({ server, config }) =>
+  defineTool(({ server, ...ctx }) =>
     server.tool(
-      `${config.name}-replace-file`,
+      `${ctx.config.name}-replace-file`,
       `Replace content in a file using regex pattern`,
       {
         filePath: z.string().describe("File path to modify"),
@@ -144,7 +144,7 @@ export const editorTools = [
       },
       async (input) => {
         try {
-          await coreEditorTools(config).replaceFile(
+          await coreEditorTools(ctx).replaceFile(
             input.filePath,
             input.pattern,
             input.replace
@@ -168,9 +168,9 @@ export const editorTools = [
     )
   ),
 
-  defineTool(({ server, config }) =>
+  defineTool(({ server, ...ctx }) =>
     server.tool(
-      `${config.name}-glob`,
+      `${ctx.config.name}-glob`,
       `Find files matching a glob pattern`,
       {
         pattern: z.string().describe("Glob pattern to match"),
@@ -178,7 +178,7 @@ export const editorTools = [
       },
       async (input) => {
         try {
-          const files = await coreEditorTools(config).glob(
+          const files = await coreEditorTools(ctx).glob(
             input.pattern,
             input.cwd
           )
@@ -201,9 +201,9 @@ export const editorTools = [
     )
   ),
 
-  defineTool(({ server, config }) =>
+  defineTool(({ server, ...ctx }) =>
     server.tool(
-      `${config.name}-grep`,
+      `${ctx.config.name}-grep`,
       `Search for a pattern in files`,
       {
         pattern: z.string().describe("Regex pattern to search for"),
@@ -222,7 +222,7 @@ export const editorTools = [
       },
       async (input) => {
         try {
-          const result = await coreEditorTools(config).grep(
+          const result = await coreEditorTools(ctx).grep(
             input.pattern,
             input.options
           )
@@ -245,16 +245,16 @@ export const editorTools = [
     )
   ),
 
-  defineTool(({ server, config }) =>
+  defineTool(({ server, ...ctx }) =>
     server.tool(
-      `${config.name}-test-file`,
+      `${ctx.config.name}-test-file`,
       `Run test file`,
       {
         filePath: z.string().describe("File path to test"),
       },
       (input) => {
         try {
-          const result = coreEditorTools(config).testFile(input.filePath)
+          const result = coreEditorTools(ctx).testFile(input.filePath)
           return {
             isError: false,
             content: [{ type: "text", text: JSON.stringify(result) }],
@@ -274,13 +274,13 @@ export const editorTools = [
     )
   ),
 
-  defineTool(({ server, config }) =>
+  defineTool(({ server, ...ctx }) =>
     server.tool(
-      `${config.name}-check-all`,
+      `${ctx.config.name}-check-all`,
       `Run all check commands`,
       {},
       async () => {
-        const result = await coreEditorTools(config).checkAll()
+        const result = await coreEditorTools(ctx).checkAll()
         return {
           isError: false,
           content: [{ type: "text", text: JSON.stringify(result) }],

@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from "vitest"
 import type { EmbeddingAdapter } from "./interface"
 import type { Config } from "../../config/schema"
 import type { EmbeddingModel } from "ai"
+import { contextFactory } from "../../../../test/helpers/context"
 import { aiSdkEmbeddingAdapter } from "./aiSdkAdapter"
 import { resolveEmbeddingAdapter } from "./resolver"
 
@@ -16,21 +17,9 @@ vi.mock("./aiSdkAdapter", () => ({
   aiSdkEmbeddingAdapter: vi.fn(),
 }))
 
-vi.mock("./xenovaAdapter", () => ({
-  xenovaEmbeddingAdapter: vi.fn(),
-}))
-
 describe("resolveEmbeddingAdapter", () => {
   describe("Given OpenAI provider configuration", () => {
-    const mockConfig = {
-      embedding: {
-        provider: {
-          type: "openai" as const,
-          model: "text-embedding-ada-002",
-          apiKey: "test-api-key",
-        },
-      },
-    } as unknown as Config
+    const mockContext = contextFactory()
 
     describe("When resolving the adapter", () => {
       it("Then should return an AI SDK adapter with OpenAI model", () => {
@@ -44,12 +33,12 @@ describe("resolveEmbeddingAdapter", () => {
         vi.mocked(openai.embedding).mockReturnValue(mockModel)
         vi.mocked(aiSdkEmbeddingAdapter).mockReturnValue(mockAdapter)
 
-        const result = resolveEmbeddingAdapter(mockConfig)
+        const result = resolveEmbeddingAdapter(mockContext)
 
         expect(openai.embedding).toHaveBeenCalledWith(
           "text-embedding-ada-002",
           {
-            user: "test-api-key",
+            user: "dummy-openai-api-key",
           }
         )
         expect(aiSdkEmbeddingAdapter).toHaveBeenCalledWith(mockModel)
@@ -59,17 +48,21 @@ describe("resolveEmbeddingAdapter", () => {
   })
 
   describe("Given unsupported provider configuration", () => {
-    const mockConfig = {
-      embedding: {
-        provider: {
-          type: "unsupported" as const,
+    const mockContext = contextFactory((ctx) => ({
+      ...ctx,
+      config: {
+        ...ctx.config,
+        embedding: {
+          provider: {
+            type: "invalid" as const,
+          },
         },
-      },
-    } as unknown as Config
+      } as unknown as Config,
+    }))
 
     describe("When resolving the adapter", () => {
       it("Then should throw an error", () => {
-        expect(() => resolveEmbeddingAdapter(mockConfig)).toThrow()
+        expect(() => resolveEmbeddingAdapter(mockContext)).toThrow()
       })
     })
   })

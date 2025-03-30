@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs"
 import { err, ok } from "neverthrow"
 import { describe, it, expect, vi } from "vitest"
-import type { Config } from "../../config/schema"
 import type { PathLike } from "node:fs"
+import { contextFactory } from "../../../../test/helpers/context"
 import { DiscriminatedError } from "../../errors/DiscriminatedError"
 import { execBash } from "./bash"
 import { checkModifiedFiles, testModifiedFiles } from "./checks"
@@ -13,42 +13,7 @@ vi.mock("./bash")
 vi.mock("./toAbsolutePath")
 
 describe("checks", () => {
-  const mockConfig: Config = {
-    name: "test-project",
-    directory: "/test/project",
-    language: "日本語",
-    commands: {
-      install: "pnpm i",
-      build: "pnpm build",
-      test: "pnpm test",
-      testFile: "pnpm vitest run <file>",
-      checks: ["pnpm tsc -p . --noEmit"],
-      checkFiles: ["pnpm eslint <files>"],
-    },
-    shell: {
-      enable: false,
-      allowedCommands: [],
-    },
-    git: {
-      defaultBranch: "main",
-      branchPrefix: "claude-crew/",
-    },
-    github: {
-      createPullRequest: "draft",
-    },
-    database: {
-      customDb: false,
-      url: "postgresql://localhost:5432/test",
-      port: 5432,
-    },
-    embedding: {
-      provider: {
-        type: "openai",
-        apiKey: "test-api-key",
-        model: "text-embedding-ada-002",
-      },
-    },
-  }
+  const mockContext = contextFactory()
 
   beforeEach(() => {
     vi.mocked(toAbsolutePath).mockReturnValue((path: string) =>
@@ -57,7 +22,7 @@ describe("checks", () => {
   })
 
   describe("checkModifiedFiles", () => {
-    const checkModifiedFilesWithConfig = checkModifiedFiles(mockConfig)
+    const checkModifiedFilesWithConfig = checkModifiedFiles(mockContext)
 
     describe("Given a list of modified files", () => {
       describe("When all checks pass", () => {
@@ -108,7 +73,7 @@ describe("checks", () => {
   })
 
   describe("testModifiedFiles", () => {
-    const testModifiedFilesWithConfig = testModifiedFiles(mockConfig)
+    const testModifiedFilesWithConfig = testModifiedFiles(mockContext)
 
     describe("Given a list of modified files", () => {
       describe("When file has no test", () => {

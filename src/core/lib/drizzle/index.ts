@@ -1,7 +1,6 @@
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js"
-import { logger } from "../../../lib/logger"
 import { documentEmbeddingsTable } from "./schema/documentEmbeddings"
 import { documentsTable } from "./schema/documents"
 import { embeddingsTable } from "./schema/embeddings"

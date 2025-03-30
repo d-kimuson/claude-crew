@@ -1,8 +1,6 @@
 import { resolve } from "node:path"
 import { sql } from "drizzle-orm"
-import { drizzle } from "drizzle-orm/postgres-js"
 import { migrate } from "drizzle-orm/postgres-js/migrator"
-import postgres from "postgres"
 import { logger } from "../../../lib/logger"
 import { serializeError } from "../../errors/serializeError"
 import { createDbClient } from "."
