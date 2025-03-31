@@ -4,8 +4,16 @@ import { readFile } from "node:fs/promises"
 import { resolve } from "node:path"
 import { logger } from "../../lib/logger"
 
-export const getProjectInfo = async (projectDirectory: string) => {
-  const { dependencyText, packageJson } = await readFile(
+export type ProjectInfo = {
+  dependencies: Record<string, string> | null
+  devDependencies: Record<string, string> | null
+  packageManager: string
+}
+
+export const getProjectInfo = async (
+  projectDirectory: string
+): Promise<ProjectInfo> => {
+  const { dependencies, devDependencies, packageJson } = await readFile(
     resolve(projectDirectory, "package.json"),
     "utf-8"
   )
@@ -19,14 +27,15 @@ export const getProjectInfo = async (projectDirectory: string) => {
         devDependencies: json.devDependencies,
       }
       return {
-        dependencyText: JSON.stringify(dependencies),
+        ...dependencies,
         packageJson: json,
       }
     })
     .catch((e) => {
       logger.warn("Failed to get package.json", e)
       return {
-        dependencyText: "Failed to get package.json",
+        dependencies: null,
+        devDependencies: null,
         packageJson: null,
       }
     })
@@ -48,7 +57,8 @@ export const getProjectInfo = async (projectDirectory: string) => {
   })()
 
   return {
-    dependencyText,
+    dependencies,
+    devDependencies,
     packageManager,
   } as const
 }

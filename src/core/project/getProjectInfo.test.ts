@@ -35,10 +35,8 @@ describe("getProjectInfo", () => {
         const result = await getProjectInfo(mockProjectDir)
 
         expect(result).toEqual({
-          dependencyText: JSON.stringify({
-            dependencies: mockPackageJson.dependencies,
-            devDependencies: mockPackageJson.devDependencies,
-          }),
+          dependencies: mockPackageJson.dependencies,
+          devDependencies: mockPackageJson.devDependencies,
           packageManager: "unknown",
         })
       })
@@ -53,7 +51,8 @@ describe("getProjectInfo", () => {
         const result = await getProjectInfo(mockProjectDir)
 
         expect(result).toEqual({
-          dependencyText: "Failed to get package.json",
+          dependencies: null,
+          devDependencies: null,
           packageManager: "unknown",
         })
       })

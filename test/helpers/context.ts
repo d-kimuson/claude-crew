@@ -23,13 +23,6 @@ const defaultConfig: Config = {
     enable: true,
     allowedCommands: [],
   },
-  git: {
-    defaultBranch: "main",
-    branchPrefix: "feature/",
-  },
-  github: {
-    createPullRequest: "never",
-  },
   embedding: {
     provider: {
       type: "openai",
@@ -53,6 +46,11 @@ const defaultContext = {
   configPath: `${defaultConfig.directory}/.claude-crew/config.json`,
   config: defaultConfig,
   queries: {},
+  projectInfo: {
+    dependencies: {},
+    devDependencies: {},
+    packageManager: "pnpm",
+  },
 } as const satisfies MockContextType
 
 export const contextFactory = (

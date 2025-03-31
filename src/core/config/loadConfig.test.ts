@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs"
 import { describe, it, expect, vi } from "vitest"
-import type { Config } from "./schema"
+import { configFactory } from "../../../test/helpers/context"
 import { loadConfig } from "./loadConfig"
 
 vi.mock("node:fs")
@@ -9,42 +9,7 @@ describe("loadConfig", () => {
   describe("Given a valid config file", () => {
     describe("When loading the config", () => {
       it("Then should return parsed config", () => {
-        const mockConfig: Config = {
-          name: "test-project",
-          directory: "/test/project",
-          language: "日本語",
-          commands: {
-            install: "pnpm i",
-            build: "pnpm build",
-            test: "pnpm test",
-            testFile: "pnpm vitest run <file>",
-            checks: ["pnpm tsc -p . --noEmit"],
-            checkFiles: ["pnpm eslint <files>"],
-          },
-          shell: {
-            enable: false,
-            allowedCommands: [],
-          },
-          git: {
-            defaultBranch: "main",
-            branchPrefix: "claude-crew/",
-          },
-          github: {
-            createPullRequest: "draft",
-          },
-          database: {
-            customDb: false,
-            url: "postgresql://localhost:5432/test",
-            port: 5432,
-          },
-          embedding: {
-            provider: {
-              type: "openai",
-              apiKey: "test-api-key",
-              model: "text-embedding-ada-002",
-            },
-          },
-        }
+        const mockConfig = configFactory()
 
         vi.mocked(readFileSync).mockReturnValue(JSON.stringify(mockConfig))
 

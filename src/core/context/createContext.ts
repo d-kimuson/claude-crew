@@ -4,6 +4,7 @@ import { loadConfig } from "../config/loadConfig"
 import { createDbClient } from "../lib/drizzle"
 import { queries } from "../lib/drizzle/queries"
 import { startPostgres } from "../lib/postgres/startPostgres"
+import { getProjectInfo } from "../project/getProjectInfo"
 
 export const createContext = async (
   configPath: string,
@@ -22,11 +23,13 @@ export const createContext = async (
   const { db, clean } = createDbClient(config.database.url, {
     enableQueryLogging,
   })
+  const projectInfo = await getProjectInfo(config.directory)
 
   const context: Context = {
     configPath,
     config,
     queries: queries(db),
+    projectInfo,
   }
 
   return {
