@@ -8,6 +8,7 @@ import { writeConfig } from "./core/config/writeConfig"
 import { createContext } from "./core/context/createContext"
 import { indexCodebase } from "./core/embedding/indexCodebase"
 import { runMigrate } from "./core/lib/drizzle/runMigrate"
+import { cleanPostgres } from "./core/lib/postgres/cleanPostgres"
 import { createPostgresConfig } from "./core/lib/postgres/startPostgres"
 import { createPrompt } from "./core/prompt/createPrompt"
 import { logger } from "./lib/logger"
@@ -18,6 +19,7 @@ const commands = {
   setup: "setup",
   serveMcp: "serve-mcp",
   setupDb: "setup-db",
+  clean: "clean",
 } as const
 
 export const main = async () => {
@@ -55,6 +57,13 @@ export const main = async () => {
         setupDb
           .positional("config-path", { type: "string", demandOption: true })
           .help()
+      }
+    )
+    .command(
+      `${commands.clean}`,
+      "Remove containers and volumes, revert to pre setup-db state",
+      (clean) => {
+        clean.help()
       }
     )
     .help()
@@ -172,6 +181,12 @@ export const main = async () => {
       await indexCodebase(context)
 
       await clean()
+      break
+    }
+
+    case commands.clean: {
+      logger.info("Starting cleanup process...")
+      cleanPostgres()
       break
     }
 
