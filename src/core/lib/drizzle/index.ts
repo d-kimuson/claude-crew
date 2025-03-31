@@ -1,3 +1,4 @@
+import { NoopLogger } from "drizzle-orm"
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
 import prexit from "prexit"
@@ -42,7 +43,7 @@ export const createDbClient = (
     schema: schema,
     logger:
       options.enableQueryLogging === false
-        ? false
+        ? new NoopLogger()
         : {
             logQuery: (query, params) => {
               logger.info("query", { query, params })

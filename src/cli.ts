@@ -133,12 +133,20 @@ export const main = async () => {
     }
 
     case commands.serveMcp: {
+      // stdout logging should be disabled because MCP server using stdout
       logger.setRuntime("mcp-server")
+      // some messages are written in spite of LoopLogger, so override stdout.write
+      // eslint-disable-next-line @typescript-eslint/unbound-method -- It's fine because we're just returning to a method with the same 'this'
+      const originalWrite = process.stdout.write
+      process.stdout.write = (content) => {
+        logger.info(content.toString())
+        return true
+      }
 
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const configPath = argv["configPath"] as string
       const { context, db } = await createContext(configPath, {
-        enableQueryLogging: true,
+        enableQueryLogging: false,
       })
 
       logger.setLogFilePath(
@@ -148,6 +156,7 @@ export const main = async () => {
       await runMigrate(db)
       await indexCodebase(context)
 
+      process.stdout.write = originalWrite
       await startMcpServer(context)
       break
     }
@@ -155,7 +164,9 @@ export const main = async () => {
     case commands.setupDb: {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const configPath = argv["configPath"] as string
-      const { context, db, clean } = await createContext(configPath)
+      const { context, db, clean } = await createContext(configPath, {
+        enableQueryLogging: true,
+      })
 
       await runMigrate(db)
       await indexCodebase(context)
