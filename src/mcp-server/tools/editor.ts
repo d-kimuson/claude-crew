@@ -113,10 +113,13 @@ export const editorTools = [
       },
       async (input) => {
         try {
-          await coreEditorTools(ctx).writeFile(input.filePath, input.content)
+          const result = await coreEditorTools(ctx).writeFile(
+            input.filePath,
+            input.content
+          )
           return {
             isError: false,
-            content: [{ type: "text", text: `success` }],
+            content: [{ type: "text", text: JSON.stringify(result) }],
           }
         } catch (error) {
           return {
@@ -144,14 +147,14 @@ export const editorTools = [
       },
       async (input) => {
         try {
-          await coreEditorTools(ctx).replaceFile(
+          const result = await coreEditorTools(ctx).replaceFile(
             input.filePath,
             input.pattern,
             input.replace
           )
           return {
             isError: false,
-            content: [{ type: "text", text: `success` }],
+            content: [{ type: "text", text: JSON.stringify(result) }],
           }
         } catch (error) {
           return {
