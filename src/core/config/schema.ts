@@ -18,17 +18,6 @@ export const configSchema = z.object({
       allowedCommands: z.array(z.string()).default(["pnpm"]),
     })
     .default({}),
-  git: z
-    .object({
-      defaultBranch: z.string().default("main"),
-      branchPrefix: z.string().default("claude-crew/"),
-    })
-    .default({}),
-  github: z
-    .object({
-      createPullRequest: z.enum(["always", "draft", "never"]).default("draft"),
-    })
-    .default({}),
   embedding: z.object({
     // want to provide providers that can be used completely locally
     provider: z.object({

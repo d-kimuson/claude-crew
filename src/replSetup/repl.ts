@@ -10,9 +10,6 @@ type SetupAnswers = {
   testFileCommand: string
   checkCommand: string
   checkFilesCommand: string
-  defaultBranch: string
-  branchPrefix: string
-  githubPullRequest: "always" | "draft" | "never"
   runtime: "local" | "container"
   openaiApiKey: string
 } & (
@@ -84,25 +81,6 @@ export const startRepl = async () => {
       message:
         "Input check files command. <files> is replaced by the file names.",
       default: "pnpm eslint <files>",
-    },
-    {
-      type: "input",
-      name: "defaultBranch",
-      message: "Input default branch",
-      default: "main",
-    },
-    {
-      type: "input",
-      name: "branchPrefix",
-      message: "Input branch prefix",
-      default: "claude-crew/",
-    },
-    {
-      type: "select",
-      name: "githubPullRequest",
-      message: "Allow claude to create pull request?",
-      choices: ["always", "draft", "never"],
-      default: "draft",
     },
     {
       type: "select",

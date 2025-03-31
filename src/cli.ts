@@ -86,13 +86,6 @@ export const main = async () => {
           enable: false,
           allowedCommands: [],
         },
-        git: {
-          defaultBranch: answers.defaultBranch,
-          branchPrefix: answers.branchPrefix,
-        },
-        github: {
-          createPullRequest: answers.githubPullRequest,
-        },
         database: answers.customDb
           ? {
               customDb: true,

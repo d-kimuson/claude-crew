@@ -73,37 +73,6 @@
           "additionalProperties": false,
           "default": {}
         },
-        "git": {
-          "type": "object",
-          "properties": {
-            "defaultBranch": {
-              "type": "string",
-              "default": "main"
-            },
-            "branchPrefix": {
-              "type": "string",
-              "default": "claude-crew/"
-            }
-          },
-          "additionalProperties": false,
-          "default": {}
-        },
-        "github": {
-          "type": "object",
-          "properties": {
-            "createPullRequest": {
-              "type": "string",
-              "enum": [
-                "always",
-                "draft",
-                "never"
-              ],
-              "default": "draft"
-            }
-          },
-          "additionalProperties": false,
-          "default": {}
-        },
         "embedding": {
           "type": "object",
           "properties": {

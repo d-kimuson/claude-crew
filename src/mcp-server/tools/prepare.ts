@@ -8,18 +8,13 @@ export const prepareTool = defineTool(({ server, ...ctx }) =>
     `${ctx.config.name}-prepare`,
     "Prepare the project for the next task",
     {
-      branch: z.string().describe("branch name for the task"),
       documentQuery: z.string().describe("query to fetch relevant documents"),
       resourceQuery: z.string().describe("query to fetch relevant resources"),
     },
     async (args) => {
       try {
-        const { branch, documentQuery, resourceQuery } = args
-        const result = await prepareTask(ctx)(
-          branch,
-          documentQuery,
-          resourceQuery
-        )
+        const { documentQuery, resourceQuery } = args
+        const result = await prepareTask(ctx)(documentQuery, resourceQuery)
 
         return {
           isError: false,
