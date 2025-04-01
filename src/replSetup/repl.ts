@@ -17,36 +17,23 @@ const multipleInput = async (
   const { addAnotherMessage = "Add another?" } = options ?? {}
 
   const answers = await inquirer.prompt<{
-    addAnother: "yes" | "no"
+    addAnother: boolean
     value: string
   }>([
-    {
-      type: "expand",
-      name: "addAnother",
-      message: addAnotherMessage,
-      default: "y",
-      choices: [
-        {
-          key: "y",
-          name: "Yes",
-          value: "yes",
-        },
-        {
-          key: "n",
-          name: "No",
-          value: "no",
-        },
-      ],
-    },
     {
       type: "input",
       name: "value",
       message: message,
-      when: (answers) => answers.addAnother === "yes",
+    },
+    {
+      type: "confirm",
+      name: "addAnother",
+      message: addAnotherMessage,
+      default: true,
     },
   ])
 
-  if (answers.addAnother === "yes") {
+  if (answers.addAnother) {
     return [
       ...(await multipleInput(message, {
         addAnotherMessage,
