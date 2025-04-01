@@ -85,6 +85,7 @@ Please proceed with your work following these processes:
    - Evaluate the entire deliverable once all tasks are complete.
    - Verify consistency with initial instructions and make adjustments as needed.
    - Perform final confirmation that there is no duplicate functionality in the implementation.
+   - Run the {{projectName}}-check-all tool to verify the overall health of the codebase.
 
 ---
 
