@@ -1,5 +1,6 @@
 import { execSync } from "child_process"
 import { logger } from "../../../lib/logger"
+import { isIntegrationEnabled } from "../../../mcp-server/integrations/isIntegrationEnabled"
 import { withContext } from "../../context/withContext"
 import { findRelevantDocuments } from "../../embedding/findRelevantDocuments"
 import { findRelevantResources } from "../../embedding/findRelevantResources"
@@ -18,7 +19,7 @@ export const prepareTask = withContext(
     const projectInfo = await getProjectInfo(ctx.config.directory)
 
     // Only index the codebase if embedding is enabled
-    if (args === undefined || !ctx.config.embedding.enabled) {
+    if (args === undefined || !isIntegrationEnabled(ctx)("rag")) {
       logger.info("⚠️ Embedding is disabled, skipping codebase indexing")
       return {
         success: true,

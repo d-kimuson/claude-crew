@@ -5,10 +5,9 @@ import { withContext } from "../core/context/withContext"
 import { integrations } from "./integrations"
 import { editorTools } from "./tools/editor"
 import { prepareTool } from "./tools/prepare"
-import { ragTools } from "./tools/rag"
 import { think } from "./tools/think"
 
-const tools = [prepareTool, think, ...editorTools, ...ragTools] as const
+const tools = [prepareTool, think, ...editorTools] as const
 
 const server = withContext(async (ctx) => {
   const server = new McpServer({

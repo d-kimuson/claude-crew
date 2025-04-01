@@ -13,6 +13,7 @@ import { createPostgresConfig } from "./core/lib/postgres/startPostgres"
 import { createPrompt } from "./core/prompt/createPrompt"
 import { logger } from "./lib/logger"
 import { startMcpServer } from "./mcp-server"
+import { isIntegrationEnabled } from "./mcp-server/integrations/isIntegrationEnabled"
 import { startRepl } from "./replSetup/repl"
 import { createSnippet } from "./snippet/createSnippet"
 
@@ -124,14 +125,6 @@ export const main = async () => {
               customDb: false,
               ...(await createPostgresConfig()),
             },
-        embedding: {
-          enabled: answers.enableEmbedding,
-          provider: {
-            type: "openai",
-            apiKey: answers.enableEmbedding ? answers.openaiApiKey : "",
-            model: "text-embedding-ada-002",
-          },
-        },
         integrations: answers.integration.map((name) => {
           switch (name) {
             case "typescript":
@@ -141,6 +134,17 @@ export const main = async () => {
                   tsConfigFilePath: answers.tsConfigPath.startsWith("/")
                     ? answers.tsConfigPath
                     : resolve(projectDirectory, answers.tsConfigPath),
+                },
+              } as const
+            case "rag":
+              return {
+                name: "rag",
+                config: {
+                  provider: {
+                    type: "openai",
+                    apiKey: answers.openaiApiKey,
+                    model: "text-embedding-ada-002",
+                  },
                 },
               } as const
             default:
@@ -199,7 +203,7 @@ export const main = async () => {
       )
 
       await runMigrate(db)
-      if (context.config.embedding.enabled) {
+      if (isIntegrationEnabled(context)("rag")) {
         await indexCodebase(context)
       } else {
         logger.info("Embedding is disabled, skipping indexing codebase")
@@ -218,7 +222,7 @@ export const main = async () => {
       })
 
       await runMigrate(db)
-      if (context.config.embedding.enabled) {
+      if (isIntegrationEnabled(context)("rag")) {
         await indexCodebase(context)
       } else {
         logger.info("Embedding is disabled, skipping indexing codebase")

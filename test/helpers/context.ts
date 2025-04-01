@@ -23,14 +23,6 @@ const defaultConfig: Config = {
     enable: true,
     allowedCommands: [],
   },
-  embedding: {
-    enabled: true,
-    provider: {
-      type: "openai",
-      model: "text-embedding-ada-002",
-      apiKey: "dummy-openai-api-key",
-    },
-  },
   integrations: [],
 }
 

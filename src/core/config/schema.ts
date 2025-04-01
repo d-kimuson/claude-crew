@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { ragIntegration } from "../../mcp-server/integrations/rag"
 import { typescriptIntegration } from "../../mcp-server/integrations/typescript"
 
 export const configSchema = z.object({
@@ -19,22 +20,6 @@ export const configSchema = z.object({
       allowedCommands: z.array(z.string()).default(["pnpm"]),
     })
     .default({}),
-  embedding: z.union([
-    z.object({
-      enabled: z.literal(false).describe("Enable embedding features"),
-    }),
-    z.object({
-      enabled: z.literal(true).describe("Disable embedding features"),
-      provider: z.object({
-        type: z.literal("openai"),
-        apiKey: z
-          .string()
-          .optional()
-          .describe("Required only when embedding.enabled is true"),
-        model: z.string().default("text-embedding-ada-002"),
-      }),
-    }),
-  ]),
   database: z.union([
     z.object({
       customDb: z.literal(true),
@@ -48,10 +33,16 @@ export const configSchema = z.object({
   ]),
   integrations: z
     .array(
-      z.object({
-        name: z.literal(typescriptIntegration.config.name),
-        config: typescriptIntegration.config.configSchema,
-      })
+      z.union([
+        z.object({
+          name: z.literal(typescriptIntegration.config.name),
+          config: typescriptIntegration.config.configSchema,
+        }),
+        z.object({
+          name: z.literal(ragIntegration.config.name),
+          config: ragIntegration.config.configSchema,
+        }),
+      ])
     )
     .default([]),
 })

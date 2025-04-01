@@ -3,6 +3,7 @@ import { z } from "zod"
 import { serializeError } from "../../core/errors/serializeError"
 import { getOrCreateMemoryBank } from "../../core/memory-bank/getOrCreateMemoryBank"
 import { prepareTask } from "../../core/project/prepare"
+import { isIntegrationEnabled } from "../integrations/isIntegrationEnabled"
 import { defineTool } from "../utils/defineTool"
 
 const prepareResponseTemplate = `
@@ -35,7 +36,7 @@ export const prepareTool = defineTool(({ server, ...ctx }) => {
   const name = `${ctx.config.name}-prepare`
   const description = "Prepare the project for the next task"
 
-  return ctx.config.embedding.enabled
+  return isIntegrationEnabled(ctx)("rag")
     ? server.tool(
         name,
         description,

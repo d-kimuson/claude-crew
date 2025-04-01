@@ -73,60 +73,6 @@
           "additionalProperties": false,
           "default": {}
         },
-        "embedding": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "enabled": {
-                  "type": "boolean",
-                  "const": false,
-                  "description": "Enable embedding features"
-                }
-              },
-              "required": [
-                "enabled"
-              ],
-              "additionalProperties": false
-            },
-            {
-              "type": "object",
-              "properties": {
-                "enabled": {
-                  "type": "boolean",
-                  "const": true,
-                  "description": "Disable embedding features"
-                },
-                "provider": {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "const": "openai"
-                    },
-                    "apiKey": {
-                      "type": "string",
-                      "description": "Required only when embedding.enabled is true"
-                    },
-                    "model": {
-                      "type": "string",
-                      "default": "text-embedding-ada-002"
-                    }
-                  },
-                  "required": [
-                    "type"
-                  ],
-                  "additionalProperties": false
-                }
-              },
-              "required": [
-                "enabled",
-                "provider"
-              ],
-              "additionalProperties": false
-            }
-          ]
-        },
         "database": {
           "anyOf": [
             {
@@ -174,30 +120,78 @@
         "integrations": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string",
-                "const": "typescript"
-              },
-              "config": {
+            "anyOf": [
+              {
                 "type": "object",
                 "properties": {
-                  "tsConfigFilePath": {
-                    "type": "string"
+                  "name": {
+                    "type": "string",
+                    "const": "typescript"
+                  },
+                  "config": {
+                    "type": "object",
+                    "properties": {
+                      "tsConfigFilePath": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "tsConfigFilePath"
+                    ],
+                    "additionalProperties": false
                   }
                 },
                 "required": [
-                  "tsConfigFilePath"
+                  "name",
+                  "config"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "const": "rag"
+                  },
+                  "config": {
+                    "type": "object",
+                    "properties": {
+                      "provider": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "openai"
+                          },
+                          "apiKey": {
+                            "type": "string"
+                          },
+                          "model": {
+                            "type": "string",
+                            "default": "text-embedding-ada-002"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "apiKey"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "provider"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "name",
+                  "config"
                 ],
                 "additionalProperties": false
               }
-            },
-            "required": [
-              "name",
-              "config"
-            ],
-            "additionalProperties": false
+            ]
           },
           "default": []
         }
@@ -206,7 +200,6 @@
         "name",
         "directory",
         "commands",
-        "embedding",
         "database"
       ]
     },

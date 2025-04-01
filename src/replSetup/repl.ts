@@ -1,6 +1,9 @@
 import { resolve } from "node:path"
 import inquirer from "inquirer"
-import type { IntegrationNames } from "../mcp-server/integrations"
+import type {
+  GetIntegrationConfig,
+  IntegrationNames,
+} from "../mcp-server/integrations"
 import { loadConfig } from "../core/config/loadConfig"
 import { logger } from "../lib/logger"
 import { integrations } from "../mcp-server/integrations"
@@ -124,7 +127,6 @@ export const startRepl = async () => {
     )
   }
 
-  const embeddingConfig = existingConfig?.embedding
   const answers = await inquirer.prompt<SetupAnswers>([
     {
       type: "input",
@@ -157,29 +159,6 @@ export const startRepl = async () => {
       message: "Input database URL",
       when: (answers) => answers.customDb,
       default: existingConfig?.database.url,
-    },
-    {
-      type: "confirm",
-      name: "enableEmbedding",
-      message:
-        "Enable embedding features? (strongly recommended, but requires OpenAI API key)",
-      default: embeddingConfig?.enabled ?? true,
-    },
-    {
-      type: "input",
-      name: "openaiApiKey",
-      message: "Input your OpenAI API key",
-      when: (answers) => answers.enableEmbedding,
-      default:
-        embeddingConfig?.enabled && embeddingConfig?.provider.type === "openai"
-          ? embeddingConfig?.provider.apiKey
-          : undefined,
-      validate: (input: string) => {
-        if (!input) return "API key is required"
-        if (!input.startsWith("sk-"))
-          return "Invalid API key format. OpenAI API keys start with 'sk-'"
-        return true
-      },
     },
   ])
 
@@ -237,6 +216,7 @@ export const startRepl = async () => {
   const integrationAnswers = await inquirer.prompt<{
     integration: IntegrationNames[]
     tsConfigPath: string
+    openaiApiKey: string
   }>([
     {
       type: "checkbox",
@@ -253,8 +233,28 @@ export const startRepl = async () => {
       message: "Input path to tsconfig.json",
       when: (answers) => answers.integration?.includes("typescript"),
       default:
-        existingConfig?.integrations.find(({ name }) => name === "typescript")
-          ?.config.tsConfigFilePath ?? resolve(directory, "tsconfig.json"),
+        // prettier-ignore
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        (existingConfig?.integrations.find(({ name }) => name === "typescript")
+            ?.config as GetIntegrationConfig<"typescript">)
+          .tsConfigFilePath ?? resolve(directory, "tsconfig.json"),
+    },
+    {
+      type: "input",
+      name: "openaiApiKey",
+      message: "Input your OpenAI API key",
+      when: (answers) => answers.integration?.includes("rag"),
+      default: // prettier-ignore
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      (existingConfig?.integrations.find(({ name }) => name === "rag")
+          ?.config as GetIntegrationConfig<"rag"> | undefined)
+        ?.provider?.apiKey,
+      validate: (input: string) => {
+        if (!input) return "API key is required"
+        if (!input.startsWith("sk-"))
+          return "Invalid API key format. OpenAI API keys start with 'sk-'"
+        return true
+      },
     },
   ])
 

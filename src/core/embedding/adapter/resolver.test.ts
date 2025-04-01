@@ -19,7 +19,27 @@ vi.mock("./aiSdkAdapter", () => ({
 
 describe("resolveEmbeddingAdapter", () => {
   describe("Given embedding is enabled with OpenAI provider", () => {
-    const mockContext = contextFactory()
+    const mockContext = contextFactory((ctx) => {
+      return {
+        ...ctx,
+        config: {
+          ...ctx.config,
+          integrations: [
+            ...ctx.config.integrations,
+            {
+              name: "rag",
+              config: {
+                provider: {
+                  type: "openai",
+                  apiKey: "dummy-openai-api-key",
+                  model: "text-embedding-ada-002",
+                },
+              },
+            },
+          ],
+        },
+      }
+    })
 
     describe("When resolving the adapter", () => {
       it("Then should return an AI SDK adapter with OpenAI model", () => {

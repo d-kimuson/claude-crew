@@ -1,5 +1,6 @@
 import type { InternalToolResult } from "../interface"
 import { logger } from "../../../lib/logger"
+import { isIntegrationEnabled } from "../../../mcp-server/integrations/isIntegrationEnabled"
 import { withContext } from "../../context/withContext"
 import { findRelevantDocuments } from "../../embedding/findRelevantDocuments"
 import { findRelevantResources } from "../../embedding/findRelevantResources"
@@ -12,7 +13,7 @@ export const ragTools = withContext((ctx) => {
     ): Promise<InternalToolResult> => {
       try {
         // Check if embedding is enabled
-        if (!ctx.config.embedding.enabled) {
+        if (!isIntegrationEnabled(ctx)("rag")) {
           logger.info(
             "Embedding is disabled, returning empty relevant documents"
           )
@@ -41,7 +42,7 @@ export const ragTools = withContext((ctx) => {
     ): Promise<InternalToolResult> => {
       try {
         // Check if embedding is enabled
-        if (!ctx.config.embedding.enabled) {
+        if (!isIntegrationEnabled(ctx)("rag")) {
           logger.info(
             "Embedding is disabled, returning empty relevant resources"
           )
