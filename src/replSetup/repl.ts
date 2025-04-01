@@ -1,7 +1,9 @@
 import { resolve } from "node:path"
 import inquirer from "inquirer"
+import type { IntegrationNames } from "../mcp-server/integrations"
 import { loadConfig } from "../core/config/loadConfig"
 import { logger } from "../lib/logger"
+import { integrations } from "../mcp-server/integrations"
 
 const multipleInput = async (
   message: string,
@@ -179,19 +181,6 @@ export const startRepl = async () => {
         return true
       },
     },
-    {
-      type: "confirm",
-      name: "enableTypescript",
-      message: "Enable TypeScript features?",
-      default: existingConfig?.typescript?.enabled ?? false,
-    },
-    {
-      type: "input",
-      name: "tsConfigPath",
-      message: "Input path to tsconfig.json",
-      when: (answers) => answers.enableTypescript,
-      default: resolve(directory, "tsconfig.json"),
-    },
   ])
 
   const projectCommandAnswers = await inquirer.prompt<{
@@ -245,6 +234,30 @@ export const startRepl = async () => {
         }
       )
 
+  const integrationAnswers = await inquirer.prompt<{
+    integration: IntegrationNames[]
+    tsConfigPath: string
+  }>([
+    {
+      type: "checkbox",
+      name: "integration",
+      message: "Select integration",
+      choices: integrations.map((integration) => integration.config.name),
+      default: existingConfig?.integrations.map(
+        (integration) => integration.name
+      ),
+    },
+    {
+      type: "input",
+      name: "tsConfigPath",
+      message: "Input path to tsconfig.json",
+      when: (answers) => answers.integration?.includes("typescript"),
+      default:
+        existingConfig?.integrations.find(({ name }) => name === "typescript")
+          ?.config.tsConfigFilePath ?? resolve(directory, "tsconfig.json"),
+    },
+  ])
+
   return {
     answers: {
       directory,
@@ -252,6 +265,7 @@ export const startRepl = async () => {
       ...projectCommandAnswers,
       checkCommands,
       checkFilesCommands,
+      ...integrationAnswers,
     },
   }
 }

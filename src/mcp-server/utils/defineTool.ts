@@ -1,10 +1,10 @@
 import type { Context } from "../../core/context/interface"
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 
-export const defineTool = <T>(
-  cb: (
-    ctx: Context & {
-      server: McpServer
-    }
-  ) => T
-) => cb
+export type ToolDeclare = (
+  ctx: Context & {
+    server: McpServer
+  }
+) => void | Promise<void>
+
+export const defineTool = (cb: ToolDeclare) => cb

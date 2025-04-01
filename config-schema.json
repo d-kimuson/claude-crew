@@ -170,6 +170,36 @@
               "additionalProperties": false
             }
           ]
+        },
+        "integrations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "const": "typescript"
+              },
+              "config": {
+                "type": "object",
+                "properties": {
+                  "tsConfigFilePath": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "tsConfigFilePath"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "name",
+              "config"
+            ],
+            "additionalProperties": false
+          },
+          "default": []
         }
       },
       "required": [

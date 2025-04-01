@@ -132,16 +132,21 @@ export const main = async () => {
             model: "text-embedding-ada-002",
           },
         },
-        typescript: answers.enableTypescript
-          ? {
-              enabled: true,
-              tsConfigFilePath:
-                answers.tsConfigPath ??
-                resolve(projectDirectory, "tsconfig.json"),
-            }
-          : {
-              enabled: false,
-            },
+        integrations: answers.integration.map((name) => {
+          switch (name) {
+            case "typescript":
+              return {
+                name: "typescript",
+                config: {
+                  tsConfigFilePath: answers.tsConfigPath.startsWith("/")
+                    ? answers.tsConfigPath
+                    : resolve(projectDirectory, answers.tsConfigPath),
+                },
+              } as const
+            default:
+              throw new Error(`Unsupported integration: ${String(name)}`)
+          }
+        }),
       }
 
       await mkdir(resolve(projectDirectory, ".claude-crew"), {
@@ -209,7 +214,7 @@ export const main = async () => {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const configPath = argv["configPath"] as string
       const { context, db, clean } = await createContext(configPath, {
-        enableQueryLogging: true,
+        enableQueryLogging: false,
       })
 
       await runMigrate(db)

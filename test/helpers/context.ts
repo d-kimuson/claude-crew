@@ -6,9 +6,6 @@ const defaultConfig: Config = {
   name: "test-project",
   language: "日本語",
   directory: "/test/project",
-  typescript: {
-    enabled: false,
-  },
   database: {
     customDb: false,
     url: "test-database-url",
@@ -34,6 +31,7 @@ const defaultConfig: Config = {
       apiKey: "dummy-openai-api-key",
     },
   },
+  integrations: [],
 }
 
 export const configFactory = (
