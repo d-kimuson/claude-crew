@@ -3,17 +3,71 @@ import inquirer from "inquirer"
 import { loadConfig } from "../core/config/loadConfig"
 import { logger } from "../lib/logger"
 
+const multipleInput = async (
+  message: string,
+  options?: {
+    addAnotherMessage?: string
+    default?: string[]
+  }
+): Promise<string[]> => {
+  const { addAnotherMessage = "Add another?", default: defaultValues = [] } =
+    options ?? {}
+
+  const answers = await inquirer.prompt<{
+    addAnother: "yes" | "no"
+    value: string
+  }>([
+    {
+      type: "expand",
+      name: "addAnother",
+      message: addAnotherMessage,
+      default: "y",
+      choices: [
+        {
+          key: "y",
+          name: "Yes",
+          value: "yes",
+        },
+        {
+          key: "n",
+          name: "No",
+          value: "no",
+        },
+      ],
+    },
+    {
+      type: "input",
+      name: "value",
+      message: message,
+      when: (answers) => answers.addAnother === "yes",
+    },
+  ])
+
+  if (answers.addAnother === "yes") {
+    return [
+      ...(await multipleInput(message, {
+        addAnotherMessage,
+        default: defaultValues,
+      })),
+      answers.value,
+    ]
+  }
+
+  return [answers.value, ...defaultValues]
+}
+
 type SetupAnswers = {
   name: string
   language: string
+  checkFilesCommand: string
+  runtime: "local" | "container"
+  openaiApiKey: string
+
   installCommand: string
   buildCommand: string
   testCommand: string
   testFileCommand: string
   checkCommand: string
-  checkFilesCommand: string
-  runtime: "local" | "container"
-  openaiApiKey: string
 } & (
   | {
       customDb: true
@@ -68,6 +122,49 @@ export const startRepl = async () => {
       default: existingConfig?.language ?? "日本語",
     },
     {
+      type: "select",
+      name: "runtime",
+      message: "Select runtime (local is recommended)",
+      choices: ["local", "container"],
+      default: "local",
+    },
+    {
+      type: "confirm",
+      name: "customDb",
+      message: "Use custom database?",
+      default: existingConfig?.database.customDb ?? false,
+    },
+    {
+      type: "input",
+      name: "databaseUrl",
+      message: "Input database URL",
+      when: (answers) => answers.customDb,
+      default: existingConfig?.database.url,
+    },
+    {
+      type: "input",
+      name: "openaiApiKey",
+      message: "Input your OpenAI API key",
+      default:
+        existingConfig?.embedding?.provider.type === "openai"
+          ? existingConfig?.embedding?.provider.apiKey
+          : undefined,
+      validate: (input: string) => {
+        if (!input) return "API key is required"
+        if (!input.startsWith("sk-"))
+          return "Invalid API key format. OpenAI API keys start with 'sk-'"
+        return true
+      },
+    },
+  ])
+
+  const projectCommandAnswers = await inquirer.prompt<{
+    installCommand: string
+    buildCommand: string
+    testCommand: string
+    testFileCommand: string
+  }>([
+    {
       type: "input",
       name: "installCommand",
       message: "Input install command",
@@ -92,59 +189,35 @@ export const startRepl = async () => {
         "Input full test file command. <file> is replaced by the file name.",
       default: existingConfig?.commands.testFile ?? "pnpm vitest run <file>",
     },
-    {
-      type: "input",
-      name: "checkCommand",
-      message: "Input check command",
-      default:
-        existingConfig?.commands.checks.at(0) ?? "pnpm tsc -p . --noEmit",
-    },
-    {
-      type: "input",
-      name: "checkFilesCommand",
-      message:
-        "Input check files command. <files> is replaced by the file names.",
-      default:
-        existingConfig?.commands.checkFiles.at(1) ?? "pnpm eslint <files>",
-    },
-    {
-      type: "select",
-      name: "runtime",
-      message: "Select runtime (local is recommended)",
-      choices: ["local", "container"],
-      default: "local",
-    },
-    {
-      type: "confirm",
-      name: "customDb",
-      message: "Use custom database?",
-      default: existingConfig?.database.customDb ?? false,
-    },
-    {
-      type: "input",
-      name: "databaseUrl",
-      message: "Input database URL",
-      when: (answers) => answers.customDb,
-      default: existingConfig?.database.url,
-    },
-    {
-      type: "password",
-      name: "openaiApiKey",
-      message: "Input your OpenAI API key",
-      default:
-        existingConfig?.embedding?.provider.type === "openai"
-          ? existingConfig?.embedding?.provider.apiKey
-          : undefined,
-      validate: (input: string) => {
-        if (!input) return "API key is required"
-        if (!input.startsWith("sk-"))
-          return "Invalid API key format. OpenAI API keys start with 'sk-'"
-        return true
-      },
-    },
   ])
 
+  const checks = Array.isArray(existingConfig?.commands.checks)
+    ? existingConfig?.commands.checks
+    : await multipleInput(
+        "Input check command. <command> is replaced by the command.",
+        {
+          addAnotherMessage: "Add another check?",
+          default: existingConfig?.commands.checks ?? [],
+        }
+      )
+
+  const checkFiles = Array.isArray(existingConfig?.commands.checkFiles)
+    ? existingConfig?.commands.checkFiles
+    : await multipleInput(
+        "Input check files command. <files> is replaced by the file names.",
+        {
+          addAnotherMessage: "Add another check file?",
+          default: existingConfig?.commands.checkFiles ?? [],
+        }
+      )
+
   return {
-    answers,
+    answers: {
+      directory,
+      ...answers,
+      ...projectCommandAnswers,
+      checks,
+      checkFiles,
+    },
   }
 }
