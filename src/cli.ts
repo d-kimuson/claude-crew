@@ -88,8 +88,8 @@ export const main = async () => {
           build: answers.buildCommand,
           test: answers.testCommand,
           testFile: answers.testFileCommand,
-          checks: [answers.checkCommand],
-          checkFiles: [answers.checkFilesCommand],
+          checks: answers.checkCommands,
+          checkFiles: answers.checkFilesCommands,
         },
         shell: {
           enable: false,

@@ -7,11 +7,9 @@ const multipleInput = async (
   message: string,
   options?: {
     addAnotherMessage?: string
-    default?: string[]
   }
 ): Promise<string[]> => {
-  const { addAnotherMessage = "Add another?", default: defaultValues = [] } =
-    options ?? {}
+  const { addAnotherMessage = "Add another?" } = options ?? {}
 
   const answers = await inquirer.prompt<{
     addAnother: "yes" | "no"
@@ -47,19 +45,17 @@ const multipleInput = async (
     return [
       ...(await multipleInput(message, {
         addAnotherMessage,
-        default: defaultValues,
       })),
       answers.value,
     ]
   }
 
-  return [answers.value, ...defaultValues]
+  return []
 }
 
 type SetupAnswers = {
   name: string
   language: string
-  checkFilesCommand: string
   runtime: "local" | "container"
   openaiApiKey: string
 
@@ -67,7 +63,6 @@ type SetupAnswers = {
   buildCommand: string
   testCommand: string
   testFileCommand: string
-  checkCommand: string
 } & (
   | {
       customDb: true
@@ -99,14 +94,17 @@ export const startRepl = async () => {
 
   const existingConfig = (() => {
     try {
-      logger.info(
-        `Existing config found at ${resolve(directory, ".claude-crew", "config.json")}`
-      )
       return loadConfig(resolve(directory, ".claude-crew", "config.json"))
     } catch {
       return null
     }
   })()
+
+  if (existingConfig !== null) {
+    logger.info(
+      `Existing config found at ${resolve(directory, ".claude-crew", "config.json")}`
+    )
+  }
 
   const answers = await inquirer.prompt<SetupAnswers>([
     {
@@ -191,23 +189,21 @@ export const startRepl = async () => {
     },
   ])
 
-  const checks = Array.isArray(existingConfig?.commands.checks)
+  const checkCommands = Array.isArray(existingConfig?.commands.checks)
     ? existingConfig?.commands.checks
     : await multipleInput(
         "Input check command. <command> is replaced by the command.",
         {
           addAnotherMessage: "Add another check?",
-          default: existingConfig?.commands.checks ?? [],
         }
       )
 
-  const checkFiles = Array.isArray(existingConfig?.commands.checkFiles)
+  const checkFilesCommands = Array.isArray(existingConfig?.commands.checkFiles)
     ? existingConfig?.commands.checkFiles
     : await multipleInput(
         "Input check files command. <files> is replaced by the file names.",
         {
           addAnotherMessage: "Add another check file?",
-          default: existingConfig?.commands.checkFiles ?? [],
         }
       )
 
@@ -216,8 +212,8 @@ export const startRepl = async () => {
       directory,
       ...answers,
       ...projectCommandAnswers,
-      checks,
-      checkFiles,
+      checkCommands,
+      checkFilesCommands,
     },
   }
 }
