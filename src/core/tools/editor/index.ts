@@ -39,7 +39,7 @@ export const editorTools = withContext((ctx) => {
 
     readFile: async (
       filePath: string,
-      maxLine = 100,
+      maxLine: number,
       offset = 0
     ): Promise<InternalToolResult> => {
       try {

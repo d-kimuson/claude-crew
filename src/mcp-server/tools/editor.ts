@@ -83,6 +83,7 @@ export const editorTools = [
         maxLine: z
           .number()
           .optional()
+          .default(200)
           .describe("Maximum number of lines to read"),
         offset: z
           .number()
