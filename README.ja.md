@@ -32,6 +32,7 @@ Claude Crew は、LLM の性能を最大限に引き出すために、以下の3
 - 🔍 OpenAIエンベッディングによる文脈理解の向上
 - 💪 型情報を活用した高精度な TypeScript サポート
 - 🔌 Docker の代わりにカスタム PostgreSQL データベースのサポート
+- 🧠 プロジェクト知識を永続的に保存するメモリバンク機能
 
 ## Quick Start
 
@@ -87,7 +88,6 @@ Claude Crew は以下のような流れでタスクを処理します：
 2. **プロジェクト情報の提供**
 
    - `prepare` ツールが自動的に呼び出され：
-     - 作業用ブランチの作成
      - プロジェクトの最新状態への更新
      - 依存関係の解決
    - LLM に以下の情報を提供：
@@ -95,15 +95,14 @@ Claude Crew は以下のような流れでタスクを処理します：
      - 関連するソースコード
      - 関連ドキュメント
      - テスト環境の情報
+     - 永続的なプロジェクト知識を格納するメモリバンク
 
 3. **自律的なタスク実行**
    - LLM が提供された情報を基に作業を開始
-   - ファイル操作時に自動的に：
      - リンターによるコード品質チェック
      - ユニットテストの実行
      - 型チェックの実行
    - フィードバック結果を基に必要な修正を実施
-   - コミットの作成とプルリクエストの提案
 
 各ステップで得られる情報は最適化され、LLM のコンテキストウィンドウを効率的に使用します。
 
@@ -124,11 +123,6 @@ Claude Crew は以下のような流れでタスクを処理します：
 |                  | `commands.testFile`         | "pnpm vitest run <file>"                                               | 単一ファイルのテストコマンド。<file> が絶対パスに置換されます。          |
 |                  | `commands.checks`           | ["pnpm tsc -p . --noEmit"]                                             | 型チェックなどの検証コマンド                                             |
 |                  | `commands.checkFiles`       | ["pnpm eslint <files>"]                                                | 特定ファイルの検証コマンド。<files>が絶体パスの一覧に置換されます。      |
-| **Git設定**      |
-|                  | `git.defaultBranch`         | "main"                                                                 | デフォルトブランチ名                                                     |
-|                  | `git.branchPrefix`          | "claude-crew/"                                                         | 作業ブランチのプレフィックス                                             |
-| **GitHub設定**   |
-|                  | `github.createPullRequest`  | "draft"                                                                | PRの作成方法（always/draft/never）                                       |
 | **データベース** |
 |                  | `database.url`              | "postgresql://postgres:postgres@127.0.0.1:6432/claude-crew-embeddings" | PostgreSQL接続URL。customDbがtrueの場合は自前のDB URLを指定します        |
 |                  | `database.port`             | 6432                                                                   | 内蔵Docker DB用ポート番号（customDbがtrueの場合は無視されます）          |
@@ -137,6 +131,26 @@ Claude Crew は以下のような流れでタスクを処理します：
 |                  | `embedding.provider.type`   | "openai"                                                               | エンベディングプロバイダーの種類                                         |
 |                  | `embedding.provider.apiKey` | -                                                                      | OpenAI API キー                                                          |
 |                  | `embedding.provider.model`  | "text-embedding-ada-002"                                               | OpenAI エンベディングモデル                                              |
+
+## メモリバンク
+
+Claude Crew では`.claude-crew/memory-bank.md`ファイルを作成し、プロジェクトの永続的な知識を保存します。このファイルは各タスクの開始時に自動的に読み込まれ、以下のセクションが含まれています：
+
+- プロジェクト概要
+- プロダクトコンテキスト
+- システムパターン
+- コーディングガイドライン
+
+メモリバンクはプロジェクト開発全体を通じて更新され、AIエージェントのための知識リポジトリとして機能します。
+
+## CLIコマンド
+
+Claude Crewは以下のCLIコマンドを提供します：
+
+- `setup` - インタラクティブなプロジェクトセットアップ
+- `setup-db` - データベースを手動でセットアップ（再インストール時に便利）
+- `clean` - Dockerコンテナとボリュームを削除してセットアップ前の状態にリセット
+- `serve-mcp` - Claude Desktop連携用のMCPサーバーを実行
 
 ## コントリビューション
 

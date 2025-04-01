@@ -32,6 +32,7 @@ Claude Crew focuses on three key elements to maximize LLM performance:
 - 🔍 Enhanced context understanding through OpenAI embedding
 - 💪 High-precision TypeScript support utilizing type information
 - 🔌 Support for custom PostgreSQL database instead of Docker
+- 🧠 Memory Bank functionality for persistent project knowledge
 
 ## Quick Start
 
@@ -87,7 +88,6 @@ Claude Crew processes tasks in the following flow:
 2. **Project Information Provision**
 
    - `prepare` tool is automatically invoked to:
-     - Create a working branch
      - Update project to latest state
      - Resolve dependencies
    - Provide LLM with:
@@ -95,15 +95,14 @@ Claude Crew processes tasks in the following flow:
      - Related source code
      - Related documentation
      - Test environment information
+     - Memory Bank for persistent project knowledge
 
 3. **Autonomous Task Execution**
    - LLM starts working based on provided information
-   - Automatic file operations include:
      - Linter code quality checks
      - Unit test execution
      - Type checking
    - Implement necessary corrections based on feedback results
-   - Create commits and propose pull requests
 
 Information obtained at each step is optimized for efficient use of the LLM's context window.
 
@@ -124,11 +123,6 @@ The following settings can be customized in `.claude-crew/config.json`:
 |               | `commands.testFile`         | "pnpm vitest run <file>"                                               | Single file test command. <file> is replaced with absolute path        |
 |               | `commands.checks`           | ["pnpm tsc -p . --noEmit"]                                             | Validation commands like type checking                                 |
 |               | `commands.checkFiles`       | ["pnpm eslint <files>"]                                                | File-specific validation commands. <files> is replaced with paths list |
-| **Git**       |
-|               | `git.defaultBranch`         | "main"                                                                 | Default branch name                                                    |
-|               | `git.branchPrefix`          | "claude-crew/"                                                         | Working branch prefix                                                  |
-| **GitHub**    |
-|               | `github.createPullRequest`  | "draft"                                                                | PR creation method (always/draft/never)                                |
 | **Database**  |
 |               | `database.url`              | "postgresql://postgres:postgres@127.0.0.1:6432/claude-crew-embeddings" | PostgreSQL connection URL. Use your own DB URL when customDb is true   |
 |               | `database.port`             | 6432                                                                   | Port number for built-in Docker DB (ignored when customDb is true)     |
@@ -137,6 +131,26 @@ The following settings can be customized in `.claude-crew/config.json`:
 |               | `embedding.provider.type`   | "openai"                                                               | Embedding provider type                                                |
 |               | `embedding.provider.apiKey` | -                                                                      | OpenAI API key                                                         |
 |               | `embedding.provider.model`  | "text-embedding-ada-002"                                               | OpenAI embedding model                                                 |
+
+## Memory Bank
+
+Claude Crew creates a `.claude-crew/memory-bank.md` file to store persistent project knowledge. This file is automatically loaded at the start of each task and contains sections for:
+
+- Project Brief
+- Product Context
+- System Patterns
+- Coding Guidelines
+
+The Memory Bank is designed to be updated throughout project development, serving as a knowledge repository for the AI agent.
+
+## CLI Commands
+
+Claude Crew provides the following CLI commands:
+
+- `setup` - Interactive project setup
+- `setup-db` - Set up the database manually (useful for reinstallation)
+- `clean` - Remove Docker containers and volumes to reset to pre-setup state
+- `serve-mcp` - Run the MCP server for Claude Desktop integration
 
 ## Contributing
 
