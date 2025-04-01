@@ -71,7 +71,9 @@ describe("editorTools", () => {
 
         expect(result).toEqual({
           success: false,
-          command: "test command",
+          meta: {
+            command: "test command",
+          },
           error: {
             message: "Command failed",
             method: "dummy",
@@ -116,11 +118,13 @@ describe("editorTools", () => {
 
         const result = await tools.readFile("nonexistent.txt")
 
-        expect(result).toEqual({
+        expect(result).toStrictEqual({
           success: false,
+          meta: {
+            filePath: "nonexistent.txt",
+          },
           error: {
             reason: "No such file or directory",
-            filePath: "nonexistent.txt",
           },
         })
       })
@@ -340,7 +344,8 @@ describe("editorTools", () => {
 
       const result = await tools.checkAll()
 
-      expect(result).toEqual({
+      expect(result).toStrictEqual({
+        success: true,
         checkResults: [
           {
             success: true,

@@ -18,14 +18,22 @@ export const configSchema = z.object({
       allowedCommands: z.array(z.string()).default(["pnpm"]),
     })
     .default({}),
-  embedding: z.object({
-    // want to provide providers that can be used completely locally
-    provider: z.object({
-      type: z.literal("openai"),
-      apiKey: z.string(),
-      model: z.string().default("text-embedding-ada-002"),
+  embedding: z.union([
+    z.object({
+      enabled: z.literal(false).describe("Enable embedding features"),
     }),
-  }),
+    z.object({
+      enabled: z.literal(true).describe("Disable embedding features"),
+      provider: z.object({
+        type: z.literal("openai"),
+        apiKey: z
+          .string()
+          .optional()
+          .describe("Required only when embedding.enabled is true"),
+        model: z.string().default("text-embedding-ada-002"),
+      }),
+    }),
+  ]),
   database: z.union([
     z.object({
       customDb: z.literal(true),

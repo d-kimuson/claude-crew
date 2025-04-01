@@ -18,7 +18,7 @@ Claude Crew は、LLM の性能を最大限に引き出すために、以下の3
 ## 必要要件
 
 - Claude Desktop
-- Embedding 用の OpenAI API キー
+- Embedding 用の OpenAI API キー（任意 - ただしコンテキスト理解の向上のため推奨）
 - Docker および Docker Compose（カスタムデータベース使用時は不要）
 - Node.js >= v20
 
@@ -29,7 +29,7 @@ Claude Crew は、LLM の性能を最大限に引き出すために、以下の3
 - 📝 Claude Projects 用の指示書自動生成
 - 🛠️ プロジェクトワークフローのカスタマイズ可能なコマンド
 - 🌐 多言語対応（TypeScript完全サポート、その他言語は基本的なファイル操作のみ）
-- 🔍 OpenAIエンベッディングによる文脈理解の向上
+- 🔍 OpenAIエンベッディングによる文脈理解の向上（任意）
 - 💪 型情報を活用した高精度な TypeScript サポート
 - 🔌 Docker の代わりにカスタム PostgreSQL データベースのサポート
 - 🧠 プロジェクト知識を永続的に保存するメモリバンク機能
@@ -128,8 +128,9 @@ Claude Crew は以下のような流れでタスクを処理します：
 |                  | `database.port`             | 6432                                                                   | 内蔵Docker DB用ポート番号（customDbがtrueの場合は無視されます）          |
 |                  | `database.customDb`         | false                                                                  | trueに設定するとDockerの代わりに自前のPostgreSQLデータベースを使用します |
 | **Embedding**    |
+|                  | `embedding.enabled`         | true                                                                   | エンベディング機能の有効/無効を切り替え                                  |
 |                  | `embedding.provider.type`   | "openai"                                                               | エンベディングプロバイダーの種類                                         |
-|                  | `embedding.provider.apiKey` | -                                                                      | OpenAI API キー                                                          |
+|                  | `embedding.provider.apiKey` | -                                                                      | OpenAI API キー（エンベディングが有効な場合のみ必須）                    |
 |                  | `embedding.provider.model`  | "text-embedding-ada-002"                                               | OpenAI エンベディングモデル                                              |
 
 ## メモリバンク

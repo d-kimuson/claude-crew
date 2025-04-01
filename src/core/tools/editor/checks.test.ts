@@ -58,10 +58,12 @@ describe("checks", () => {
           const results = checkModifiedFilesWithConfig(files)
 
           expect(results).toHaveLength(1)
-          expect(results[0]).toEqual({
+          expect(results[0]).toStrictEqual({
             success: false,
-            command:
-              "pnpm eslint /test/project/file1.ts /test/project/file2.ts",
+            meta: {
+              command:
+                "pnpm eslint /test/project/file1.ts /test/project/file2.ts",
+            },
             error: {
               message: "Command failed",
               method: "dummy",

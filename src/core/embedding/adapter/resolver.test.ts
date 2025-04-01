@@ -18,7 +18,7 @@ vi.mock("./aiSdkAdapter", () => ({
 }))
 
 describe("resolveEmbeddingAdapter", () => {
-  describe("Given OpenAI provider configuration", () => {
+  describe("Given embedding is enabled with OpenAI provider", () => {
     const mockContext = contextFactory()
 
     describe("When resolving the adapter", () => {
@@ -53,6 +53,7 @@ describe("resolveEmbeddingAdapter", () => {
       config: {
         ...ctx.config,
         embedding: {
+          enabled: true,
           provider: {
             type: "invalid" as const,
           },

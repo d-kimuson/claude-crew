@@ -24,6 +24,7 @@ const defaultConfig: Config = {
     allowedCommands: [],
   },
   embedding: {
+    enabled: true,
     provider: {
       type: "openai",
       model: "text-embedding-ada-002",

@@ -8,21 +8,32 @@ import { indexCodebase } from "../../embedding/indexCodebase"
 import { getProjectInfo } from "../getProjectInfo"
 
 export const prepareTask = withContext(
-  (ctx) => async (documentQuery: string, resourceQuery: string) => {
-    await indexCodebase(ctx)
-    logger.info("✅ index codebase done")
-
+  (ctx) => async (args?: { documentQuery: string; resourceQuery: string }) => {
     execSync(ctx.config.commands.install, {
       cwd: ctx.config.directory,
       encoding: "utf-8",
     })
 
-    const [projectInfo, relevantDocuments, relevantResources] =
-      await Promise.all([
-        getProjectInfo(ctx.config.directory),
-        findRelevantDocuments(ctx)(documentQuery).then(formatRagContents),
-        findRelevantResources(ctx)(resourceQuery).then(formatRagContents),
-      ])
+    // Get project info
+    const projectInfo = await getProjectInfo(ctx.config.directory)
+
+    // Only index the codebase if embedding is enabled
+    if (args === undefined || !ctx.config.embedding.enabled) {
+      logger.info("⚠️ Embedding is disabled, skipping codebase indexing")
+      return {
+        success: true,
+        projectInfo,
+      } as const
+    }
+
+    await indexCodebase(ctx)
+    logger.info("✅ index codebase done")
+
+    // Get relevant documents and resources only if embedding is enabled
+    const [relevantDocuments, relevantResources] = await Promise.all([
+      findRelevantDocuments(ctx)(args.documentQuery).then(formatRagContents),
+      findRelevantResources(ctx)(args.resourceQuery).then(formatRagContents),
+    ])
 
     return {
       success: true,

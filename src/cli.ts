@@ -105,9 +105,10 @@ export const main = async () => {
               ...(await createPostgresConfig()),
             },
         embedding: {
+          enabled: answers.enableEmbedding,
           provider: {
             type: "openai",
-            apiKey: answers.openaiApiKey,
+            apiKey: answers.enableEmbedding ? answers.openaiApiKey : "",
             model: "text-embedding-ada-002",
           },
         },
@@ -163,7 +164,11 @@ export const main = async () => {
       )
 
       await runMigrate(db)
-      await indexCodebase(context)
+      if (context.config.embedding.enabled) {
+        await indexCodebase(context)
+      } else {
+        logger.info("Embedding is disabled, skipping indexing codebase")
+      }
 
       process.stdout.write = originalWrite
       await startMcpServer(context)
@@ -178,7 +183,11 @@ export const main = async () => {
       })
 
       await runMigrate(db)
-      await indexCodebase(context)
+      if (context.config.embedding.enabled) {
+        await indexCodebase(context)
+      } else {
+        logger.info("Embedding is disabled, skipping indexing codebase")
+      }
 
       await clean()
       break

@@ -57,7 +57,8 @@ type SetupAnswers = {
   name: string
   language: string
   runtime: "local" | "container"
-  openaiApiKey: string
+  enableEmbedding: boolean
+  openaiApiKey?: string
 
   installCommand: string
   buildCommand: string
@@ -106,6 +107,7 @@ export const startRepl = async () => {
     )
   }
 
+  const embeddingConfig = existingConfig?.embedding
   const answers = await inquirer.prompt<SetupAnswers>([
     {
       type: "input",
@@ -140,12 +142,20 @@ export const startRepl = async () => {
       default: existingConfig?.database.url,
     },
     {
+      type: "confirm",
+      name: "enableEmbedding",
+      message:
+        "Enable embedding features? (strongly recommended, but requires OpenAI API key)",
+      default: embeddingConfig?.enabled ?? true,
+    },
+    {
       type: "input",
       name: "openaiApiKey",
       message: "Input your OpenAI API key",
+      when: (answers) => answers.enableEmbedding,
       default:
-        existingConfig?.embedding?.provider.type === "openai"
-          ? existingConfig?.embedding?.provider.apiKey
+        embeddingConfig?.enabled && embeddingConfig?.provider.type === "openai"
+          ? embeddingConfig?.provider.apiKey
           : undefined,
       validate: (input: string) => {
         if (!input) return "API key is required"

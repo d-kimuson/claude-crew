@@ -18,7 +18,7 @@ Claude Crew focuses on three key elements to maximize LLM performance:
 ## Requirements
 
 - Claude Desktop
-- OpenAI API key for embedding
+- OpenAI API key for embedding (optional - but recommended for better context understanding)
 - Docker and Docker Compose (Not required when using custom database)
 - Node.js >= v20
 
@@ -29,7 +29,7 @@ Claude Crew focuses on three key elements to maximize LLM performance:
 - 📝 Automatic instruction generation for Claude Projects
 - 🛠️ Customizable project workflow commands
 - 🌐 Multi-language support (Full TypeScript support, basic file operations for other languages)
-- 🔍 Enhanced context understanding through OpenAI embedding
+- 🔍 Enhanced context understanding through OpenAI embedding (optional)
 - 💪 High-precision TypeScript support utilizing type information
 - 🔌 Support for custom PostgreSQL database instead of Docker
 - 🧠 Memory Bank functionality for persistent project knowledge
@@ -128,8 +128,9 @@ The following settings can be customized in `.claude-crew/config.json`:
 |               | `database.port`             | 6432                                                                   | Port number for built-in Docker DB (ignored when customDb is true)     |
 |               | `database.customDb`         | false                                                                  | Set to true to use your own PostgreSQL database instead of Docker      |
 | **Embedding** |
+|               | `embedding.enabled`         | true                                                                   | Enable or disable embedding features                                   |
 |               | `embedding.provider.type`   | "openai"                                                               | Embedding provider type                                                |
-|               | `embedding.provider.apiKey` | -                                                                      | OpenAI API key                                                         |
+|               | `embedding.provider.apiKey` | -                                                                      | OpenAI API key (required only when embedding is enabled)               |
 |               | `embedding.provider.model`  | "text-embedding-ada-002"                                               | OpenAI embedding model                                                 |
 
 ## Memory Bank
@@ -148,7 +149,7 @@ The Memory Bank is designed to be updated throughout project development, servin
 Claude Crew provides the following CLI commands:
 
 - `setup` - Interactive project setup
-- `setup-db` - Set up the database manually (useful for reinstallation)
+- `setup-db` - Manual database setup (useful for reinstallation)
 - `clean` - Remove Docker containers and volumes to reset to pre-setup state
 - `serve-mcp` - Run the MCP server for Claude Desktop integration
 
