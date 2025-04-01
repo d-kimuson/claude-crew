@@ -85,7 +85,7 @@ describe("checks", () => {
           expect(results).toHaveLength(1)
           expect(results[0]).toEqual({
             file: "/test/project/file1.ts",
-            hasError: false,
+            success: true,
             supplement: "No test file exists.",
           })
         })
@@ -107,7 +107,7 @@ describe("checks", () => {
           expect(results[0]).toEqual({
             file: "/test/project/file1.ts",
             testFile: "/test/project/file1.test.ts",
-            hasError: false,
+            success: true,
             supplement: "All tests for /test/project/file1.ts passed.",
           })
         })
@@ -133,7 +133,7 @@ describe("checks", () => {
           expect(results[0]).toEqual({
             file: "/test/project/file1.ts",
             testFile: "/test/project/file1.test.ts",
-            hasError: true,
+            success: false,
             error: {
               message: "Test failed",
               method: "dummy",
@@ -158,7 +158,7 @@ describe("checks", () => {
           expect(results[0]).toEqual({
             file: "/test/project/file1.test.ts",
             testFile: "/test/project/file1.test.ts",
-            hasError: false,
+            success: true,
             supplement: "All tests for /test/project/file1.test.ts passed.",
           })
           expect(execBashMock).toHaveBeenCalledWith(
@@ -174,7 +174,7 @@ describe("checks", () => {
           expect(results).toHaveLength(1)
           expect(results[0]).toEqual({
             file: "/test/project/file1.txt",
-            hasError: false,
+            success: true,
             supplement: "No test file exists.",
           })
         })

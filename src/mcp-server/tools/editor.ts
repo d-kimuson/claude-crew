@@ -2,6 +2,7 @@ import { z } from "zod"
 import { serializeError } from "../../core/errors/serializeError"
 import { editorTools as coreEditorTools } from "../../core/tools/editor"
 import { defineTool } from "../utils/defineTool"
+import { toErrorResponse, toResponse } from "../utils/toResponse"
 
 export const editorTools = [
   defineTool(({ server, ...ctx }) =>
@@ -42,21 +43,9 @@ export const editorTools = [
       },
       (input) => {
         try {
-          const stdout = coreEditorTools(ctx).execBash(input.command)
-          return {
-            isError: false,
-            content: [{ type: "text", text: JSON.stringify(stdout) }],
-          }
+          return toResponse(coreEditorTools(ctx).execBash(input.command))
         } catch (error) {
-          return {
-            isError: true,
-            content: [
-              {
-                type: "text",
-                text: `Error: ${JSON.stringify(serializeError(error))}`,
-              },
-            ],
-          }
+          return toErrorResponse(error)
         }
       }
     )
@@ -79,25 +68,15 @@ export const editorTools = [
       },
       async (input) => {
         try {
-          const content = await coreEditorTools(ctx).readFile(
-            input.filePath,
-            input.maxLine,
-            input.offset
+          return toResponse(
+            await coreEditorTools(ctx).readFile(
+              input.filePath,
+              input.maxLine,
+              input.offset
+            )
           )
-          return {
-            isError: false,
-            content: [{ type: "text", text: JSON.stringify(content) }],
-          }
         } catch (error) {
-          return {
-            isError: true,
-            content: [
-              {
-                type: "text",
-                text: `Error: ${JSON.stringify(serializeError(error))}`,
-              },
-            ],
-          }
+          return toErrorResponse(error)
         }
       }
     )
@@ -113,24 +92,11 @@ export const editorTools = [
       },
       async (input) => {
         try {
-          const result = await coreEditorTools(ctx).writeFile(
-            input.filePath,
-            input.content
+          return toResponse(
+            await coreEditorTools(ctx).writeFile(input.filePath, input.content)
           )
-          return {
-            isError: false,
-            content: [{ type: "text", text: JSON.stringify(result) }],
-          }
         } catch (error) {
-          return {
-            isError: true,
-            content: [
-              {
-                type: "text",
-                text: `Error: ${JSON.stringify(serializeError(error))}`,
-              },
-            ],
-          }
+          return toErrorResponse(error)
         }
       }
     )
@@ -147,25 +113,15 @@ export const editorTools = [
       },
       async (input) => {
         try {
-          const result = await coreEditorTools(ctx).replaceFile(
-            input.filePath,
-            input.pattern,
-            input.replace
+          return toResponse(
+            await coreEditorTools(ctx).replaceFile(
+              input.filePath,
+              input.pattern,
+              input.replace
+            )
           )
-          return {
-            isError: false,
-            content: [{ type: "text", text: JSON.stringify(result) }],
-          }
         } catch (error) {
-          return {
-            isError: true,
-            content: [
-              {
-                type: "text",
-                text: `Error: ${JSON.stringify(serializeError(error))}`,
-              },
-            ],
-          }
+          return toErrorResponse(error)
         }
       }
     )
@@ -181,24 +137,11 @@ export const editorTools = [
       },
       async (input) => {
         try {
-          const files = await coreEditorTools(ctx).glob(
-            input.pattern,
-            input.cwd
+          return toResponse(
+            await coreEditorTools(ctx).glob(input.pattern, input.cwd)
           )
-          return {
-            isError: false,
-            content: [{ type: "text", text: JSON.stringify(files) }],
-          }
         } catch (error) {
-          return {
-            isError: true,
-            content: [
-              {
-                type: "text",
-                text: `Error: ${JSON.stringify(serializeError(error))}`,
-              },
-            ],
-          }
+          return toErrorResponse(error)
         }
       }
     )
@@ -225,24 +168,11 @@ export const editorTools = [
       },
       async (input) => {
         try {
-          const result = await coreEditorTools(ctx).grep(
-            input.pattern,
-            input.options
+          return toResponse(
+            await coreEditorTools(ctx).grep(input.pattern, input.options)
           )
-          return {
-            isError: false,
-            content: [{ type: "text", text: JSON.stringify(result) }],
-          }
         } catch (error) {
-          return {
-            isError: true,
-            content: [
-              {
-                type: "text",
-                text: `Error: ${JSON.stringify(serializeError(error))}`,
-              },
-            ],
-          }
+          return toErrorResponse(error)
         }
       }
     )
@@ -257,21 +187,9 @@ export const editorTools = [
       },
       (input) => {
         try {
-          const result = coreEditorTools(ctx).testFile(input.filePath)
-          return {
-            isError: false,
-            content: [{ type: "text", text: JSON.stringify(result) }],
-          }
+          return toResponse(coreEditorTools(ctx).testFile(input.filePath))
         } catch (error) {
-          return {
-            isError: true,
-            content: [
-              {
-                type: "text",
-                text: `Error: ${JSON.stringify(serializeError(error))}`,
-              },
-            ],
-          }
+          return toErrorResponse(error)
         }
       }
     )
@@ -283,10 +201,10 @@ export const editorTools = [
       `Run all check commands`,
       {},
       async () => {
-        const result = await coreEditorTools(ctx).checkAll()
-        return {
-          isError: false,
-          content: [{ type: "text", text: JSON.stringify(result) }],
+        try {
+          return toResponse(await coreEditorTools(ctx).checkAll())
+        } catch (error) {
+          return toErrorResponse(error)
         }
       }
     )

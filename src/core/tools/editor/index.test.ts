@@ -153,7 +153,7 @@ describe("editorTools", () => {
         vi.mocked(testModifiedFiles).mockReturnValue(() => [
           {
             file: "test.txt",
-            hasError: false,
+            success: true,
             supplement: "No test file exists.",
           },
         ])
@@ -175,7 +175,7 @@ describe("editorTools", () => {
             },
             {
               file: "test.txt",
-              hasError: false,
+              success: true,
               supplement: "No test file exists.",
             },
           ],

@@ -2,6 +2,7 @@ import { execSync } from "node:child_process"
 import { Result } from "neverthrow"
 import { z } from "zod"
 import type { Config } from "../../config/schema"
+import type { InternalToolResult } from "../interface"
 import { DiscriminatedError } from "../../errors/DiscriminatedError"
 import { unhandledError } from "../../errors/unhandleError"
 
@@ -59,7 +60,7 @@ export const shellTools = (config: Config) => {
 
   return {
     // 任意のコマンド実行（許可チェック付き）
-    bash: (command: string) => {
+    bash: (command: string): InternalToolResult => {
       if (!isAllowedCommand(command)) {
         return {
           success: false as const,
@@ -91,60 +92,8 @@ export const shellTools = (config: Config) => {
       )
     },
 
-    // プロジェクト全体のチェック実行
-    checkAll: async () => {
-      const checkResults = await Promise.all(
-        config.commands.checks.map(async (command) => {
-          const result = await Promise.resolve(execBash(command))
-          return result.match(
-            (output) => ({
-              success: true as const,
-              command,
-              stdout: output,
-            }),
-            (error) => ({
-              success: false as const,
-              command,
-              error:
-                error.code === "EXEC_BASH_FAILED"
-                  ? {
-                      message: error.message,
-                      ...error.details,
-                    }
-                  : error,
-            })
-          )
-        })
-      )
-
-      const testCommand = config.commands.test
-      const testResult = execBash(testCommand).match(
-        (output) => ({
-          success: true as const,
-          command: testCommand,
-          stdout: output,
-        }),
-        (error) => ({
-          success: false as const,
-          command: testCommand,
-          error:
-            error.code === "EXEC_BASH_FAILED"
-              ? {
-                  message: error.message,
-                  ...error.details,
-                }
-              : error,
-        })
-      )
-
-      return {
-        checks: checkResults,
-        test: testResult,
-      }
-    },
-
     // インストールコマンド実行
-    install: () => {
+    install: (): InternalToolResult => {
       const command = config.commands.install
       return execBash(command).match(
         (output) => ({
@@ -167,7 +116,7 @@ export const shellTools = (config: Config) => {
     },
 
     // ビルドコマンド実行
-    build: () => {
+    build: (): InternalToolResult => {
       const command = config.commands.build
       return execBash(command).match(
         (output) => ({

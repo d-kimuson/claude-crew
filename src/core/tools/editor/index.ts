@@ -3,6 +3,7 @@ import { writeFile, readFile } from "fs/promises"
 import { mkdir } from "node:fs/promises"
 import { dirname } from "node:path"
 import { glob } from "glob"
+import type { InternalToolResult } from "../interface"
 import { withContext } from "../../context/withContext"
 import { textDiff } from "../../utils/textDiff"
 import { execBash } from "./bash"
@@ -13,16 +14,18 @@ export const editorTools = withContext((ctx) => {
   return {
     execBash: (command: string) => {
       return execBash(ctx)(command).match(
-        (output) =>
+        (output): InternalToolResult =>
           ({
             success: true,
             command,
             stdout: output,
           }) as const,
-        (error) =>
+        (error): InternalToolResult =>
           ({
             success: false,
-            command,
+            meta: {
+              command,
+            },
             error:
               error.code === "EXEC_BASH_FAILED"
                 ? {
@@ -34,15 +37,21 @@ export const editorTools = withContext((ctx) => {
       )
     },
 
-    readFile: async (filePath: string, maxLine = 100, offset = 0) => {
+    readFile: async (
+      filePath: string,
+      maxLine = 100,
+      offset = 0
+    ): Promise<InternalToolResult> => {
       try {
         const absolutePath = toAbsolutePath(ctx)(filePath)
         if (!existsSync(absolutePath)) {
           return {
             success: false,
+            meta: {
+              filePath,
+            },
             error: {
               reason: "No such file or directory",
-              filePath,
             },
           } as const
         }
@@ -63,6 +72,9 @@ export const editorTools = withContext((ctx) => {
       } catch (error: unknown) {
         return {
           success: false,
+          meta: {
+            filePath,
+          },
           error: {
             reason: "unknown",
             cause: error,
@@ -71,14 +83,28 @@ export const editorTools = withContext((ctx) => {
       }
     },
 
-    mkdir: async (filePath: string) => {
-      const absolutePath = toAbsolutePath(ctx)(filePath)
-      await mkdir(dirname(absolutePath), {
-        recursive: true,
-      })
+    mkdir: async (filePath: string): Promise<InternalToolResult> => {
+      try {
+        const absolutePath = toAbsolutePath(ctx)(filePath)
+        await mkdir(dirname(absolutePath), {
+          recursive: true,
+        })
+
+        return {
+          success: true,
+        } as const
+      } catch (error: unknown) {
+        return {
+          success: false,
+          error,
+        } as const
+      }
     },
 
-    writeFile: async (filePath: string, content: string) => {
+    writeFile: async (
+      filePath: string,
+      content: string
+    ): Promise<InternalToolResult> => {
       try {
         const absolutePath = toAbsolutePath(ctx)(filePath)
         if (!existsSync(absolutePath)) {
@@ -106,7 +132,11 @@ export const editorTools = withContext((ctx) => {
       }
     },
 
-    replaceFile: async (filePath: string, pattern: string, replace: string) => {
+    replaceFile: async (
+      filePath: string,
+      pattern: string,
+      replace: string
+    ): Promise<InternalToolResult> => {
       try {
         const absolutePath = toAbsolutePath(ctx)(filePath)
         if (!existsSync(absolutePath)) {
@@ -145,7 +175,10 @@ export const editorTools = withContext((ctx) => {
       }
     },
 
-    glob: async (pattern: string, cwd?: string) => {
+    glob: async (
+      pattern: string,
+      cwd?: string
+    ): Promise<InternalToolResult> => {
       try {
         const result = await glob(pattern, {
           cwd:
@@ -169,7 +202,7 @@ export const editorTools = withContext((ctx) => {
         cwd?: string
         filePattern?: string
       }
-    ) => {
+    ): Promise<InternalToolResult> => {
       try {
         const { cwd = ctx.config.directory, filePattern = "**/*" } =
           options ?? {}
@@ -219,7 +252,7 @@ export const editorTools = withContext((ctx) => {
       }
     },
 
-    testFile: (filePath: string) => {
+    testFile: (filePath: string): InternalToolResult => {
       const absolutePath = toAbsolutePath(ctx)(filePath)
       if (!existsSync(absolutePath)) {
         return {
@@ -228,11 +261,30 @@ export const editorTools = withContext((ctx) => {
         } as const
       }
 
-      return execBash(ctx)(
-        ctx.config.commands.testFile.replace("<file>", absolutePath)
+      const command = ctx.config.commands.testFile.replace(
+        "<file>",
+        absolutePath
+      )
+
+      return execBash(ctx)(command).match(
+        (output): InternalToolResult =>
+          ({
+            success: true,
+            command,
+            stdout: output,
+          }) as const,
+        (error): InternalToolResult =>
+          ({
+            success: false,
+            meta: {
+              command,
+            },
+            error,
+          }) as const
       )
     },
-    checkAll: async () => {
+
+    checkAll: async (): Promise<InternalToolResult> => {
       const checkResults = await Promise.all(
         [...ctx.config.commands.checks, ctx.config.commands.test].map(
           (command) => {
@@ -261,8 +313,9 @@ export const editorTools = withContext((ctx) => {
       )
 
       return {
+        success: true,
         checkResults,
-      }
+      } as const
     },
   }
 })

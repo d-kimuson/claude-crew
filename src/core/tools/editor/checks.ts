@@ -1,4 +1,5 @@
 import { existsSync } from "node:fs"
+import type { InternalToolResult } from "../interface"
 import { withContext } from "../../context/withContext"
 import { execBash } from "./bash"
 import { toAbsolutePath } from "./toAbsolutePath"
@@ -11,16 +12,18 @@ export const checkModifiedFiles = withContext((ctx) => (files: string[]) => {
     )
     .map((command) =>
       execBash(ctx)(command).match(
-        (stdout) =>
+        (stdout): InternalToolResult =>
           ({
             success: true,
             command,
             stdout,
           }) as const,
-        (error) =>
+        (error): InternalToolResult =>
           ({
             success: false,
-            command,
+            meta: {
+              command,
+            },
             error:
               error.code === "EXEC_BASH_FAILED"
                 ? {
@@ -55,8 +58,8 @@ export const testModifiedFiles = withContext((ctx) => (files: string[]) => {
 
     if (extension === undefined)
       return {
+        success: true,
         file: absolutePath,
-        hasError: false,
         supplement: "No test file exists.",
       } as const
 
@@ -77,8 +80,8 @@ export const testModifiedFiles = withContext((ctx) => (files: string[]) => {
 
     if (testFilePath === undefined) {
       return {
+        success: true,
         file: absolutePath,
-        hasError: false,
         supplement: "No test file exists.",
       } as const
     }
@@ -88,17 +91,17 @@ export const testModifiedFiles = withContext((ctx) => (files: string[]) => {
 
     if (result.isOk()) {
       return {
+        success: true,
         file: absolutePath,
         testFile: testFilePath,
-        hasError: false,
         supplement: `All tests for ${absolutePath} passed.`,
       } as const
     }
 
     return {
+      success: false,
       file: absolutePath,
       testFile: testFilePath,
-      hasError: true,
       error:
         result.error.code === "EXEC_BASH_FAILED"
           ? {

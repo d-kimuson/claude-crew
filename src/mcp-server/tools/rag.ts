@@ -1,9 +1,7 @@
 import { z } from "zod"
-import { formatRagContents } from "../../core/embedding/formatRagContents"
-import { serializeError } from "../../core/errors/serializeError"
 import { ragTools as coreRagTools } from "../../core/tools/rag"
-import { logger } from "../../lib/logger"
 import { defineTool } from "../utils/defineTool"
+import { toErrorResponse, toResponse } from "../utils/toResponse"
 
 export const ragTools = [
   defineTool((ctx) =>
@@ -15,24 +13,11 @@ export const ragTools = [
       },
       async (input) => {
         try {
-          const result = await coreRagTools(ctx).findRelevantDocuments(
-            input.query
+          return toResponse(
+            await coreRagTools(ctx).findRelevantDocuments(input.query)
           )
-          return {
-            isError: false,
-            content: [{ type: "text", text: formatRagContents(result) }],
-          }
         } catch (error) {
-          logger.error("Error in find-relevant-documents:", error)
-          return {
-            isError: true,
-            content: [
-              {
-                type: "text",
-                text: `Error: ${JSON.stringify(serializeError(error))}`,
-              },
-            ],
-          }
+          return toErrorResponse(error)
         }
       }
     )
@@ -47,24 +32,11 @@ export const ragTools = [
       },
       async (input) => {
         try {
-          const result = await coreRagTools(ctx).findRelevantResources(
-            input.query
+          return toResponse(
+            await coreRagTools(ctx).findRelevantResources(input.query)
           )
-          return {
-            isError: false,
-            content: [{ type: "text", text: formatRagContents(result) }],
-          }
         } catch (error) {
-          logger.error("Error in find-relevant-resources:", error)
-          return {
-            isError: true,
-            content: [
-              {
-                type: "text",
-                text: `Error: ${JSON.stringify(serializeError(error))}`,
-              },
-            ],
-          }
+          return toErrorResponse(error)
         }
       }
     )
