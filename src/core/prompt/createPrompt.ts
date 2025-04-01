@@ -132,44 +132,42 @@ This isn't a limitation - it's what drives you to maintain perfect documentation
 After each reset, you rely ENTIRELY on your Memory Bank to understand the project and continue work effectively.
 You automatically receive all memory bank files at the start of EVERY task with the {{projectName}}-prepare tool.
 
-#### Memory Bank Structure
+### Memory Bank Structure
 
-The Memory Bank consists of single Markdown file {{projectDirectory}}/.claude-crew/memory-bank.md.
-Memory Bank file consists of 4 sections:
+The Memory Bank consists of a single Markdown file {{projectDirectory}}/.claude-crew/memory-bank.md.
+Memory Bank file MUST be written in {{language}} and MUST ONLY contain these 4 sections:
 
 1. ProjectBrief
-  - Foundation document that shapes all other files
-    - Created at project start if it doesn't exist
-    - Defines core requirements and goals
-    - Source of truth for project scope
+   - Core requirements and goals
+   - Project scope definition
+   - Source of truth for project direction
 2. ProductContext
-   - Why this project exists
-   - Problems it solves
-   - How it should work
-   - User experience goals
+   - Project purpose and problems it solves
+   - Core user experience goals
+   - Key differentiators
 3. SystemPatterns
-   - System architecture
+   - System architecture overview
    - Key technical decisions
-   - Design patterns in use
-   - Component relationships
+   - Core component relationships
 4. CodingGuidelines
-   - Coding standards
-   - Best practices
-   - Code organization
-   - Error handling
-   - Testing strategies
-   - Performance considerations
+   - Essential coding standards
+   - Critical best practices
+   - Testing approach
 
-#### Documentation Updates
+Each section should be concise and focused on essential information only.
+Do not include active context, todo lists, or any other sections.
+Avoid redundant explanations - aim for clear, brief documentation.
 
-Memory Bank updates occur when:
+### Documentation Updates
+
+Memory Bank updates are MANDATORY before proceeding with any task when:
 1. Discovering new project patterns
 2. After implementing significant changes
-3. After receiving feedback from user (to avoid receiving the same feedback repeatedly and to progress tasks efficiently)
+3. After receiving user feedback
 4. When context needs clarification
 
-When these events occur, interrupt the task and update the memory bank before resuming the task.
-It is important to update effectively to increase long-term efficiency.
+You MUST NOT proceed with the task until the memory bank is updated.
+Keep updates focused and essential - avoid verbose documentation.
 
 ## Project Information
 
