@@ -1,7 +1,7 @@
 import { existsSync } from "fs"
 import { writeFile, readFile } from "fs/promises"
-import { mkdir } from "node:fs/promises"
-import { dirname } from "node:path"
+import { mkdir, readdir, stat } from "node:fs/promises"
+import { dirname, join } from "node:path"
 import { glob } from "glob"
 import type { InternalToolResult } from "../interface"
 import { withContext } from "../../context/withContext"
@@ -175,6 +175,108 @@ export const editorTools = withContext((ctx) => {
       }
     },
 
+    listDirectory: async (
+      path: string,
+      depth: number
+    ): Promise<InternalToolResult> => {
+      try {
+        const absolutePath = toAbsolutePath(ctx)(path)
+        if (!existsSync(absolutePath)) {
+          return {
+            success: false,
+            meta: {
+              path,
+            },
+            error: {
+              reason: "No such file or directory",
+            },
+          } as const
+        }
+
+        const statInfo = await stat(absolutePath)
+        if (!statInfo.isDirectory()) {
+          return {
+            success: false,
+            meta: {
+              path,
+            },
+            error: {
+              reason: "Not a directory",
+            },
+          } as const
+        }
+
+        const entries = await readdir(absolutePath)
+        const result: string[] = []
+
+        for (const entry of entries) {
+          const entryPath = join(absolutePath, entry)
+          const entryStat = await stat(entryPath)
+
+          if (entryStat.isDirectory()) {
+            result.push(`[DIR] ${entry}`)
+
+            // 再帰呼び出しが必要で、深さが1より大きい場合
+            if (depth > 1) {
+              // ここでは直接再帰呼び出しを行わず、再帰処理関数を定義
+              const processSubDirectory = async (
+                subPath: string,
+                currentDepth: number
+              ) => {
+                const subEntries = await readdir(join(absolutePath, subPath))
+                const subResults: string[] = []
+
+                for (const subEntry of subEntries) {
+                  const subEntryPath = join(absolutePath, subPath, subEntry)
+                  const subEntryStat = await stat(subEntryPath)
+
+                  const indent = "  ".repeat(currentDepth)
+
+                  if (subEntryStat.isDirectory()) {
+                    subResults.push(`${indent}[DIR] ${subEntry}`)
+
+                    if (currentDepth < depth - 1) {
+                      const deeperResults = await processSubDirectory(
+                        join(subPath, subEntry),
+                        currentDepth + 1
+                      )
+                      subResults.push(...deeperResults)
+                    }
+                  } else {
+                    subResults.push(`${indent}[FILE] ${subEntry}`)
+                  }
+                }
+
+                return subResults
+              }
+
+              // サブディレクトリの処理を開始
+              const subResults = await processSubDirectory(entry, 1)
+              result.push(...subResults)
+            }
+          } else {
+            result.push(`[FILE] ${entry}`)
+          }
+        }
+
+        return {
+          success: true,
+          entries: result,
+        } as const
+      } catch (error: unknown) {
+        return {
+          success: false,
+          meta: {
+            path,
+          },
+          error: {
+            reason: "unknown",
+            cause: error,
+          },
+        } as const
+      }
+    },
+
     glob: async (
       pattern: string,
       cwd?: string
@@ -199,8 +301,8 @@ export const editorTools = withContext((ctx) => {
     grep: async (
       pattern: string,
       options?: {
-        cwd?: string
         filePattern?: string
+        cwd?: string
       }
     ): Promise<InternalToolResult> => {
       try {

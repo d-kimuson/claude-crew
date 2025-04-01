@@ -7,6 +7,29 @@ import { toErrorResponse, toResponse } from "../utils/toResponse"
 export const editorTools = [
   defineTool(({ server, ...ctx }) =>
     server.tool(
+      `${ctx.config.name}-list-directory`,
+      `List files and directories with specified depth`,
+      {
+        path: z.string().describe("Directory path to list"),
+        depth: z
+          .number()
+          .optional()
+          .default(1)
+          .describe("Depth of directory traversal"),
+      },
+      async (input) => {
+        try {
+          return toResponse(
+            await coreEditorTools(ctx).listDirectory(input.path, input.depth)
+          )
+        } catch (error) {
+          return toErrorResponse(error)
+        }
+      }
+    )
+  ),
+  defineTool(({ server, ...ctx }) =>
+    server.tool(
       `${ctx.config.name}-mkdir`,
       `Create a directory`,
       {
