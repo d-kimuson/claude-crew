@@ -1,5 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises"
-import { resolve } from "node:path"
+import { dirname, resolve } from "node:path"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 import type { Config } from "./core/config/schema"
@@ -14,12 +14,14 @@ import { createPrompt } from "./core/prompt/createPrompt"
 import { logger } from "./lib/logger"
 import { startMcpServer } from "./mcp-server"
 import { startRepl } from "./replSetup/repl"
+import { createSnippet } from "./snippet/createSnippet"
 
 const commands = {
   setup: "setup",
   serveMcp: "serve-mcp",
   setupDb: "setup-db",
   clean: "clean",
+  createSnippet: "create-snippet",
 } as const
 
 export const main = async () => {
@@ -64,6 +66,24 @@ export const main = async () => {
       "Remove containers and volumes, revert to pre setup-db state",
       (clean) => {
         clean.help()
+      }
+    )
+    .command(
+      `${commands.createSnippet}`,
+      "Create a snippet for Claude Desktop",
+      (createSnippet) => {
+        createSnippet
+          .option("disable-send-enter", {
+            type: "boolean",
+            description: "Disable sending message on Enter key press",
+            default: false,
+          })
+          .option("outfile", {
+            type: "string",
+            description: "Output file path",
+            default: "claude_crew_snippet.js",
+          })
+          .help()
       }
     )
     .help()
@@ -196,6 +216,23 @@ export const main = async () => {
     case commands.clean: {
       logger.info("Starting cleanup process...")
       cleanPostgres()
+      break
+    }
+
+    case commands.createSnippet: {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- yargs の型定義の制限により必要
+      const disableSendEnter = argv["disable-send-enter"] as boolean
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- yargs の型定義の制限により必要
+      const outfile = argv["outfile"] as string
+      const snippet = createSnippet({ disableSendEnter })
+
+      const outputPath = outfile.startsWith("/")
+        ? outfile
+        : resolve(process.cwd(), outfile)
+      // create parent directory
+      await mkdir(dirname(outputPath), { recursive: true })
+      await writeFile(outputPath, snippet, "utf-8")
+      logger.info(`Snippet has been written to: ${outputPath}`)
       break
     }
 

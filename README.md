@@ -152,6 +152,9 @@ Claude Crew provides the following CLI commands:
 - `setup-db` - Manual database setup (useful for reinstallation)
 - `clean` - Remove Docker containers and volumes to reset to pre-setup state
 - `serve-mcp` - Run the MCP server for Claude Desktop integration
+- `create-snippet` - Create a helper script for Claude Desktop
+  - `--disable-send-enter` - Disable sending message on Enter key press (default: false)
+  - `--outfile` - Output file path (default: claude_crew_snippet.js)
 
 ## Contributing
 
