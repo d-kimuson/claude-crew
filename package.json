@@ -58,6 +58,7 @@
     "tree-sitter-javascript": "^0.23.1",
     "tree-sitter-python": "^0.23.6",
     "tree-sitter-typescript": "^0.23.2",
+    "ts-morph": "^25.0.1",
     "tsx": "^4.19.3",
     "type-safe-prompt": "^0.0.2",
     "yargs": "^17.7.2",

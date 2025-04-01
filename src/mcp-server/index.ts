@@ -6,9 +6,15 @@ import { editorTools } from "./tools/editor"
 import { prepareTool } from "./tools/prepare"
 import { ragTools } from "./tools/rag"
 import { think } from "./tools/think"
+import { typescriptTools } from "./tools/typescript"
 
-const tools = [prepareTool, think, ...editorTools, ...ragTools] as const
-
+const tools = [
+  prepareTool,
+  think,
+  ...editorTools,
+  ...ragTools,
+  ...typescriptTools,
+] as const
 const server = withContext((ctx) => {
   const server = new McpServer({
     name: "claude-crew-mcp-server",

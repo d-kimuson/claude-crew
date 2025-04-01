@@ -45,6 +45,15 @@ export const configSchema = z.object({
       url: z.string().describe("postgres url"),
     }),
   ]),
+  typescript: z.union([
+    z.object({
+      enabled: z.literal(false),
+    }),
+    z.object({
+      enabled: z.literal(true),
+      tsConfigFilePath: z.string().describe("tsconfig file path"),
+    }),
+  ]),
 })
 
 export type Config = z.infer<typeof configSchema>

@@ -132,6 +132,16 @@ export const main = async () => {
             model: "text-embedding-ada-002",
           },
         },
+        typescript: answers.enableTypescript
+          ? {
+              enabled: true,
+              tsConfigFilePath:
+                answers.tsConfigPath ??
+                resolve(projectDirectory, "tsconfig.json"),
+            }
+          : {
+              enabled: false,
+            },
       }
 
       await mkdir(resolve(projectDirectory, ".claude-crew"), {

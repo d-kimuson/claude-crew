@@ -53,7 +53,7 @@ const multipleInput = async (
   return []
 }
 
-type SetupAnswers = {
+export type SetupAnswers = {
   name: string
   language: string
   runtime: "local" | "container"
@@ -75,7 +75,22 @@ type SetupAnswers = {
       databaseUrl?: undefined
       databasePort?: undefined
     }
-)
+) &
+  (
+    | {
+        enableTypescript: true
+        tsConfigPath: string
+      }
+    | {
+        enableTypescript: false
+        tsConfigPath?: undefined
+      }
+  )
+
+export type SetupResult = {
+  directory: string
+  answers: SetupAnswers
+}
 
 export const startRepl = async () => {
   const directory = await inquirer
@@ -163,6 +178,19 @@ export const startRepl = async () => {
           return "Invalid API key format. OpenAI API keys start with 'sk-'"
         return true
       },
+    },
+    {
+      type: "confirm",
+      name: "enableTypescript",
+      message: "Enable TypeScript features?",
+      default: existingConfig?.typescript?.enabled ?? false,
+    },
+    {
+      type: "input",
+      name: "tsConfigPath",
+      message: "Input path to tsconfig.json",
+      when: (answers) => answers.enableTypescript,
+      default: resolve(directory, "tsconfig.json"),
     },
   ])
 

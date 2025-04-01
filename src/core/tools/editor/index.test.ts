@@ -116,7 +116,7 @@ describe("editorTools", () => {
       it("Then should return error", async () => {
         vi.mocked(existsSync).mockReturnValue(false)
 
-        const result = await tools.readFile("nonexistent.txt")
+        const result = await tools.readFile("nonexistent.txt", 200)
 
         expect(result).toStrictEqual({
           success: false,

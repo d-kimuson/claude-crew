@@ -6,6 +6,9 @@ const defaultConfig: Config = {
   name: "test-project",
   language: "日本語",
   directory: "/test/project",
+  typescript: {
+    enabled: false,
+  },
   database: {
     customDb: false,
     url: "test-database-url",
