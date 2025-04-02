@@ -113,14 +113,14 @@ export const main = async () => {
   switch (argv._[0]) {
     case commands.setup: {
       logger.title("Setting up Claude Crew")
-      logger.step(1, 4, "Starting project configuration")
+      logger.step(1, 5, "Starting project configuration")
 
       const { answers } = await startRepl()
       const projectDirectory: string = answers.directory.startsWith("/")
         ? answers.directory
         : resolve(process.cwd(), answers.directory)
 
-      logger.step(2, 4, "Creating configuration files")
+      logger.step(2, 5, "Creating configuration files")
 
       const spinner = ora("Generating project configuration...").start()
       const config: Config = {
@@ -177,7 +177,7 @@ export const main = async () => {
       }
       spinner.succeed("Configuration generated successfully!")
 
-      logger.step(3, 4, "Writing configuration and instruction files")
+      logger.step(3, 5, "Writing configuration and instruction files")
 
       const configDirSpinner = ora(
         `Creating configuration directory at ${chalk.cyan(".claude-crew")}...`
@@ -206,7 +206,25 @@ export const main = async () => {
       )
       instructionSpinner.succeed("Instruction file created!")
 
-      logger.step(4, 4, "Setup completed")
+      logger.step(4, 5, "Setting up database")
+
+      const { context, db, clean } = await createContext(
+        resolve(projectDirectory, ".claude-crew", "config.json"),
+        {
+          enableQueryLogging: false,
+        }
+      )
+
+      await runMigrate(db)
+      if (isIntegrationEnabled(context)("rag")) {
+        await indexCodebase(context)
+      } else {
+        logger.info("Embedding is disabled, skipping indexing codebase")
+      }
+
+      await clean()
+
+      logger.step(5, 5, "Setup completed")
 
       logger.box(
         `
