@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 950 650">
+  <!-- Background -->
+  <rect width="950" height="650" fill="#f8f9fa" />
+  
+  <!-- Title -->
+  <text x="475" y="40" text-anchor="middle" font-family="Arial" font-size="24" font-weight="bold" fill="#333">Claude Crew and Claude Desktop Integration</text>
+  
+  <!-- Claude Crew CLI Section -->
+  <rect x="50" y="190" width="220" height="100" rx="10" fill="#4dabf7" opacity="0.8" />
+  <text x="160" y="220" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#333">Claude Crew CLI</text>
+  <text x="160" y="245" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">Interactive Setup</text>
+  <text x="160" y="265" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">for Project</text>
+  <text x="160" y="285" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">Configuration</text>
+  
+  <!-- Project Settings Section -->
+  <rect x="50" y="390" width="220" height="110" rx="10" fill="#20c997" opacity="0.8" />
+  <text x="160" y="420" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#333">Project Settings</text>
+  <text x="160" y="445" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">.claude-crew/</text>
+  <text x="160" y="465" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">config.json</text>
+  
+  <!-- Claude Desktop Config Section -->
+  <rect x="400" y="120" width="250" height="110" rx="10" fill="#ff922b" opacity="0.8" />
+  <text x="525" y="150" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#333">Claude Desktop Config</text>
+  <text x="525" y="175" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">~/Library/Application Support/Claude/</text>
+  <text x="525" y="195" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">claude_desktop_config.json</text>
+  
+  <!-- Claude Projects Section -->
+  <rect x="400" y="260" width="250" height="100" rx="10" fill="#ff922b" opacity="0.8" />
+  <text x="525" y="290" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#333">Claude Projects</text>
+  <text x="525" y="315" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">Custom</text>
+  <text x="525" y="335" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">Instructions</text>
+  
+  <!-- Claude Crew MCP Server Section -->
+  <rect x="400" y="390" width="250" height="110" rx="10" fill="#4dabf7" opacity="0.8" />
+  <text x="525" y="420" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#333">Claude Crew MCP Server</text>
+  <text x="525" y="445" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">RAG for Codebase &amp; Documents</text>
+  <text x="525" y="465" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">Codebase Manipulation Tools with</text>
+  <text x="525" y="485" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">Static Analysis &amp; Unit Test Feedback</text>
+  
+  <!-- Claude Desktop Section -->
+  <rect x="730" y="240" width="150" height="140" rx="10" fill="#ff922b" opacity="0.8" />
+  <text x="805" y="270" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#333">Claude Desktop</text>
+  <text x="805" y="295" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">Chat UI</text>
+  <text x="805" y="315" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">MCP</text>
+  <text x="805" y="335" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">Custom</text>
+  <text x="805" y="355" text-anchor="middle" font-family="Arial" font-size="14" fill="#333">Instructions</text>
+  
+  <!-- User Section -->
+  <rect x="730" y="120" width="150" height="80" rx="10" fill="#868e96" opacity="0.8" />
+  <text x="805" y="150" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#fff">User</text>
+  <text x="805" y="175" text-anchor="middle" font-family="Arial" font-size="14" fill="#fff">Task Request</text>
+  
+  <!-- Implementation Result -->
+  <rect x="450" y="550" width="150" height="60" rx="10" fill="#fa5252" opacity="0.8" />
+  <text x="525" y="575" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#fff">Implementation</text>
+  <text x="525" y="595" text-anchor="middle" font-family="Arial" font-size="14" fill="#fff">Code Changes</text>
+  
+  <!-- Arrows and Connection Lines - Fixed using the Japanese version's format -->
+  <!-- CLI → Project Settings -->
+  <path d="M160 290 L160 390" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+  
+  <!-- CLI → Claude Desktop Config -->
+  <path d="M270 200 Q335 170 400 165" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="230" y="150" text-anchor="start" font-family="Arial" font-size="14" fill="#333">Add MCP</text>
+  <text x="230" y="170" text-anchor="start" font-family="Arial" font-size="14" fill="#333">Configuration</text>
+  
+  <!-- CLI → Claude Projects -->
+  <path d="M270 240 Q335 265 400 280" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="320" y="255" text-anchor="start" font-family="Arial" font-size="14" fill="#333">Set Instructions</text>
+  
+  <!-- Project Settings → MCP Server -->
+  <path d="M270 445 L400 445" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="275" y="425" text-anchor="start" font-family="Arial" font-size="14" fill="#333">Project Information</text>
+  
+  <!-- Claude Desktop Config → Claude Desktop -->
+  <path d="M650 175 Q700 175 730 240" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+  
+  <!-- Claude Projects → Claude Desktop -->
+  <line x1="650" y1="310" x2="730" y2="310" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+  
+  <!-- MCP Server → Claude Desktop -->
+  <path d="M650 445 Q690 445 730 380" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+  
+  <!-- User → Claude Desktop -->
+  <path d="M805 200 L805 240" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+  
+  <!-- MCP Server → Implementation Result -->
+  <path d="M525 500 L525 550" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="535" y="525" text-anchor="start" font-family="Arial" font-size="16" fill="#333">Execute Code Changes</text>
+
+  <!-- Arrow Marker Definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+    </marker>
+  </defs>
+</svg>

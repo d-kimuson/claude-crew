@@ -5,11 +5,11 @@
 
 English | [日本語](README.ja.md)
 
-Claude Crew is a tool for creating autonomous coding agents like OpenHands using Claude Desktop and Model Context Protocol (MCP). Unlike coding assistants like Cline that focus on real-time collaboration, Claude Crew aims to create agents that can process tasks autonomously.
+Claude Crew is a tool for creating autonomous coding agents like OpenHands using Claude Desktop and Model Context Protocol (MCP). Unlike coding assistants like Cline that focus on real-time collaboration, Claude Crew aims to create agents that can process tasks autonomously. It excels in delegating low-complexity tasks and enabling non-engineers to implement features using natural language only.
 
 ## Concept
 
-Claude Crew focuses on three key elements to maximize LLM performance:
+Claude Crew focuses on three key elements to maximize Claude Desktop's performance:
 
 - 🎯 Maximizing cost efficiency through efficient context window usage
 - 🧪 Prioritizing operation verification through unit testing over browser integration for better token cost performance
@@ -22,17 +22,37 @@ Claude Crew focuses on three key elements to maximize LLM performance:
 - Docker and Docker Compose (Not required when using custom database)
 - Node.js >= v20
 
-## Features
+## How it works
 
-- 🚀 Easy setup through interactive dialog
-- 🔄 Smooth integration with Claude Desktop
-- 📝 Automatic instruction generation for Claude Projects
-- 🛠️ Customizable project workflow commands
-- 🌐 Multi-language support (Full TypeScript support, basic file operations for other languages)
-- 🔍 Enhanced context understanding through OpenAI embedding (optional)
-- 💪 High-precision TypeScript support utilizing type information
-- 🔌 Support for custom PostgreSQL database instead of Docker
-- 🧠 Memory Bank functionality for persistent project knowledge
+Claude Crew provides a configuration CLI and MCP Server.
+
+![](./docs/assets/claude-crew-architecture_en.svg)
+
+The CLI interactively configures project information and provides MCP tools and custom instructions that reflect project information.
+
+Tasks are processed in the following flow:
+
+1. **Task Reception**
+
+   - Receive task requests from users
+
+2. **Project Information Provision**
+
+   - `prepare` tool is automatically invoked to:
+     - Update dependencies
+     - Update RAG index
+   - Provide LLM with:
+     - Project structure
+     - Related source code
+     - Related documentation
+     - Memory Bank knowledge
+
+3. **Autonomous Task Execution**
+   - LLM starts working based on provided information
+     - Linter and unit tests are automatically executed with file operations and provide feedback
+   - Implement necessary corrections based on feedback results
+
+Information obtained at each step is optimized for efficient use of the LLM's context window.
 
 ## Quick Start
 
@@ -41,8 +61,8 @@ Claude Crew focuses on three key elements to maximize LLM performance:
 Move to your project directory and run the setup:
 
 ```bash
-cd /path/to/your-project
-npx claude-crew@latest setup
+$ cd /path/to/your-project
+$ npx claude-crew@latest setup
 ```
 
 Configuration files will be generated under `.claude-crew` through an interactive setup process.
@@ -76,35 +96,6 @@ Configuration files will be generated under `.claude-crew` through an interactiv
 3. Add the content of `.claude-crew/instruction.md` to the project's custom instructions
 
 Setup complete! 🎉
-
-## How it works
-
-Claude Crew processes tasks in the following flow:
-
-1. **Task Reception**
-
-   - Receive task requests from users
-
-2. **Project Information Provision**
-
-   - `prepare` tool is automatically invoked to:
-     - Update project to latest state
-     - Resolve dependencies
-   - Provide LLM with:
-     - Project structure
-     - Related source code
-     - Related documentation
-     - Test environment information
-     - Memory Bank for persistent project knowledge
-
-3. **Autonomous Task Execution**
-   - LLM starts working based on provided information
-     - Linter code quality checks
-     - Unit test execution
-     - Type checking
-   - Implement necessary corrections based on feedback results
-
-Information obtained at each step is optimized for efficient use of the LLM's context window.
 
 ## Configuration
 
@@ -280,6 +271,8 @@ Contributions are welcome! You can participate in the following ways:
 
 - Report bugs and feature requests via Issues
 - Submit improvements via Pull Requests
+
+For more details, please check [/docs/contribute/README.md](./docs/contribute/README.md).
 
 ## License
 
