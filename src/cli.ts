@@ -1,5 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises"
 import { dirname, resolve } from "node:path"
+import chalk from "chalk"
+import ora from "ora"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 import type { Config } from "./core/config/schema"
@@ -110,11 +112,17 @@ export const main = async () => {
 
   switch (argv._[0]) {
     case commands.setup: {
+      logger.title("Setting up Claude Crew")
+      logger.step(1, 4, "Starting project configuration")
+
       const { answers } = await startRepl()
       const projectDirectory: string = answers.directory.startsWith("/")
         ? answers.directory
         : resolve(process.cwd(), answers.directory)
 
+      logger.step(2, 4, "Creating configuration files")
+
+      const spinner = ora("Generating project configuration...").start()
       const config: Config = {
         name: answers.name,
         directory: projectDirectory,
@@ -167,10 +175,19 @@ export const main = async () => {
           }
         }),
       }
+      spinner.succeed("Configuration generated successfully!")
 
+      logger.step(3, 4, "Writing configuration and instruction files")
+
+      const configDirSpinner = ora(
+        `Creating configuration directory at ${chalk.cyan(".claude-crew")}...`
+      ).start()
       await mkdir(resolve(projectDirectory, ".claude-crew"), {
         recursive: true,
       })
+      configDirSpinner.succeed("Configuration directory created!")
+
+      const writeConfigSpinner = ora("Writing configuration files...").start()
       await writeConfig(
         resolve(projectDirectory, ".claude-crew", "config.json"),
         config
@@ -179,19 +196,38 @@ export const main = async () => {
         resolve(projectDirectory, ".claude-crew", "mcp.json"),
         JSON.stringify(mcpConfig(config), null, 2)
       )
+      writeConfigSpinner.succeed("Configuration files written successfully!")
 
+      const instructionSpinner = ora("Generating instruction file...").start()
       const prompt = createPrompt(config)
       await writeFile(
         resolve(projectDirectory, ".claude-crew", "instruction.md"),
         prompt
       )
-      logger.info("All setup completed!")
-      logger.info("To start task, process the followings.")
-      logger.info(
-        `1. copy ${resolve(projectDirectory, ".claude-crew", "mcp.json")} and paste to Claude Desktop's MCP config file.`
-      )
-      logger.info(
-        `2. Create Claude Projects for this project, and copy the ${resolve(projectDirectory, ".claude-crew", "instruction.md")} to the Claude Projects's instruction.`
+      instructionSpinner.succeed("Instruction file created!")
+
+      logger.step(4, 4, "Setup completed")
+
+      logger.box(
+        `
+Setup completed successfully! 🎉
+
+To start using Claude Crew, follow these steps:
+
+1. Copy ${chalk.cyan(resolve(projectDirectory, ".claude-crew", "mcp.json"))} 
+   and paste to Claude Desktop's MCP config file.
+
+2. Create Claude Projects for this project, and copy 
+   ${chalk.cyan(resolve(projectDirectory, ".claude-crew", "instruction.md"))} 
+   to the Claude Projects's instruction.
+   
+3. [Optional] Create a snippet for Claude Desktop by executing the following command.
+   ${chalk.cyan(`$ npx claude-crew@latest create-snippet --disable-send-enter`)}`,
+        {
+          borderColor: "green",
+          title: "Setup Complete",
+          titleAlignment: "center",
+        }
       )
       break
     }
@@ -248,7 +284,7 @@ export const main = async () => {
     }
 
     case commands.clean: {
-      logger.info("Starting cleanup process...")
+      logger.title("Claude Crew Cleanup")
       cleanPostgres()
       break
     }
@@ -258,29 +294,70 @@ export const main = async () => {
       const disableSendEnter = argv["disable-send-enter"] as boolean
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- yargs の型定義の制限により必要
       const outfile = argv["outfile"] as string
+
+      logger.title("Creating Claude Desktop Snippet")
+
+      const spinner = ora("Generating snippet...").start()
       const snippet = createSnippet({ disableSendEnter })
 
       const outputPath = outfile.startsWith("/")
         ? outfile
         : resolve(process.cwd(), outfile)
+
       // create parent directory
       await mkdir(dirname(outputPath), { recursive: true })
       await writeFile(outputPath, snippet, "utf-8")
-      logger.info(`Snippet has been written to: ${outputPath}`)
+
+      spinner.succeed(`Snippet created successfully!`)
+
+      logger.box(
+        `
+Snippet has been written to:
+${chalk.cyan(outputPath)}
+
+To use this snippet:
+1. Open Claude Desktop
+2. Press ${chalk.yellow("Cmd + Alt + Shift + i")} to open Developer Console
+3. Paste the snippet contents and press Enter
+`,
+        {
+          borderColor: "green",
+          title: "Snippet Created",
+          titleAlignment: "center",
+        }
+      )
       break
     }
 
     case commands.createInstruction: {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const configPath = argv["configPath"] as string
-      const config = loadConfig(configPath)
 
+      logger.title("Creating Claude Instruction")
+
+      const spinner = ora("Loading configuration...").start()
+      const config = loadConfig(configPath)
+      spinner.succeed("Configuration loaded!")
+
+      const promptSpinner = ora("Generating instructions...").start()
       const prompt = createPrompt(config)
       await writeFile(
         resolve(config.directory, ".claude-crew", "instruction.md"),
         prompt
       )
-      logger.info("Instruction file has been created!")
+      promptSpinner.succeed("Instruction file created!")
+
+      logger.box(
+        `
+Instruction file has been created at:
+${chalk.cyan(resolve(config.directory, ".claude-crew", "instruction.md"))}
+`,
+        {
+          borderColor: "green",
+          title: "Success",
+          titleAlignment: "center",
+        }
+      )
       break
     }
 

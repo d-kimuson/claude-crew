@@ -1,4 +1,7 @@
 import { appendFileSync } from "node:fs"
+import boxen from "boxen"
+import chalk from "chalk"
+import type { Options } from "boxen"
 
 /* eslint-disable no-console */
 export type Runtime = "mcp-server" | "cli" | "debug"
@@ -9,6 +12,10 @@ export type Logger = {
   info: (code: string, structuredData?: unknown) => void
   error: (code: string, structuredData?: unknown) => void
   warn: (code: string, structuredData?: unknown) => void
+  success: (code: string, structuredData?: unknown) => void
+  title: (text: string) => void
+  box: (text: string, options?: Options) => void
+  step: (step: number, total: number, text: string) => void
 }
 
 export const logger = ((): Logger => {
@@ -24,7 +31,7 @@ export const logger = ((): Logger => {
     },
     info: (code, structuredData) => {
       if (runtimeState !== "mcp-server") {
-        console.info(code, structuredData ?? "")
+        console.info(chalk.blue("ℹ"), chalk.blue(code), structuredData ?? "")
       } else if (logFilePath) {
         appendFileSync(
           logFilePath,
@@ -45,7 +52,7 @@ export const logger = ((): Logger => {
     },
     error: (code, structuredData) => {
       if (runtimeState !== "mcp-server") {
-        console.error(code, structuredData ?? "")
+        console.error(chalk.red("✖"), chalk.red(code), structuredData ?? "")
       } else if (logFilePath) {
         appendFileSync(
           logFilePath,
@@ -66,7 +73,11 @@ export const logger = ((): Logger => {
     },
     warn: (code, structuredData) => {
       if (runtimeState !== "mcp-server") {
-        console.warn(code, structuredData ?? "")
+        console.warn(
+          chalk.yellow("⚠"),
+          chalk.yellow(code),
+          structuredData ?? ""
+        )
       } else if (logFilePath) {
         appendFileSync(
           logFilePath,
@@ -79,6 +90,48 @@ export const logger = ((): Logger => {
             encoding: "utf-8",
           }
         )
+      }
+    },
+    success: (code, structuredData) => {
+      if (runtimeState !== "mcp-server") {
+        console.log(chalk.green("✓"), chalk.green(code), structuredData ?? "")
+      } else if (logFilePath) {
+        appendFileSync(
+          logFilePath,
+          JSON.stringify(
+            { ...(structuredData ?? {}), code, level: "success" },
+            null,
+            2
+          ) + "\n",
+          {
+            encoding: "utf-8",
+          }
+        )
+      }
+    },
+    title: (text) => {
+      if (runtimeState !== "mcp-server") {
+        console.log("\n" + chalk.bold.cyan(text))
+        console.log(chalk.cyan("=".repeat(text.length)) + "\n")
+      }
+    },
+    box: (text, options = {}) => {
+      if (runtimeState !== "mcp-server") {
+        console.log(
+          boxen(text, {
+            padding: 1,
+            margin: 1,
+            borderStyle: "round",
+            borderColor: "cyan",
+            ...options,
+          })
+        )
+      }
+    },
+    step: (step, total, text) => {
+      if (runtimeState !== "mcp-server") {
+        const progress = `[${step}/${total}]`
+        console.log(chalk.cyan(progress), text)
       }
     },
   }

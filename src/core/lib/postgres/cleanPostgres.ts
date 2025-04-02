@@ -1,4 +1,6 @@
 import { execSync } from "node:child_process"
+import chalk from "chalk"
+import ora from "ora"
 import { logger } from "../../../lib/logger"
 import { constraints } from "../../constraints"
 
@@ -7,7 +9,10 @@ import { constraints } from "../../constraints"
  */
 export const cleanPostgres = () => {
   try {
+    logger.title("Cleaning up PostgreSQL resources")
+
     // コンテナの存在確認
+    const containerSpinner = ora("Checking for existing container...").start()
     const dockerPsStdout = execSync(
       `docker ps -a --filter name="${constraints.defaultPostgresContainer.containerName}" --format=json`,
       {
@@ -25,56 +30,68 @@ export const cleanPostgres = () => {
     })()
 
     if (containerExists) {
-      // コンテナを停止して削除
-      logger.info(
-        `Stopping container ${constraints.defaultPostgresContainer.containerName}...`
+      containerSpinner.succeed(
+        `Found container: ${chalk.cyan(constraints.defaultPostgresContainer.containerName)}`
       )
+
+      // コンテナを停止して削除
+      const stopSpinner = ora(`Stopping container...`).start()
       execSync(
         `docker stop ${constraints.defaultPostgresContainer.containerName}`,
         {
           encoding: "utf-8",
         }
       )
+      stopSpinner.succeed(`Container stopped successfully`)
 
-      logger.info(
-        `Removing container ${constraints.defaultPostgresContainer.containerName}...`
-      )
+      const removeSpinner = ora(`Removing container...`).start()
       execSync(
         `docker rm ${constraints.defaultPostgresContainer.containerName}`,
         {
           encoding: "utf-8",
         }
       )
+      removeSpinner.succeed(
+        `Container ${chalk.cyan(constraints.defaultPostgresContainer.containerName)} removed successfully`
+      )
     } else {
-      logger.info(
-        `Container ${constraints.defaultPostgresContainer.containerName} does not exist, skipping...`
+      containerSpinner.info(
+        `Container ${chalk.cyan(constraints.defaultPostgresContainer.containerName)} does not exist, skipping...`
       )
     }
 
     // ボリュームの存在確認
+    const volumeSpinner = ora("Checking for existing volume...").start()
     const volumeExistsCode = execSync(
       `docker volume inspect ${constraints.defaultPostgresContainer.volumeName} >/dev/null 2>&1 || echo "not-exists"`,
       { encoding: "utf-8" }
     )
 
     if (!volumeExistsCode.includes("not-exists")) {
-      // ボリュームを削除
-      logger.info(
-        `Removing volume ${constraints.defaultPostgresContainer.volumeName}...`
+      volumeSpinner.succeed(
+        `Found volume: ${chalk.cyan(constraints.defaultPostgresContainer.volumeName)}`
       )
+
+      // ボリュームを削除
+      const removeVolumeSpinner = ora(`Removing volume...`).start()
       execSync(
         `docker volume rm ${constraints.defaultPostgresContainer.volumeName}`,
         {
           encoding: "utf-8",
         }
       )
+      removeVolumeSpinner.succeed(
+        `Volume ${chalk.cyan(constraints.defaultPostgresContainer.volumeName)} removed successfully`
+      )
     } else {
-      logger.info(
-        `Volume ${constraints.defaultPostgresContainer.volumeName} does not exist, skipping...`
+      volumeSpinner.info(
+        `Volume ${chalk.cyan(constraints.defaultPostgresContainer.volumeName)} does not exist, skipping...`
       )
     }
 
-    logger.info("✅ Clean up completed. Now in pre setup-db state.")
+    logger.box("Cleanup completed successfully! Now in pre setup-db state.", {
+      borderColor: "green",
+    })
   } catch (error) {
     logger.error("Failed to clean up Docker resources", error)
     throw error
