@@ -1,5 +1,43 @@
 # Changelog
 
+## 0.0.8
+
+### &nbsp;&nbsp;&nbsp;Breaking Changes
+
+- Remove xenova adapter &nbsp;-&nbsp; by **d-kimsuon** [<samp>(73982)</samp>](https://github.com/d-kimuson/claude-crew/commit/73982c0)
+
+### &nbsp;&nbsp;&nbsp;Features
+
+- Switch the RAG feature’s indexing functionality to incremental (differential) updates &nbsp;-&nbsp; by **d-kimsuon** [<samp>(6779f)</samp>](https://github.com/d-kimuson/claude-crew/commit/6779f30)
+- Using not mtime but contentHash check for diff indexing &nbsp;-&nbsp; by **d-kimsuon** [<samp>(ecabf)</samp>](https://github.com/d-kimuson/claude-crew/commit/ecabf19)
+- Add clean command to remove containers and volumes &nbsp;-&nbsp; by **d-kimsuon** [<samp>(37c7e)</samp>](https://github.com/d-kimuson/claude-crew/commit/37c7e06)
+- Update file write and replace methods to return operation results &nbsp;-&nbsp; by **d-kimsuon** [<samp>(5410f)</samp>](https://github.com/d-kimuson/claude-crew/commit/5410f85)
+- Implement memory bank functionality and update prompt preparation &nbsp;-&nbsp; by **d-kimsuon** [<samp>(0456b)</samp>](https://github.com/d-kimuson/claude-crew/commit/0456bac)
+- Enhance REPL setup with existing configuration support &nbsp;-&nbsp; by **d-kimsuon** [<samp>(80a65)</samp>](https://github.com/d-kimuson/claude-crew/commit/80a657b)
+- Enhance REPL setup with multiple input handling and project command prompts &nbsp;-&nbsp; by **d-kimsuon** [<samp>(b3133)</samp>](https://github.com/d-kimuson/claude-crew/commit/b313361)
+- Update command handling in REPL setup for improved input management &nbsp;-&nbsp; by **d-kimsuon** [<samp>(b3cda)</samp>](https://github.com/d-kimuson/claude-crew/commit/b3cda34)
+- Refine Memory Bank documentation structure and update guidelines &nbsp;-&nbsp; by **d-kimsuon** [<samp>(1991b)</samp>](https://github.com/d-kimuson/claude-crew/commit/1991bf5)
+- Update prompt guidelines to enhance task execution clarity &nbsp;-&nbsp; by **d-kimsuon** [<samp>(f25fa)</samp>](https://github.com/d-kimuson/claude-crew/commit/f25fa02)
+- Make embedding feature optional &nbsp;-&nbsp; by **d-kimsuon** [<samp>(f4218)</samp>](https://github.com/d-kimuson/claude-crew/commit/f421837)
+- Update type annotation for maxLine parameter in readFile function &nbsp;-&nbsp; by **d-kimsuon** [<samp>(85c63)</samp>](https://github.com/d-kimuson/claude-crew/commit/85c6358)
+- Add create-snippet command for generating Claude Desktop helper script &nbsp;-&nbsp; by **d-kimsuon** [<samp>(7e993)</samp>](https://github.com/d-kimuson/claude-crew/commit/7e993b0)
+- Enhance embedding configuration schema &nbsp;-&nbsp; by **d-kimsuon** [<samp>(96497)</samp>](https://github.com/d-kimuson/claude-crew/commit/96497c7)
+- Add check-all tool execution step to final confirmation in task flow &nbsp;-&nbsp; by **d-kimsuon** [<samp>(7f662)</samp>](https://github.com/d-kimuson/claude-crew/commit/7f66253)
+- Integrate TypeScript support with configuration and tools &nbsp;-&nbsp; by **d-kimsuon** [<samp>(7695d)</samp>](https://github.com/d-kimuson/claude-crew/commit/7695ddc)
+- Implement integration system and moved typescript tool to integration &nbsp;-&nbsp; by **d-kimsuon** [<samp>(3447b)</samp>](https://github.com/d-kimuson/claude-crew/commit/3447b0b)
+- Moved rag feature to integration &nbsp;-&nbsp; by **d-kimsuon** [<samp>(dad42)</samp>](https://github.com/d-kimuson/claude-crew/commit/dad4296)
+- Add create-instruction command to generate instruction file from config &nbsp;-&nbsp; by **d-kimsuon** [<samp>(b1b45)</samp>](https://github.com/d-kimuson/claude-crew/commit/b1b4576)
+- Enhance setup process with database initialization and updated progress steps &nbsp;-&nbsp; by **d-kimsuon** [<samp>(239b4)</samp>](https://github.com/d-kimuson/claude-crew/commit/239b409)
+
+### &nbsp;&nbsp;&nbsp;Bug Fixes
+
+- Format RAG content before returning in find-relevant-documents and find-relevant-resources &nbsp;-&nbsp; by **d-kimsuon** [<samp>(4e001)</samp>](https://github.com/d-kimuson/claude-crew/commit/4e001c0)
+- Bug setup-db command doesn't close process after task completed &nbsp;-&nbsp; by **d-kimsuon** [<samp>(f5560)</samp>](https://github.com/d-kimuson/claude-crew/commit/f5560b7)
+- Remove all stdout logging in MCP server &nbsp;-&nbsp; by **d-kimsuon** [<samp>(62e34)</samp>](https://github.com/d-kimuson/claude-crew/commit/62e34dc)
+- Bug that 1'st command asked anthor command? &nbsp;-&nbsp; by **d-kimsuon** [<samp>(e7ee6)</samp>](https://github.com/d-kimuson/claude-crew/commit/e7ee6e9)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/d-kimuson/claude-crew/compare/0.0.7...0.0.8)
+
 ## 0.0.7
 
 ### &nbsp;&nbsp;&nbsp;Bug Fixes
