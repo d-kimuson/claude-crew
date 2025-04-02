@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 import type { Config } from "./core/config/schema"
+import { loadConfig } from "./core/config/loadConfig"
 import { mcpConfig } from "./core/config/mcp"
 import { writeConfig } from "./core/config/writeConfig"
 import { createContext } from "./core/context/createContext"
@@ -19,9 +20,10 @@ import { createSnippet } from "./snippet/createSnippet"
 
 const commands = {
   setup: "setup",
-  serveMcp: "serve-mcp",
   setupDb: "setup-db",
   clean: "clean",
+  serveMcp: "serve-mcp",
+  createInstruction: "create-instruction",
   createSnippet: "create-snippet",
 } as const
 
@@ -83,6 +85,19 @@ export const main = async () => {
             type: "string",
             description: "Output file path",
             default: "claude_crew_snippet.js",
+          })
+          .help()
+      }
+    )
+    .command(
+      `${commands.createInstruction} <config-path>`,
+      "Create instruction file from config",
+      (createInstruction) => {
+        createInstruction
+          .positional("config-path", {
+            type: "string",
+            description: "Configuration file path",
+            demandOption: true,
           })
           .help()
       }
@@ -252,6 +267,20 @@ export const main = async () => {
       await mkdir(dirname(outputPath), { recursive: true })
       await writeFile(outputPath, snippet, "utf-8")
       logger.info(`Snippet has been written to: ${outputPath}`)
+      break
+    }
+
+    case commands.createInstruction: {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const configPath = argv["configPath"] as string
+      const config = loadConfig(configPath)
+
+      const prompt = createPrompt(config)
+      await writeFile(
+        resolve(config.directory, ".claude-crew", "instruction.md"),
+        prompt
+      )
+      logger.info("Instruction file has been created!")
       break
     }
 
