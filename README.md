@@ -110,28 +110,108 @@ Information obtained at each step is optimized for efficient use of the LLM's co
 
 The following settings can be customized in `.claude-crew/config.json`:
 
-| Category      | Setting                     | Default Value                                                          | Description                                                            |
-| ------------- | --------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| **Basic**     |
-|               | `name`                      | Project name                                                           | Project name                                                           |
-|               | `directory`                 | Current directory                                                      | Project root directory                                                 |
-|               | `language`                  | "日本語"                                                               | Language for Claude interaction                                        |
-| **Commands**  |
-|               | `commands.install`          | "pnpm i"                                                               | Command to install dependencies                                        |
-|               | `commands.build`            | "pnpm build"                                                           | Build command                                                          |
-|               | `commands.test`             | "pnpm test"                                                            | Test execution command                                                 |
-|               | `commands.testFile`         | "pnpm vitest run <file>"                                               | Single file test command. <file> is replaced with absolute path        |
-|               | `commands.checks`           | ["pnpm tsc -p . --noEmit"]                                             | Validation commands like type checking                                 |
-|               | `commands.checkFiles`       | ["pnpm eslint <files>"]                                                | File-specific validation commands. <files> is replaced with paths list |
-| **Database**  |
-|               | `database.url`              | "postgresql://postgres:postgres@127.0.0.1:6432/claude-crew-embeddings" | PostgreSQL connection URL. Use your own DB URL when customDb is true   |
-|               | `database.port`             | 6432                                                                   | Port number for built-in Docker DB (ignored when customDb is true)     |
-|               | `database.customDb`         | false                                                                  | Set to true to use your own PostgreSQL database instead of Docker      |
-| **Embedding** |
-|               | `embedding.enabled`         | true                                                                   | Enable or disable embedding features                                   |
-|               | `embedding.provider.type`   | "openai"                                                               | Embedding provider type                                                |
-|               | `embedding.provider.apiKey` | -                                                                      | OpenAI API key (required only when embedding is enabled)               |
-|               | `embedding.provider.model`  | "text-embedding-ada-002"                                               | OpenAI embedding model                                                 |
+| Category     | Setting               | Default Value                                                          | Description                                                            |
+| ------------ | --------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| **Basic**    |
+|              | `name`                | Project name                                                           | Project name                                                           |
+|              | `directory`           | Current directory                                                      | Project root directory                                                 |
+|              | `language`            | "日本語"                                                               | Language for Claude interaction                                        |
+| **Commands** |
+|              | `commands.install`    | "pnpm i"                                                               | Command to install dependencies                                        |
+|              | `commands.build`      | "pnpm build"                                                           | Build command                                                          |
+|              | `commands.test`       | "pnpm test"                                                            | Test execution command                                                 |
+|              | `commands.testFile`   | "pnpm vitest run <file>"                                               | Single file test command. <file> is replaced with absolute path        |
+|              | `commands.checks`     | ["pnpm tsc -p . --noEmit"]                                             | Validation commands like type checking                                 |
+|              | `commands.checkFiles` | ["pnpm eslint <files>"]                                                | File-specific validation commands. <files> is replaced with paths list |
+| **Database** |
+|              | `database.url`        | "postgresql://postgres:postgres@127.0.0.1:6432/claude-crew-embeddings" | PostgreSQL connection URL. Use your own DB URL when customDb is true   |
+|              | `database.port`       | 6432                                                                   | Port number for built-in Docker DB (ignored when customDb is true)     |
+|              | `database.customDb`   | false                                                                  | Set to true to use your own PostgreSQL database instead of Docker      |
+
+## Integrations
+
+Claude Crew provides several integrations as extensions. These can be enabled and configured in the `integrations` section of the configuration file.
+
+## Collaboration with Other MCP Tools
+
+While Claude Crew can be used alongside other MCP tools, we recommend following these guidelines:
+
+### Recommended: Disable Similar Tools
+
+We recommend disabling similar tools such as `filesystem` and `claude-code`.
+
+**Reasons:**
+
+- AI agents can proceed with tasks more efficiently when there are fewer choices
+- Having duplicate functionality may cause the AI agent to consume extra context in selecting the optimal tool
+
+### Browser Operation Tools
+
+While you can use browser operation tools like `playwright-mcp` to perform browser-based tasks, consider the following:
+
+- Browser-based operation verification tends to consume more context compared to unit testing
+- Browser operation tools are not recommended when unit tests can provide sufficient verification
+- Consider using browser operation tools when unit testing is challenging (e.g., visual UI verification, complex user interaction testing)
+
+### Adding Custom Instructions
+
+Currently, there is no built-in functionality to automatically integrate custom instructions for other tools.
+
+Alternatives:
+
+- Manually append to the CLI-generated instructions (`.claude-crew/instruction.md`)
+- Add instructions for additional tools directly to your project's custom instructions
+
+### Available Integrations
+
+#### TypeScript Integration
+
+An integration that enhances support for TypeScript projects.
+
+```json
+{
+  "name": "typescript",
+  "config": {
+    "tsConfigFilePath": "./tsconfig.json"
+  }
+}
+```
+
+| Setting            | Description                               |
+| ------------------ | ----------------------------------------- |
+| `tsConfigFilePath` | Path to the TypeScript configuration file |
+
+**Provided Tools:**
+
+- `{project_name}-search-typescript-declaration` - Search for TypeScript declarations by identifier (function name, class name, interface name, etc.)
+
+#### RAG Integration (Retrieval-Augmented Generation)
+
+An extension for searching related documents and information within your project.
+
+```json
+{
+  "name": "rag",
+  "config": {
+    "provider": {
+      "type": "openai",
+      "apiKey": "your-openai-api-key",
+      "model": "text-embedding-ada-002"
+    }
+  }
+}
+```
+
+| Setting           | Default Value            | Description                                                       |
+| ----------------- | ------------------------ | ----------------------------------------------------------------- |
+| `provider.type`   | "openai"                 | Type of embedding provider (currently only "openai" is supported) |
+| `provider.apiKey` | -                        | OpenAI API key                                                    |
+| `provider.model`  | "text-embedding-ada-002" | Embedding model to use                                            |
+
+**Provided Tools:**
+
+- `{project_name}-find-relevant-documents` - Find relevant documents based on a query
+- `{project_name}-find-relevant-resources` - Find relevant resources based on a query
 
 ## Memory Bank
 
@@ -143,6 +223,44 @@ Claude Crew creates a `.claude-crew/memory-bank.md` file to store persistent pro
 - Coding Guidelines
 
 The Memory Bank is designed to be updated throughout project development, serving as a knowledge repository for the AI agent.
+
+## Snippets
+
+Since Claude Desktop does not have an automatic MCP approval feature, we provide a script for automatic approval. This is optional, not mandatory.
+
+The snippet provides the following features:
+
+### Key Features
+
+- **Automatic Tool Approval**: Automatically approves execution of trusted tools (those prefixed with `claude-crew-`)
+- **Message Sending Control**: Recommended especially for non-English input. Enables message sending with Ctrl+Enter (optional)
+
+### Usage
+
+1. Generate the snippet:
+
+```bash
+# Basic usage
+npx claude-crew@latest create-snippet
+
+# Disable Enter key message sending
+npx claude-crew@latest create-snippet --disable-send-enter
+
+# Specify output file
+npx claude-crew@latest create-snippet --outfile path/to/snippet.js
+```
+
+2. Apply in Claude Desktop:
+   - Launch Claude Desktop
+   - Press `Cmd + Alt + Shift + i` to open Developer Console
+   - Paste and execute the generated snippet content in the console
+
+### Options
+
+| Option                 | Default Value            | Description                                              |
+| ---------------------- | ------------------------ | -------------------------------------------------------- |
+| `--disable-send-enter` | `false`                  | When `true`, disables message sending on Enter key press |
+| `--outfile`            | `claude_crew_snippet.js` | Output file path for the generated snippet               |
 
 ## CLI Commands
 
