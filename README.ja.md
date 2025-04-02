@@ -43,6 +43,7 @@ CLI を介してインタラクティブにプロジェクトの情報を設定�
    - `prepare` ツールが呼び出され：
      - 依存関係の更新
      - RAG インデックスの更新
+     - Gitリポジトリの最新化（設定されている場合）
    - LLM に以下の情報を提供：
      - プロジェクトの構造
      - 関連するソースコード
@@ -109,6 +110,9 @@ $ npx claude-crew@latest setup
 |                  | `name`                | プロジェクト名                                                         | プロジェクト名                                                           |
 |                  | `directory`           | カレントディレクトリ                                                   | プロジェクトのルートディレクトリ                                         |
 |                  | `language`            | "日本語"                                                               | Claude との対話言語                                                      |
+| **Git設定**      |
+|                  | `git.defaultBranch`   | "main"                                                                 | Gitのデフォルトブランチ名                                                |
+|                  | `git.autoPull`        | true                                                                   | prepare時に自動的に最新の変更を取得するかどうか                          |
 | **コマンド**     |
 |                  | `commands.install`    | "pnpm i"                                                               | 依存関係のインストールコマンド                                           |
 |                  | `commands.build`      | "pnpm build"                                                           | ビルドコマンド                                                           |
@@ -203,49 +207,49 @@ TypeScript プロジェクトのサポートを強化するインテグレーシ
 
 **提供するツール:**
 
-- `{project_name}-find-relevant-documents` - クエリに基づいて関連するドキュメントを検索
-- `{project_name}-find-relevant-resources` - クエリに基づいて関連するリソースを検索
+- `{project_name}-find-relevant-documents` - クエリに基づいて関連ドキュメントを検索
+- `{project_name}-find-relevant-resources` - クエリに基づいて関連リソースを検索
 
 ## メモリバンク
 
-Claude Crew では`.claude-crew/memory-bank.md`ファイルを作成し、プロジェクトの永続的な知識を保存します。このファイルは各タスクの開始時に自動的に読み込まれ、以下のセクションが含まれています：
+Claude Crew は `.claude-crew/memory-bank.md` ファイルを作成し、プロジェクトの永続的な知識を保存します。このファイルは各タスクの開始時に自動的に読み込まれ、以下のセクションが含まれています：
 
 - プロジェクト概要
 - プロダクトコンテキスト
 - システムパターン
 - コーディングガイドライン
 
-メモリバンクはプロジェクト開発全体を通じて更新され、AIエージェントのための知識リポジトリとして機能します。
+メモリバンクはプロジェクト開発を通じて更新され、AIエージェントのための知識リポジトリとして機能します。
 
 ## スニペット
 
-Claude Desktop では MCP の自動承認機能がないため、自動承認を行うためのスクリプトを提供します。必須ではなく、オプショナルです。
+Claude DesktopにはMCPツールの自動承認機能がないため、自動承認のためのスクリプトを提供しています。これはオプションであり、必須ではありません。
 
-このスニペットは以下の機能を提供します：
+スニペットは以下の機能を提供します：
 
 ### 主な機能
 
-- **ツールの自動承認**: 信頼できるツール（`claude-crew-`で始まるツール）の実行を自動的に承認
-- **メッセージ送信の制御**: 特に日本語で推奨. Ctrl+Enterでの送信を可能に（オプション）
+- **自動ツール承認**: 信頼できるツール（`claude-crew-` というプレフィックスを持つツール）の実行を自動的に承認
+- **メッセージ送信コントロール**: 特に非英語入力に推奨。Ctrl+Enterでのメッセージ送信を可能にします（オプション）
 
 ### 使用方法
 
-1. スニペットの生成:
+1. スニペットを生成:
 
 ```bash
 # 基本的な使用方法
 npx claude-crew@latest create-snippet
 
-# Enterキーでの送信を無効化する場合
+# Enterキーでのメッセージ送信を無効化
 npx claude-crew@latest create-snippet --disable-send-enter
 
-# 出力ファイルを指定する場合
+# 出力ファイルを指定
 npx claude-crew@latest create-snippet --outfile path/to/snippet.js
 ```
 
-2. Claude Desktopでの適用:
+2. Claude Desktopに適用:
    - Claude Desktopを起動
-   - `Cmd + Alt + Shift + i`を押してデベロッパーコンソールを開く
+   - `Cmd + Alt + Shift + i` を押してデベロッパーコンソールを開く
    - 生成されたスニペットの内容をコンソールに貼り付けて実行
 
 ### オプション
@@ -253,29 +257,29 @@ npx claude-crew@latest create-snippet --outfile path/to/snippet.js
 | オプション             | デフォルト値             | 説明                                              |
 | ---------------------- | ------------------------ | ------------------------------------------------- |
 | `--disable-send-enter` | `false`                  | `true`の場合、Enterキーでのメッセージ送信を無効化 |
-| `--outfile`            | `claude_crew_snippet.js` | 生成されるスニペットの出力先ファイルパス          |
+| `--outfile`            | `claude_crew_snippet.js` | 生成されたスニペットの出力ファイルパス            |
 
 ## CLIコマンド
 
-Claude Crewは以下のCLIコマンドを提供します：
+Claude Crewは以下のCLIコマンドを提供しています：
 
 - `setup` - インタラクティブなプロジェクトセットアップ
-- `setup-db` - データベースを手動でセットアップ（再インストール時に便利）
+- `setup-db` - 手動でのデータベースセットアップ（再インストール時に便利）
 - `clean` - Dockerコンテナとボリュームを削除してセットアップ前の状態にリセット
-- `serve-mcp` - Claude Desktop連携用のMCPサーバーを実行
-- `create-snippet` - Claude Desktop用のヘルパースクリプトを生成
+- `serve-mcp` - Claude Desktop統合用のMCPサーバーを実行
+- `create-snippet` - Claude Desktop用のヘルパースクリプトを作成
   - `--disable-send-enter` - Enterキーでのメッセージ送信を無効化（デフォルト: false）
   - `--outfile` - 出力ファイルパス（デフォルト: claude_crew_snippet.js）
 
-## コントリビューション
+## 貢献
 
-コントリビューションは大歓迎です！以下の方法で参加できます：
+貢献を歓迎します！以下の方法で参加できます：
 
-- バグ報告や機能要望は Issue で
-- 改善案は Pull Request で
+- バグや機能リクエストをIssuesで報告
+- Pull Requestで改善を提案
 
-詳しくは [/docs/contribute/README.md](./docs/contribute/README.md) を確認してください。
+詳細については、[/docs/contribute/README.md](./docs/contribute/README.md)をご確認ください。
 
 ## ライセンス
 
-このプロジェクトは MIT ライセンスの下で公開されています。詳細は [LICENSE](LICENSE) ファイルをご覧ください。
+このプロジェクトはMITライセンスの下でリリースされています。詳細は[LICENSE](LICENSE)ファイルをご覧ください。

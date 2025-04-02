@@ -139,6 +139,10 @@ export const main = async () => {
           enable: false,
           allowedCommands: [],
         },
+        git: {
+          defaultBranch: answers.gitDefaultBranch,
+          autoPull: true,
+        },
         database: answers.customDb
           ? {
               customDb: true,

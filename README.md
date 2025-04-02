@@ -41,6 +41,7 @@ Tasks are processed in the following flow:
    - `prepare` tool is automatically invoked to:
      - Update dependencies
      - Update RAG index
+     - Pull latest Git changes (if configured)
    - Provide LLM with:
      - Project structure
      - Related source code
@@ -48,8 +49,7 @@ Tasks are processed in the following flow:
      - Memory Bank knowledge
 
 3. **Autonomous Task Execution**
-   - LLM starts working based on provided information
-     - Linter and unit tests are automatically executed with file operations and provide feedback
+   - Linter and unit tests are automatically executed with file operations and provide feedback
    - Implement necessary corrections based on feedback results
 
 Information obtained at each step is optimized for efficient use of the LLM's context window.
@@ -107,6 +107,9 @@ The following settings can be customized in `.claude-crew/config.json`:
 |              | `name`                | Project name                                                           | Project name                                                           |
 |              | `directory`           | Current directory                                                      | Project root directory                                                 |
 |              | `language`            | "日本語"                                                               | Language for Claude interaction                                        |
+| **Git**      |
+|              | `git.defaultBranch`   | "main"                                                                 | Default Git branch name                                                |
+|              | `git.autoPull`        | true                                                                   | Whether to automatically pull latest changes during prepare            |
 | **Commands** |
 |              | `commands.install`    | "pnpm i"                                                               | Command to install dependencies                                        |
 |              | `commands.build`      | "pnpm build"                                                           | Build command                                                          |

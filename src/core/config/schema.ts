@@ -20,6 +20,12 @@ export const configSchema = z.object({
       allowedCommands: z.array(z.string()).default(["pnpm"]),
     })
     .default({}),
+  git: z
+    .object({
+      defaultBranch: z.string().default("main"),
+      autoPull: z.boolean().default(true),
+    })
+    .default({}),
   database: z.union([
     z.object({
       customDb: z.literal(true),

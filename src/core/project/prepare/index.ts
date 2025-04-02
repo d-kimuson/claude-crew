@@ -7,9 +7,13 @@ import { findRelevantResources } from "../../embedding/findRelevantResources"
 import { formatRagContents } from "../../embedding/formatRagContents"
 import { indexCodebase } from "../../embedding/indexCodebase"
 import { getProjectInfo } from "../getProjectInfo"
+import { checkAndPullLatestChanges } from "./pullLatest"
 
 export const prepareTask = withContext(
   (ctx) => async (args?: { documentQuery: string; resourceQuery: string }) => {
+    // ブランチの最新化を試みる
+    checkAndPullLatestChanges(ctx)
+
     execSync(ctx.config.commands.install, {
       cwd: ctx.config.directory,
       encoding: "utf-8",

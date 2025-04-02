@@ -73,6 +73,21 @@
           "additionalProperties": false,
           "default": {}
         },
+        "git": {
+          "type": "object",
+          "properties": {
+            "defaultBranch": {
+              "type": "string",
+              "default": "main"
+            },
+            "autoPull": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          "additionalProperties": false,
+          "default": {}
+        },
         "database": {
           "anyOf": [
             {

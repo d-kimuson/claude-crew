@@ -56,6 +56,8 @@ export type SetupAnswers = {
   buildCommand: string
   testCommand: string
   testFileCommand: string
+  gitDefaultBranch: string
+  gitAutoPull: boolean
 } & (
   | {
       customDb: true
@@ -146,6 +148,18 @@ export const startRepl = async () => {
       message: "Input database URL",
       when: (answers) => answers.customDb,
       default: existingConfig?.database.url,
+    },
+    {
+      type: "input",
+      name: "gitDefaultBranch",
+      message: "Input default branch",
+      default: existingConfig?.git.defaultBranch ?? "main",
+    },
+    {
+      type: "confirm",
+      name: "gitAutoPull",
+      message: "Auto pull latest changes?",
+      default: existingConfig?.git.autoPull ?? true,
     },
   ])
 
