@@ -19,6 +19,7 @@ export type Logger = {
   step: (step: number, total: number, text: string) => void
   spinner: (text: string) => {
     succeed: (text: string) => void
+    info: (text: string) => void
     fail: (text: string) => void
   }
 }
@@ -146,6 +147,9 @@ export const logger = ((): Logger => {
           succeed: (text: string) => {
             spinner.succeed(text)
           },
+          info: (text: string) => {
+            spinner.info(text)
+          },
           fail: (text: string) => {
             spinner.fail(text)
           },
@@ -154,6 +158,9 @@ export const logger = ((): Logger => {
         logger.info(text)
         return {
           succeed: () => {
+            logger.info(text)
+          },
+          info: () => {
             logger.info(text)
           },
           fail: () => {

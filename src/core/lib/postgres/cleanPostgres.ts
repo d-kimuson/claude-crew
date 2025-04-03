@@ -1,6 +1,5 @@
 import { execSync } from "node:child_process"
 import chalk from "chalk"
-import ora from "ora"
 import { logger } from "../../../lib/logger"
 import { constraints } from "../../constraints"
 
@@ -12,7 +11,9 @@ export const cleanPostgres = () => {
     logger.title("Cleaning up PostgreSQL resources")
 
     // コンテナの存在確認
-    const containerSpinner = ora("Checking for existing container...").start()
+    const containerSpinner = logger.spinner(
+      "Checking for existing container..."
+    )
     const dockerPsStdout = execSync(
       `docker ps -a --filter name="${constraints.defaultPostgresContainer.containerName}" --format=json`,
       {
@@ -35,7 +36,7 @@ export const cleanPostgres = () => {
       )
 
       // コンテナを停止して削除
-      const stopSpinner = ora(`Stopping container...`).start()
+      const stopSpinner = logger.spinner(`Stopping container...`)
       execSync(
         `docker stop ${constraints.defaultPostgresContainer.containerName}`,
         {
@@ -44,7 +45,7 @@ export const cleanPostgres = () => {
       )
       stopSpinner.succeed(`Container stopped successfully`)
 
-      const removeSpinner = ora(`Removing container...`).start()
+      const removeSpinner = logger.spinner(`Removing container...`)
       execSync(
         `docker rm ${constraints.defaultPostgresContainer.containerName}`,
         {
@@ -61,7 +62,7 @@ export const cleanPostgres = () => {
     }
 
     // ボリュームの存在確認
-    const volumeSpinner = ora("Checking for existing volume...").start()
+    const volumeSpinner = logger.spinner("Checking for existing volume...")
     const volumeExistsCode = execSync(
       `docker volume inspect ${constraints.defaultPostgresContainer.volumeName} >/dev/null 2>&1 || echo "not-exists"`,
       { encoding: "utf-8" }
@@ -73,7 +74,7 @@ export const cleanPostgres = () => {
       )
 
       // ボリュームを削除
-      const removeVolumeSpinner = ora(`Removing volume...`).start()
+      const removeVolumeSpinner = logger.spinner(`Removing volume...`)
       execSync(
         `docker volume rm ${constraints.defaultPostgresContainer.volumeName}`,
         {

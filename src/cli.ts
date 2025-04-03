@@ -1,7 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises"
 import { dirname, resolve } from "node:path"
 import chalk from "chalk"
-import ora from "ora"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 import type { Config } from "./core/config/schema"
@@ -122,7 +121,7 @@ export const main = async () => {
 
       logger.step(2, 5, "Creating configuration files")
 
-      const spinner = ora("Generating project configuration...").start()
+      const spinner = logger.spinner("Generating project configuration...")
       const config: Config = {
         name: answers.name,
         directory: projectDirectory,
@@ -183,15 +182,17 @@ export const main = async () => {
 
       logger.step(3, 5, "Writing configuration and instruction files")
 
-      const configDirSpinner = ora(
+      const configDirSpinner = logger.spinner(
         `Creating configuration directory at ${chalk.cyan(".claude-crew")}...`
-      ).start()
+      )
       await mkdir(resolve(projectDirectory, ".claude-crew"), {
         recursive: true,
       })
       configDirSpinner.succeed("Configuration directory created!")
 
-      const writeConfigSpinner = ora("Writing configuration files...").start()
+      const writeConfigSpinner = logger.spinner(
+        `Writing configuration files at ${chalk.cyan(".claude-crew")}...`
+      )
       await writeConfig(
         resolve(projectDirectory, ".claude-crew", "config.json"),
         config
@@ -202,7 +203,9 @@ export const main = async () => {
       )
       writeConfigSpinner.succeed("Configuration files written successfully!")
 
-      const instructionSpinner = ora("Generating instruction file...").start()
+      const instructionSpinner = logger.spinner(
+        "Generating instruction file..."
+      )
       const prompt = createPrompt(config)
       await writeFile(
         resolve(projectDirectory, ".claude-crew", "instruction.md"),
@@ -319,7 +322,7 @@ To start using Claude Crew, follow these steps:
 
       logger.title("Creating Claude Desktop Snippet")
 
-      const spinner = ora("Generating snippet...").start()
+      const spinner = logger.spinner("Generating snippet...")
       const snippet = createSnippet({ disableSendEnter })
 
       const outputPath = outfile.startsWith("/")
@@ -357,11 +360,11 @@ To use this snippet:
 
       logger.title("Creating Claude Instruction")
 
-      const spinner = ora("Loading configuration...").start()
+      const spinner = logger.spinner("Loading configuration...")
       const config = loadConfig(configPath)
       spinner.succeed("Configuration loaded!")
 
-      const promptSpinner = ora("Generating instructions...").start()
+      const promptSpinner = logger.spinner("Generating instructions...")
       const prompt = createPrompt(config)
       await writeFile(
         resolve(config.directory, ".claude-crew", "instruction.md"),
