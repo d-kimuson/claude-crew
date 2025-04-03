@@ -6,6 +6,10 @@ const defaultConfig: Config = {
   name: "test-project",
   language: "日本語",
   directory: "/test/project",
+  git: {
+    defaultBranch: "main",
+    autoPull: true,
+  },
   database: {
     customDb: false,
     url: "test-database-url",
@@ -18,10 +22,6 @@ const defaultConfig: Config = {
     testFile: "pnpm vitest run <file>",
     checks: ["pnpm tsc -p . --noEmit"],
     checkFiles: ["pnpm eslint <files>"],
-  },
-  shell: {
-    enable: true,
-    allowedCommands: [],
   },
   integrations: [],
 }
