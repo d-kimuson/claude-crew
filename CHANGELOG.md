@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.0.9
+
+### &nbsp;&nbsp;&nbsp;Features
+
+- Add Git configuration options for default branch and auto-pull functionality &nbsp;-&nbsp; by **d-kimsuon** [<samp>(a706e)</samp>](https://github.com/d-kimuson/claude-crew/commit/a706ede)
+- Make bash tool integration &nbsp;-&nbsp; by **d-kimsuon** [<samp>(46b95)</samp>](https://github.com/d-kimuson/claude-crew/commit/46b9517)
+
+### &nbsp;&nbsp;&nbsp;Bug Fixes
+
+- Bug that MCP server output log to stdout by ora &nbsp;-&nbsp; by **d-kimsuon** [<samp>(4acdc)</samp>](https://github.com/d-kimuson/claude-crew/commit/4acdcf9)
+- Remove mcp server's imvalid stdout &nbsp;-&nbsp; by **d-kimsuon** [<samp>(a30cd)</samp>](https://github.com/d-kimuson/claude-crew/commit/a30cd5d)
+- Correct regex escape sequences in snippet template for tool name extraction &nbsp;-&nbsp; by **d-kimsuon** [<samp>(10664)</samp>](https://github.com/d-kimuson/claude-crew/commit/106649e)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/d-kimuson/claude-crew/compare/0.0.8...0.0.9)
+
 ## 0.0.8
 
 ### &nbsp;&nbsp;&nbsp;Breaking Changes
