@@ -46,52 +46,7 @@ export const shellTools = (config: Config) => {
     }
   )
 
-  // 許可されたコマンドかどうかチェック
-  const isAllowedCommand = (command: string): boolean => {
-    if (!config.shell.enable) {
-      return false
-    }
-
-    // 許可されたコマンドプレフィックスかチェック
-    return config.shell.allowedCommands.some((allowedCommand) =>
-      command.trim().startsWith(allowedCommand)
-    )
-  }
-
   return {
-    // 任意のコマンド実行（許可チェック付き）
-    bash: (command: string): InternalToolResult => {
-      if (!isAllowedCommand(command)) {
-        return {
-          success: false as const,
-          error: new DiscriminatedError(
-            "COMMAND_NOT_ALLOWED",
-            `Command '${command}' is not allowed. Allowed commands: ${config.shell.allowedCommands.join(", ")}`,
-            { command }
-          ),
-        }
-      }
-
-      return execBash(command).match(
-        (output) => ({
-          success: true as const,
-          command,
-          stdout: output,
-        }),
-        (error) => ({
-          success: false as const,
-          command,
-          error:
-            error.code === "EXEC_BASH_FAILED"
-              ? {
-                  message: error.message,
-                  ...error.details,
-                }
-              : error,
-        })
-      )
-    },
-
     // インストールコマンド実行
     install: (): InternalToolResult => {
       const command = config.commands.install

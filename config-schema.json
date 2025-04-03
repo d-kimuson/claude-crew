@@ -53,26 +53,6 @@
           },
           "additionalProperties": false
         },
-        "shell": {
-          "type": "object",
-          "properties": {
-            "enable": {
-              "type": "boolean",
-              "default": true
-            },
-            "allowedCommands": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "default": [
-                "pnpm"
-              ]
-            }
-          },
-          "additionalProperties": false,
-          "default": {}
-        },
         "git": {
           "type": "object",
           "properties": {
@@ -203,6 +183,35 @@
                 "required": [
                   "name",
                   "config"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "const": "shell"
+                  },
+                  "config": {
+                    "type": "object",
+                    "properties": {
+                      "allowedCommands": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "default": [
+                          "pnpm"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false,
+                    "default": {}
+                  }
+                },
+                "required": [
+                  "name"
                 ],
                 "additionalProperties": false
               }

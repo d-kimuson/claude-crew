@@ -134,10 +134,6 @@ export const main = async () => {
           checks: answers.checkCommands,
           checkFiles: answers.checkFilesCommands,
         },
-        shell: {
-          enable: false,
-          allowedCommands: [],
-        },
         git: {
           defaultBranch: answers.gitDefaultBranch,
           autoPull: true,
@@ -171,6 +167,16 @@ export const main = async () => {
                     apiKey: answers.openaiApiKey,
                     model: "text-embedding-ada-002",
                   },
+                },
+              } as const
+            case "shell":
+              return {
+                name: "shell",
+                config: {
+                  allowedCommands: answers.allowedCommands
+                    .split(",")
+                    .map((command) => command.trim())
+                    .filter((command) => command !== ""),
                 },
               } as const
             default:

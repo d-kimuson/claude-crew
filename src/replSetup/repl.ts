@@ -69,17 +69,7 @@ export type SetupAnswers = {
       databaseUrl?: undefined
       databasePort?: undefined
     }
-) &
-  (
-    | {
-        enableTypescript: true
-        tsConfigPath: string
-      }
-    | {
-        enableTypescript: false
-        tsConfigPath?: undefined
-      }
-  )
+)
 
 export type SetupResult = {
   directory: string
@@ -218,6 +208,7 @@ export const startRepl = async () => {
     integration: IntegrationNames[]
     tsConfigPath: string
     openaiApiKey: string
+    allowedCommands: string
   }>([
     {
       type: "checkbox",
@@ -256,6 +247,19 @@ export const startRepl = async () => {
           return "Invalid API key format. OpenAI API keys start with 'sk-'"
         return true
       },
+    },
+    {
+      type: "input",
+      name: "allowedCommands",
+      message: "Input allowed commands with comma separated",
+      when: (answers) => answers.integration?.includes("shell"),
+      default:
+        // prettier-ignore
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        (existingConfig?.integrations.find(({ name }) => name === "shell")
+            ?.config as GetIntegrationConfig<"shell"> | undefined)?.allowedCommands.join(
+          ","
+        ) ?? "",
     },
   ])
 

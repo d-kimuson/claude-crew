@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { ragIntegration } from "../../mcp-server/integrations/rag"
+import { shellIntegration } from "../../mcp-server/integrations/shell"
 import { typescriptIntegration } from "../../mcp-server/integrations/typescript"
 
 export const configSchema = z.object({
@@ -14,12 +15,6 @@ export const configSchema = z.object({
     checks: z.array(z.string()).default(["pnpm tsc -p . --noEmit"]),
     checkFiles: z.array(z.string()).default(["pnpm eslint --fix <files>"]),
   }),
-  shell: z
-    .object({
-      enable: z.boolean().default(true),
-      allowedCommands: z.array(z.string()).default(["pnpm"]),
-    })
-    .default({}),
   git: z
     .object({
       defaultBranch: z.string().default("main"),
@@ -47,6 +42,10 @@ export const configSchema = z.object({
         z.object({
           name: z.literal(ragIntegration.config.name),
           config: ragIntegration.config.configSchema,
+        }),
+        z.object({
+          name: z.literal(shellIntegration.config.name),
+          config: shellIntegration.config.configSchema,
         }),
       ])
     )

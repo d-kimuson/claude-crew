@@ -1,4 +1,3 @@
-import type { Context } from "../../core/context/interface"
 import type { ToolDeclare } from "../utils/defineTool"
 import type { z } from "zod"
 import { withContext } from "../../core/context/withContext"

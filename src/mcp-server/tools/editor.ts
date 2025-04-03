@@ -59,23 +59,6 @@ export const editorTools = [
 
   defineTool(({ server, ...ctx }) =>
     server.tool(
-      `${ctx.config.name}-exec-bash`,
-      `Execute a bash command`,
-      {
-        command: z.string().describe("Command to execute"),
-      },
-      (input) => {
-        try {
-          return toResponse(coreEditorTools(ctx).execBash(input.command))
-        } catch (error) {
-          return toErrorResponse(error)
-        }
-      }
-    )
-  ),
-
-  defineTool(({ server, ...ctx }) =>
-    server.tool(
       `${ctx.config.name}-read-file`,
       `Read the contents of a file`,
       {

@@ -1,8 +1,13 @@
 import type { z } from "zod"
 import { ragIntegration } from "./rag"
+import { shellIntegration } from "./shell"
 import { typescriptIntegration } from "./typescript"
 
-export const integrations = [typescriptIntegration, ragIntegration] as const
+export const integrations = [
+  typescriptIntegration,
+  ragIntegration,
+  shellIntegration,
+] as const
 
 export type IntegrationNames = (typeof integrations)[number]["config"]["name"]
 
