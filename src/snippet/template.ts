@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-escape */
 export const snippetTemplate = /* javascript */ `
 /**
  * Helper script for Claude Desktop
@@ -28,8 +27,8 @@ const autoApprove = () => {
 
   const toolDiv = dialog.querySelector("button > div")
   const toolName =
-    toolDiv.textContent?.match(/Run (\S+) from/)?.at(1) ?? // English
-    toolDiv.textContent?.match(/(\S+)から(\S+)を実行/)?.at(2) // Japanese
+    toolDiv.textContent?.match(/Run (\\S+) from/)?.at(1) ?? // English
+    toolDiv.textContent?.match(/(\\S+)から(\\S+)を実行/)?.at(2) // Japanese
   const allowButton = dialog.querySelector("[type=button]")
 
   if (!toolName || !allowButton) {
