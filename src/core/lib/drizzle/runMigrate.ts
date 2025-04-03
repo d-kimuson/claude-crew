@@ -1,17 +1,16 @@
 import chalk from "chalk"
 import { sql } from "drizzle-orm"
 import { migrate } from "drizzle-orm/postgres-js/migrator"
-import ora from "ora"
 import type { DB } from "."
 import { logger } from "../../../lib/logger"
 import { serializeError } from "../../errors/serializeError"
 import { getMigrationsFolder } from "./getMigrationsFolder"
 
 export const runMigrate = async (db: DB) => {
-  try {
-    logger.title("Database Migrations")
+  logger.title("Database Migrations")
 
-    const spinner = ora("Running migrations...").start()
+  const spinner = logger.spinner("Running migrations...")
+  try {
     const start = Date.now()
 
     await db.execute(sql`CREATE EXTENSION IF NOT EXISTS vector;`)
@@ -24,8 +23,9 @@ export const runMigrate = async (db: DB) => {
 
     spinner.succeed(`Migrations completed in ${chalk.cyan(`${duration}ms`)}`)
   } catch (error) {
-    logger.error("Failed to run migrations", {
-      error: serializeError(error),
-    })
+    spinner.fail(
+      `Failed to run migrations\n\nerror: ${JSON.stringify(serializeError(error), null, 2)}`
+    )
+    throw error
   }
 }

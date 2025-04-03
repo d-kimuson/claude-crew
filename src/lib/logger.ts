@@ -1,6 +1,7 @@
 import { appendFileSync } from "node:fs"
 import boxen from "boxen"
 import chalk from "chalk"
+import ora from "ora"
 import type { Options } from "boxen"
 
 /* eslint-disable no-console */
@@ -16,6 +17,10 @@ export type Logger = {
   title: (text: string) => void
   box: (text: string, options?: Options) => void
   step: (step: number, total: number, text: string) => void
+  spinner: (text: string) => {
+    succeed: (text: string) => void
+    fail: (text: string) => void
+  }
 }
 
 export const logger = ((): Logger => {
@@ -132,6 +137,29 @@ export const logger = ((): Logger => {
       if (runtimeState !== "mcp-server") {
         const progress = `[${step}/${total}]`
         console.log(chalk.cyan(progress), text)
+      }
+    },
+    spinner: (text: string) => {
+      if (runtimeState !== "mcp-server") {
+        const spinner = ora(text).start()
+        return {
+          succeed: (text: string) => {
+            spinner.succeed(text)
+          },
+          fail: (text: string) => {
+            spinner.fail(text)
+          },
+        }
+      } else {
+        logger.info(text)
+        return {
+          succeed: () => {
+            logger.info(text)
+          },
+          fail: () => {
+            logger.error(text)
+          },
+        }
       }
     },
   }
