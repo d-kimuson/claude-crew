@@ -97,6 +97,29 @@ Configuration files will be generated under `.claude-crew` through an interactiv
 
 Setup complete! 🎉
 
+## Troubleshooting
+
+If you encounter issues while using Claude Crew, here are some common solutions:
+
+### MCP Server Won't Start
+
+If the MCP server fails to start, it might be due to using an outdated configuration format. Try the following:
+
+1. Check if your `claude_desktop_config.json` matches the format in `.claude-crew/mcp.json`
+2. Update the MCP configuration in Claude Desktop with the latest format from `.claude-crew/mcp.json`
+
+### Database Issues
+
+If you experience database-related problems, you can reset and reinitialize the database:
+
+```bash
+# Clean up existing database containers and volumes
+$ npx claude-crew clean
+
+# Reinitialize the database
+$ npx claude-crew setup-db
+```
+
 ## Configuration
 
 The following settings can be customized in `.claude-crew/config.json`:

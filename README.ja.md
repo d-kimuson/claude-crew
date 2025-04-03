@@ -100,6 +100,29 @@ $ npx claude-crew@latest setup
 
 以上でセットアップ完了です 🎉
 
+## トラブルシューティング
+
+Claude Crewの使用中に問題が発生した場合、以下の一般的な解決方法を試してください：
+
+### MCPサーバーが起動しない
+
+MCPサーバーが起動しない場合、古い設定フォーマットを使用している可能性があります。以下を試してください：
+
+1. `claude_desktop_config.json` の内容が `.claude-crew/mcp.json` のフォーマットと一致しているか確認する
+2. Claude Desktopの MCP 設定を `.claude-crew/mcp.json` の最新フォーマットで更新する
+
+### データベースの問題
+
+データベース関連の問題が発生した場合、データベースをリセットして再初期化できます：
+
+```bash
+# 既存のデータベースコンテナとボリュームをクリーンアップ
+$ npx claude-crew clean
+
+# データベースを再初期化
+$ npx claude-crew setup-db
+```
+
 ## 設定項目
 
 `.claude-crew/config.json` で以下の設定をカスタマイズできます：
