@@ -29,7 +29,7 @@ const multipleInput = async (
       type: "confirm",
       name: "addAnother",
       message: addAnotherMessage,
-      default: true,
+      default: false,
     },
   ])
 
