@@ -150,6 +150,11 @@ export const main = async () => {
         integrations: answers.integration.map((name) => {
           switch (name) {
             case "typescript":
+              if (answers.tsConfigPath === undefined) {
+                throw new Error(
+                  "TypeScript integration selected but tsConfigPath is undefined"
+                )
+              }
               return {
                 name: "typescript",
                 config: {
