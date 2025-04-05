@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path"
 import chalk from "chalk"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
+import { z } from "zod"
 import type { Config } from "./core/config/schema"
 import { loadConfig } from "./core/config/loadConfig"
 import { mcpConfig } from "./core/config/mcp"
@@ -149,22 +150,25 @@ export const main = async () => {
             },
         integrations: answers.integration.map((name) => {
           switch (name) {
-            case "typescript":
+            case "typescript": {
+              const tsconfigPath = z.string().parse(answers.tsConfigPath)
+
               return {
                 name: "typescript",
                 config: {
-                  tsConfigFilePath: answers.tsConfigPath.startsWith("/")
-                    ? answers.tsConfigPath
-                    : resolve(projectDirectory, answers.tsConfigPath),
+                  tsConfigFilePath: tsconfigPath.startsWith("/")
+                    ? tsconfigPath
+                    : resolve(projectDirectory, tsconfigPath),
                 },
               } as const
+            }
             case "rag":
               return {
                 name: "rag",
                 config: {
                   provider: {
                     type: "openai",
-                    apiKey: answers.openaiApiKey,
+                    apiKey: z.string().parse(answers.openaiApiKey),
                     model: "text-embedding-ada-002",
                   },
                 },
@@ -173,7 +177,9 @@ export const main = async () => {
               return {
                 name: "shell",
                 config: {
-                  allowedCommands: answers.allowedCommands
+                  allowedCommands: z
+                    .string()
+                    .parse(answers.allowedCommands)
                     .split(",")
                     .map((command) => command.trim())
                     .filter((command) => command !== ""),

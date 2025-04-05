@@ -206,9 +206,9 @@ export const startRepl = async () => {
 
   const integrationAnswers = await inquirer.prompt<{
     integration: IntegrationNames[]
-    tsConfigPath: string
-    openaiApiKey: string
-    allowedCommands: string
+    tsConfigPath?: string
+    openaiApiKey?: string
+    allowedCommands?: string
   }>([
     {
       type: "checkbox",
@@ -228,8 +228,8 @@ export const startRepl = async () => {
         // prettier-ignore
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         (existingConfig?.integrations.find(({ name }) => name === "typescript")
-            ?.config as GetIntegrationConfig<"typescript">)
-          .tsConfigFilePath ?? resolve(directory, "tsconfig.json"),
+            ?.config as GetIntegrationConfig<"typescript"> | undefined)
+          ?.tsConfigFilePath ?? resolve(directory, "tsconfig.json"),
     },
     {
       type: "input",
