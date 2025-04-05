@@ -150,14 +150,19 @@ export const main = async () => {
         integrations: answers.integration.map((name) => {
           switch (name) {
             case "typescript":
-              return {
-                name: "typescript",
-                config: {
-                  tsConfigFilePath: answers.tsConfigPath.startsWith("/")
-                    ? answers.tsConfigPath
-                    : resolve(projectDirectory, answers.tsConfigPath),
-                },
-              } as const
+              if (typeof answers.tsConfigPath === "string") {
+                return {
+                  name: "typescript",
+                  config: {
+                    tsConfigFilePath: answers.tsConfigPath.startsWith("/")
+                      ? answers.tsConfigPath
+                      : resolve(projectDirectory, answers.tsConfigPath),
+                  },
+                } as const
+              }
+              throw new Error(
+                "TypeScript integration selected but tsConfigPath is not provided"
+              )
             case "rag":
               return {
                 name: "rag",
