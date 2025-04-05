@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.0.10
+
+### &nbsp;&nbsp;&nbsp;Bug Fixes
+
+- Setup command failed with no existing config &nbsp;-&nbsp; by **d-kimsuon** [<samp>(fb9fd)</samp>](https://github.com/d-kimuson/claude-crew/commit/fb9fdbf)
+- Update default value for addAnother prompt in REPL setup &nbsp;-&nbsp; by **d-kimsuon** [<samp>(d5c98)</samp>](https://github.com/d-kimuson/claude-crew/commit/d5c98bf)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/d-kimuson/claude-crew/compare/0.0.9...0.0.10)
+
 ## 0.0.9
 
 ### &nbsp;&nbsp;&nbsp;Features
