@@ -1,0 +1,47 @@
+{
+  "$schema": "https://raw.githubusercontent.com/d-kimuson/claude-crew/refs/heads/main/config-schema.json",
+  "name": "my-project",
+  "directory": "/path/to/my-project",
+  "language": "日本語",
+  "commands": {
+    "install": "pnpm i",
+    "build": "pnpm build",
+    "test": "pnpm test",
+    "testFile": "pnpm vitest run <file>",
+    "checks": ["pnpm tsc -p . --noEmit"],
+    "checkFiles": ["pnpm eslint --fix <files>", "pnpm prettier --write <files>"]
+  },
+  "git": {
+    "defaultBranch": "main",
+    "autoPull": true
+  },
+  "database": {
+    "customDb": false,
+    "port": 6432,
+    "url": "postgresql://postgres:postgres@127.0.0.1:6432/claude-crew-embeddings"
+  },
+  "integrations": [
+    {
+      "name": "typescript",
+      "config": {
+        "tsConfigFilePath": "/path/to/my-project/tsconfig.json"
+      }
+    },
+    {
+      "name": "rag",
+      "config": {
+        "provider": {
+          "type": "openai",
+          "apiKey": "<your-openai-api-key>",
+          "model": "text-embedding-ada-002"
+        }
+      }
+    },
+    {
+      "name": "shell",
+      "config": {
+        "allowedCommands": ["ls"]
+      }
+    }
+  ]
+}

@@ -107,6 +107,11 @@ If the MCP server fails to start, it might be due to using an outdated configura
 
 1. Check if your `claude_desktop_config.json` matches the format in `.claude-crew/mcp.json`
 2. Update the MCP configuration in Claude Desktop with the latest format from `.claude-crew/mcp.json`
+3. If the issue persists, refer to the example configuration at `config.example.json` in the project root and adjust your settings accordingly
+
+### Configuration Example
+
+For a complete example of Claude Crew configuration including all available options and integrations setup, refer to `config.example.json` in the project root.
 
 ### Database Issues
 

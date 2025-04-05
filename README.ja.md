@@ -110,6 +110,11 @@ MCPサーバーが起動しない場合、古い設定フォーマットを使�
 
 1. `claude_desktop_config.json` の内容が `.claude-crew/mcp.json` のフォーマットと一致しているか確認する
 2. Claude Desktopの MCP 設定を `.claude-crew/mcp.json` の最新フォーマットで更新する
+3. 問題が解決しない場合は、プロジェクトルートの `config.example.json` を参考に設定を調整してください
+
+### 設定例
+
+利用可能なすべてのオプションとインテグレーション設定を含む Claude Crew の設定例については、プロジェクトルートの `config.example.json` を参照してください。
 
 ### データベースの問題
 
