@@ -35,7 +35,6 @@
     "run:eslint": "eslint --cache --no-error-on-unmatched-pattern",
     "ts:run": "tsx --tsconfig ./tsconfig.src.json",
     "setup:lefthook": "lefthook install",
-    "preinstall": "npx -y only-allow pnpm",
     "prepare": "run-s setup:*"
   },
   "dependencies": {
@@ -63,7 +62,7 @@
     "tree-sitter-typescript": "^0.23.2",
     "ts-morph": "^25.0.1",
     "tsx": "^4.19.3",
-    "type-safe-prompt": "^0.0.2",
+    "type-safe-prompt": "^0.0.3",
     "yargs": "^17.7.2",
     "zod": "^3.24.2",
     "zod-to-json-schema": "^3.24.5"
