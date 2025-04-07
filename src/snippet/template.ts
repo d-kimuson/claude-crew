@@ -14,7 +14,7 @@ export const snippetTemplate = /* javascript */ `
  */
 
 const trustedTools = [] // You can add other tools to this array
-const trustedPrefixes = ["claude-crew-"] // You can add other prefixes to this array
+const trustedPrefixes = ["{{projectName}}-"] // You can add other prefixes to this array
 
 let lastExecution = 0
 const COOLDOWN_MS = 500

@@ -78,15 +78,15 @@ export const main = async () => {
       "Create a snippet for Claude Desktop",
       (createSnippet) => {
         createSnippet
+          .positional("config-path", {
+            type: "string",
+            description: "Configuration file path",
+            demandOption: true,
+          })
           .option("disable-send-enter", {
             type: "boolean",
             description: "Disable sending message on Enter key press",
             default: false,
-          })
-          .option("outfile", {
-            type: "string",
-            description: "Output file path",
-            default: "claude_crew_snippet.js",
           })
           .help()
       }
@@ -327,19 +327,22 @@ To start using Claude Crew, follow these steps:
     }
 
     case commands.createSnippet: {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const configPath = argv["configPath"] as string
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- yargs の型定義の制限により必要
       const disableSendEnter = argv["disable-send-enter"] as boolean
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- yargs の型定義の制限により必要
-      const outfile = argv["outfile"] as string
+
+      const config = loadConfig(configPath)
 
       logger.title("Creating Claude Desktop Snippet")
 
       const spinner = logger.spinner("Generating snippet...")
-      const snippet = createSnippet({ disableSendEnter })
+      const snippet = createSnippet({
+        disableSendEnter,
+        projectName: config.name,
+      })
 
-      const outputPath = outfile.startsWith("/")
-        ? outfile
-        : resolve(process.cwd(), outfile)
+      const outputPath = resolve(config.directory, ".claude-crew", "snippet.js")
 
       // create parent directory
       await mkdir(dirname(outputPath), { recursive: true })

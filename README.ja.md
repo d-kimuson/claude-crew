@@ -270,9 +270,6 @@ npx claude-crew@latest create-snippet
 
 # Enterキーでのメッセージ送信を無効化
 npx claude-crew@latest create-snippet --disable-send-enter
-
-# 出力ファイルを指定
-npx claude-crew@latest create-snippet --outfile path/to/snippet.js
 ```
 
 2. Claude Desktopに適用:
@@ -282,10 +279,10 @@ npx claude-crew@latest create-snippet --outfile path/to/snippet.js
 
 ### オプション
 
-| オプション             | デフォルト値             | 説明                                              |
-| ---------------------- | ------------------------ | ------------------------------------------------- |
-| `--disable-send-enter` | `false`                  | `true`の場合、Enterキーでのメッセージ送信を無効化 |
-| `--outfile`            | `claude_crew_snippet.js` | 生成されたスニペットの出力ファイルパス            |
+| オプション             | デフォルト値 | 説明                                              |
+| ---------------------- | ------------ | ------------------------------------------------- |
+| `--disable-send-enter` | `false`      | `true`の場合、Enterキーでのメッセージ送信を無効化 |
+| `config-path`          | -            | 設定ファイルのパス（必須）                        |
 
 ## CLIコマンド
 

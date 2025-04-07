@@ -267,9 +267,6 @@ npx claude-crew@latest create-snippet
 
 # Disable Enter key message sending
 npx claude-crew@latest create-snippet --disable-send-enter
-
-# Specify output file
-npx claude-crew@latest create-snippet --outfile path/to/snippet.js
 ```
 
 2. Apply in Claude Desktop:
@@ -279,10 +276,10 @@ npx claude-crew@latest create-snippet --outfile path/to/snippet.js
 
 ### Options
 
-| Option                 | Default Value            | Description                                              |
-| ---------------------- | ------------------------ | -------------------------------------------------------- |
-| `--disable-send-enter` | `false`                  | When `true`, disables message sending on Enter key press |
-| `--outfile`            | `claude_crew_snippet.js` | Output file path for the generated snippet               |
+| Option                 | Default Value | Description                                              |
+| ---------------------- | ------------- | -------------------------------------------------------- |
+| `--disable-send-enter` | `false`       | When `true`, disables message sending on Enter key press |
+| `config-path`          | -             | Configuration file path (required)                       |
 
 ## CLI Commands
 
@@ -294,7 +291,6 @@ Claude Crew provides the following CLI commands:
 - `serve-mcp` - Run the MCP server for Claude Desktop integration
 - `create-snippet` - Create a helper script for Claude Desktop
   - `--disable-send-enter` - Disable sending message on Enter key press (default: false)
-  - `--outfile` - Output file path (default: claude_crew_snippet.js)
 
 ## Contributing
 
