@@ -1,4 +1,4 @@
-import { execSync } from "child_process"
+import { execSync } from "node:child_process"
 import { logger } from "../../../lib/logger"
 import { isIntegrationEnabled } from "../../../mcp-server/integrations/isIntegrationEnabled"
 import { withContext } from "../../context/withContext"
