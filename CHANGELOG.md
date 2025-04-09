@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.0.12
+
+### &nbsp;&nbsp;&nbsp;Features
+
+- **create-snippet**: Remove outfile option and fix to .claude-crew/snippet.js &nbsp;-&nbsp; by **d-kimsuon** [<samp>(b4c4c)</samp>](https://github.com/d-kimuson/claude-crew/commit/b4c4cc5)
+
+### &nbsp;&nbsp;&nbsp;Bug Fixes
+
+- Node20 path resolvetion bug &nbsp;-&nbsp; by **d-kimsuon** [<samp>(0de09)</samp>](https://github.com/d-kimuson/claude-crew/commit/0de0994)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/d-kimuson/claude-crew/compare/0.0.11...0.0.12)
+
 ## 0.0.11
 
 _No significant changes_
