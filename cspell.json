@@ -36,7 +36,8 @@
     "ununsed",
     "xenova",
     "cooldown",
-    "contenteditable"
+    "contenteditable",
+    "pglite"
   ],
   "ignoreWords": ["kimsuon"],
   "ignorePaths": [

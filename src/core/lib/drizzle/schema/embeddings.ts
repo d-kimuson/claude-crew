@@ -7,10 +7,11 @@ import {
   vector,
 } from "drizzle-orm/pg-core"
 import { nanoid } from "nanoid"
+import { tableNames } from "../tableNames"
 import { resourcesTable } from "./resources"
 
 export const embeddingsTable = pgTable(
-  "embeddings",
+  tableNames.embeddings,
   {
     id: varchar("id", { length: 191 })
       .primaryKey()

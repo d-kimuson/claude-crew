@@ -1,8 +1,11 @@
+import { existsSync, mkdirSync } from "node:fs"
+import { homedir } from "node:os"
+import { resolve } from "node:path"
+import { PGlite } from "@electric-sql/pglite"
+import { vector } from "@electric-sql/pglite/vector"
 import { NoopLogger } from "drizzle-orm"
-import { drizzle } from "drizzle-orm/postgres-js"
-import postgres from "postgres"
+import { drizzle, type PgliteDatabase } from "drizzle-orm/pglite"
 import prexit from "prexit"
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js"
 import { logger } from "../../../lib/logger"
 import { documentEmbeddingsTable } from "./schema/documentEmbeddings"
 import { documentsTable } from "./schema/documents"
@@ -18,13 +21,15 @@ const schema = {
   documentEmbeddings: documentEmbeddingsTable,
 } as const
 
-export const createDbClient = (
-  databaseUrl: string,
-  options: {
-    enableQueryLogging: boolean
-  }
-) => {
-  const client = postgres(databaseUrl)
+export const allTables = Object.values(schema)
+
+export type DB = PgliteDatabase<typeof schema>
+
+export const createDbClient = (options: { enableQueryLogging: boolean }) => {
+  const client = new PGlite({
+    extensions: { vector },
+    dataDir: resolve(homedir(), ".claude-crew", "pglite-data"),
+  })
 
   let ended = false
 
@@ -32,14 +37,18 @@ export const createDbClient = (
     if (ended) return
     ended = true
     logger.info("✅ Clean up postgres connection")
-    await client.end()
+    await client.close()
   }
 
   prexit(async () => {
     await clean()
   })
 
-  const db: PostgresJsDatabase<typeof schema> = drizzle(client, {
+  if (!existsSync("~/.claude-crew/pglite")) {
+    mkdirSync("~/.claude-crew/pglite", { recursive: true })
+  }
+
+  const db: DB = drizzle(client, {
     schema: schema,
     logger:
       options.enableQueryLogging === false
@@ -53,9 +62,6 @@ export const createDbClient = (
 
   return {
     db,
-    client,
     clean,
   }
 }
-
-export type DB = PostgresJsDatabase<typeof schema>

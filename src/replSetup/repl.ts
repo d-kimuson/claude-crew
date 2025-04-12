@@ -127,19 +127,6 @@ export const startRepl = async () => {
       default: "local",
     },
     {
-      type: "confirm",
-      name: "customDb",
-      message: "Use custom database?",
-      default: existingConfig?.database.customDb ?? false,
-    },
-    {
-      type: "input",
-      name: "databaseUrl",
-      message: "Input database URL",
-      when: (answers) => answers.customDb,
-      default: existingConfig?.database.url,
-    },
-    {
       type: "input",
       name: "gitDefaultBranch",
       message: "Input default branch",
