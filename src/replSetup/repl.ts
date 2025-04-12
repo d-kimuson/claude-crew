@@ -58,18 +58,7 @@ export type SetupAnswers = {
   testFileCommand: string
   gitDefaultBranch: string
   gitAutoPull: boolean
-} & (
-  | {
-      customDb: true
-      databaseUrl: string
-      databasePort: number
-    }
-  | {
-      customDb: false
-      databaseUrl?: undefined
-      databasePort?: undefined
-    }
-)
+}
 
 export type SetupResult = {
   directory: string
