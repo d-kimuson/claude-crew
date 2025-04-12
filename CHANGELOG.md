@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.0.13
+
+### &nbsp;&nbsp;&nbsp;Breaking Changes
+
+- Using pglite insted of docker psql and remove custom db option &nbsp;-&nbsp; by **d-kimsuon** [<samp>(c70e7)</samp>](https://github.com/d-kimuson/claude-crew/commit/c70e79e)
+
+### &nbsp;&nbsp;&nbsp;Features
+
+- Improve think tool prompt &nbsp;-&nbsp; by **d-kimsuon** [<samp>(88dba)</samp>](https://github.com/d-kimuson/claude-crew/commit/88dba99)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;[View changes on GitHub](https://github.com/d-kimuson/claude-crew/compare/0.0.12...0.0.13)
+
 ## 0.0.12
 
 ### &nbsp;&nbsp;&nbsp;Features
