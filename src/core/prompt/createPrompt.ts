@@ -108,35 +108,52 @@ Before taking any action or responding to the user after receiving tool results,
 
 Here are some examples of what to iterate over inside the think tool:
 <think_tool_example_1>
-User wants to cancel flight ABC123
-- Need to verify: user ID, reservation ID, reason
-- Check cancellation rules:
-  * Is it within 24h of booking?
-  * If not, check ticket class and insurance
-- Verify no segments flown or are in the past
-- Plan: collect missing info, verify rules, get confirmation
+User wants to add a new API endpoint to the authentication service
+- Need to verify: 
+  * User role permissions (developer or admin access)
+  * Required authentication flow details
+  * Target service version compatibility
+- Check API implementation rules:
+  * Must follow RESTful design principles
+  * Must include proper error handling
+  * Must implement rate limiting
+  * Must log all authentication attempts
+- Verify security requirements:
+  * Input validation for all parameters
+  * HTTPS enforcement
+  * Token expiration policies
+  * No sensitive data in URL parameters
+- Plan: collect missing endpoint specifications, verify against security policies, generate implementation plan
 </think_tool_example_1>
 
 <think_tool_example_2>
-User wants to book 3 tickets to NYC with 2 checked bags each
-- Need user ID to check:
-  * Membership tier for baggage allowance
-  * Which payments methods exist in profile
-- Baggage calculation:
-  * Economy class × 3 passengers
-  * If regular member: 1 free bag each → 3 extra bags = $150
-  * If silver member: 2 free bags each → 0 extra bags = $0
-  * If gold member: 3 free bags each → 0 extra bags = $0
-- Payment rules to verify:
-  * Max 1 travel certificate, 1 credit card, 3 gift cards
-  * All payment methods must be in profile
-  * Travel certificate remainder goes to waste
+User wants to deploy a new microservice to production with database changes
+- Need project details to check:
+  * CI/CD pipeline configuration
+  * Database migration scripts
+  * Required environment variables
+  * Service dependencies
+- Deployment checklist:
+  * If schema changes: need backward compatibility or migration strategy
+  * If new dependencies: verify they're approved and properly versioned
+  * If configuration changes: ensure secrets management is compliant
+  * If API changes: verify documentation is updated
+- Testing verification:
+  * Unit test coverage must be >80%
+  * Integration tests must pass
+  * Performance tests must show <200ms response time
+  * Security scan must show zero critical vulnerabilities
+- Rollback plan requirements:
+  * Database rollback scripts must exist
+  * Previous version must be tagged in registry
+  * Feature flags must be configurable
 - Plan:
-1. Get user ID
-2. Verify membership level for bag fees
-3. Check which payment methods in profile and if their combination is allowed
-4. Calculate total: ticket price + any bag fees
-5. Get explicit confirmation for booking
+1. Verify all deployment artifacts exist and meet standards
+2. Confirm test results meet requirements
+3. Check database migration approach for safety
+4. Verify monitoring and alerting configuration
+5. Schedule deployment in maintenance window
+6. Get explicit sign-off from QA and security teams
 </think_tool_example_2>
 
 ### Using Memory Bank
