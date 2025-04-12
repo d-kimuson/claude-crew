@@ -68,50 +68,6 @@
           "additionalProperties": false,
           "default": {}
         },
-        "database": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "customDb": {
-                  "type": "boolean",
-                  "const": true
-                },
-                "url": {
-                  "type": "string",
-                  "description": "postgres url"
-                }
-              },
-              "required": [
-                "customDb",
-                "url"
-              ],
-              "additionalProperties": false
-            },
-            {
-              "type": "object",
-              "properties": {
-                "customDb": {
-                  "type": "boolean",
-                  "const": false
-                },
-                "port": {
-                  "type": "number"
-                },
-                "url": {
-                  "type": "string",
-                  "description": "postgres url"
-                }
-              },
-              "required": [
-                "customDb",
-                "port",
-                "url"
-              ],
-              "additionalProperties": false
-            }
-          ]
-        },
         "integrations": {
           "type": "array",
           "items": {
@@ -223,8 +179,7 @@
       "required": [
         "name",
         "directory",
-        "commands",
-        "database"
+        "commands"
       ]
     },
     {
