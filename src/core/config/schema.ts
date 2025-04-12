@@ -21,17 +21,6 @@ export const configSchema = z.object({
       autoPull: z.boolean().default(true),
     })
     .default({}),
-  database: z.union([
-    z.object({
-      customDb: z.literal(true),
-      url: z.string().describe("postgres url"),
-    }),
-    z.object({
-      customDb: z.literal(false),
-      port: z.number(),
-      url: z.string().describe("postgres url"),
-    }),
-  ]),
   integrations: z
     .array(
       z.union([

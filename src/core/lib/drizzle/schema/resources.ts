@@ -2,10 +2,11 @@ import { varchar, timestamp, pgTable, uniqueIndex } from "drizzle-orm/pg-core"
 import { createSelectSchema } from "drizzle-zod"
 import { nanoid } from "nanoid"
 import type { z } from "zod"
+import { tableNames } from "../tableNames"
 import { projectsTable } from "./projects"
 
 export const resourcesTable = pgTable(
-  "resources",
+  tableNames.resources,
   {
     id: varchar("id", { length: 191 })
       .primaryKey()

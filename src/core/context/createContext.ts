@@ -3,7 +3,6 @@ import type { DB } from "../lib/drizzle"
 import { loadConfig } from "../config/loadConfig"
 import { createDbClient } from "../lib/drizzle"
 import { queries } from "../lib/drizzle/queries"
-import { startPostgres } from "../lib/postgres/startPostgres"
 import { getProjectInfo } from "../project/getProjectInfo"
 
 export const createContext = async (
@@ -17,10 +16,9 @@ export const createContext = async (
   clean: () => Promise<void>
 }> => {
   const { enableQueryLogging = false } = options
-  await startPostgres(configPath, loadConfig(configPath))
 
   const config = loadConfig(configPath)
-  const { db, clean } = createDbClient(config.database.url, {
+  const { db, clean } = createDbClient({
     enableQueryLogging,
   })
   const projectInfo = await getProjectInfo(config.directory)

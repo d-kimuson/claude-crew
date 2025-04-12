@@ -58,18 +58,7 @@ export type SetupAnswers = {
   testFileCommand: string
   gitDefaultBranch: string
   gitAutoPull: boolean
-} & (
-  | {
-      customDb: true
-      databaseUrl: string
-      databasePort: number
-    }
-  | {
-      customDb: false
-      databaseUrl?: undefined
-      databasePort?: undefined
-    }
-)
+}
 
 export type SetupResult = {
   directory: string
@@ -125,19 +114,6 @@ export const startRepl = async () => {
       message: "Select runtime (local is recommended)",
       choices: ["local", "container"],
       default: "local",
-    },
-    {
-      type: "confirm",
-      name: "customDb",
-      message: "Use custom database?",
-      default: existingConfig?.database.customDb ?? false,
-    },
-    {
-      type: "input",
-      name: "databaseUrl",
-      message: "Input database URL",
-      when: (answers) => answers.customDb,
-      default: existingConfig?.database.url,
     },
     {
       type: "input",

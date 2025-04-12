@@ -21,7 +21,6 @@ Claude Crew は、Claude Desktop の性能を最大限に引き出すために�
 
 - Claude Desktop
 - Embedding 用の OpenAI API キー（任意 - ただしコンテキスト理解の向上のため強く推奨）
-- Docker および Docker Compose（カスタムデータベース使用時は不要）
 - Node.js >= v20
 
 ## How it works
@@ -132,26 +131,22 @@ $ npx claude-crew setup-db
 
 `.claude-crew/config.json` で以下の設定をカスタマイズできます：
 
-| カテゴリ         | 設定項目              | デフォルト値                                                           | 説明                                                                     |
-| ---------------- | --------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| **基本設定**     |
-|                  | `name`                | プロジェクト名                                                         | プロジェクト名                                                           |
-|                  | `directory`           | カレントディレクトリ                                                   | プロジェクトのルートディレクトリ                                         |
-|                  | `language`            | "日本語"                                                               | Claude との対話言語                                                      |
-| **Git設定**      |
-|                  | `git.defaultBranch`   | "main"                                                                 | Gitのデフォルトブランチ名                                                |
-|                  | `git.autoPull`        | true                                                                   | prepare時に自動的に最新の変更を取得するかどうか                          |
-| **コマンド**     |
-|                  | `commands.install`    | "pnpm i"                                                               | 依存関係のインストールコマンド                                           |
-|                  | `commands.build`      | "pnpm build"                                                           | ビルドコマンド                                                           |
-|                  | `commands.test`       | "pnpm test"                                                            | テスト実行コマンド                                                       |
-|                  | `commands.testFile`   | "pnpm vitest run <file>"                                               | 単一ファイルのテストコマンド。<file> が絶対パスに置換されます。          |
-|                  | `commands.checks`     | ["pnpm tsc -p . --noEmit"]                                             | 型チェックなどの検証コマンド                                             |
-|                  | `commands.checkFiles` | ["pnpm eslint <files>"]                                                | 特定ファイルの検証コマンド。<files>が絶体パスの一覧に置換されます。      |
-| **データベース** |
-|                  | `database.url`        | "postgresql://postgres:postgres@127.0.0.1:6432/claude-crew-embeddings" | PostgreSQL接続URL。customDbがtrueの場合は自前のDB URLを指定します        |
-|                  | `database.port`       | 6432                                                                   | 内蔵Docker DB用ポート番号（customDbがtrueの場合は無視されます）          |
-|                  | `database.customDb`   | false                                                                  | trueに設定するとDockerの代わりに自前のPostgreSQLデータベースを使用します |
+| カテゴリ     | 設定項目              | デフォルト値               | 説明                                                                |
+| ------------ | --------------------- | -------------------------- | ------------------------------------------------------------------- |
+| **基本設定** |
+|              | `name`                | プロジェクト名             | プロジェクト名                                                      |
+|              | `directory`           | カレントディレクトリ       | プロジェクトのルートディレクトリ                                    |
+|              | `language`            | "日本語"                   | Claude との対話言語                                                 |
+| **Git設定**  |
+|              | `git.defaultBranch`   | "main"                     | Gitのデフォルトブランチ名                                           |
+|              | `git.autoPull`        | true                       | prepare時に自動的に最新の変更を取得するかどうか                     |
+| **コマンド** |
+|              | `commands.install`    | "pnpm i"                   | 依存関係のインストールコマンド                                      |
+|              | `commands.build`      | "pnpm build"               | ビルドコマンド                                                      |
+|              | `commands.test`       | "pnpm test"                | テスト実行コマンド                                                  |
+|              | `commands.testFile`   | "pnpm vitest run <file>"   | 単一ファイルのテストコマンド。<file> が絶対パスに置換されます。     |
+|              | `commands.checks`     | ["pnpm tsc -p . --noEmit"] | 型チェックなどの検証コマンド                                        |
+|              | `commands.checkFiles` | ["pnpm eslint <files>"]    | 特定ファイルの検証コマンド。<files>が絶体パスの一覧に置換されます。 |
 
 ## インテグレーション
 
@@ -290,7 +285,7 @@ Claude Crewは以下のCLIコマンドを提供しています：
 
 - `setup` - インタラクティブなプロジェクトセットアップ
 - `setup-db` - 手動でのデータベースセットアップ（再インストール時に便利）
-- `clean` - Dockerコンテナとボリュームを削除してセットアップ前の状態にリセット
+- `clean` - PGlite データベースをリセット
 - `serve-mcp` - Claude Desktop統合用のMCPサーバーを実行
 - `create-snippet` - Claude Desktop用のヘルパースクリプトを作成
   - `--disable-send-enter` - Enterキーでのメッセージ送信を無効化（デフォルト: false）

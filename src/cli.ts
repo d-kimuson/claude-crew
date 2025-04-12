@@ -10,9 +10,9 @@ import { mcpConfig } from "./core/config/mcp"
 import { writeConfig } from "./core/config/writeConfig"
 import { createContext } from "./core/context/createContext"
 import { indexCodebase } from "./core/embedding/indexCodebase"
+import { createDbClient } from "./core/lib/drizzle"
+import { resetMigrate } from "./core/lib/drizzle/resetMigrate"
 import { runMigrate } from "./core/lib/drizzle/runMigrate"
-import { cleanPostgres } from "./core/lib/postgres/cleanPostgres"
-import { createPostgresConfig } from "./core/lib/postgres/startPostgres"
 import { createPrompt } from "./core/prompt/createPrompt"
 import { logger } from "./lib/logger"
 import { startMcpServer } from "./mcp-server"
@@ -139,15 +139,6 @@ export const main = async () => {
           defaultBranch: answers.gitDefaultBranch,
           autoPull: true,
         },
-        database: answers.customDb
-          ? {
-              customDb: true,
-              url: answers.databaseUrl,
-            }
-          : {
-              customDb: false,
-              ...(await createPostgresConfig()),
-            },
         integrations: answers.integration.map((name) => {
           switch (name) {
             case "typescript": {
@@ -322,7 +313,11 @@ To start using Claude Crew, follow these steps:
 
     case commands.clean: {
       logger.title("Claude Crew Cleanup")
-      cleanPostgres()
+      const { db, clean } = createDbClient({
+        enableQueryLogging: false,
+      })
+      await resetMigrate(db)
+      await clean()
       break
     }
 

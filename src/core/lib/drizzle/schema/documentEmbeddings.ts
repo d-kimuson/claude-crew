@@ -7,10 +7,11 @@ import {
   index,
 } from "drizzle-orm/pg-core"
 import { nanoid } from "nanoid"
+import { tableNames } from "../tableNames"
 import { documentsTable } from "./documents"
 
 export const documentEmbeddingsTable = pgTable(
-  "document_embeddings",
+  tableNames.documentEmbeddings,
   {
     id: varchar("id", { length: 191 })
       .primaryKey()

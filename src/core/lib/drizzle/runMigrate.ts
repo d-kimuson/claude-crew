@@ -1,6 +1,6 @@
 import chalk from "chalk"
-import { sql } from "drizzle-orm"
-import { migrate } from "drizzle-orm/postgres-js/migrator"
+import { migrate } from "drizzle-orm/pglite/migrator"
+import { sql } from "drizzle-orm/sql"
 import type { DB } from "."
 import { logger } from "../../../lib/logger"
 import { serializeError } from "../../errors/serializeError"

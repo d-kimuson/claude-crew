@@ -10,11 +10,6 @@ const defaultConfig: Config = {
     defaultBranch: "main",
     autoPull: true,
   },
-  database: {
-    customDb: false,
-    url: "test-database-url",
-    port: 3306,
-  },
   commands: {
     install: "pnpm i",
     build: "pnpm build",

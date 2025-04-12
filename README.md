@@ -19,7 +19,6 @@ Claude Crew focuses on three key elements to maximize Claude Desktop's performan
 
 - Claude Desktop
 - OpenAI API key for embedding (optional - but recommended for better context understanding)
-- Docker and Docker Compose (Not required when using custom database)
 - Node.js >= v20
 
 ## How it works
@@ -146,9 +145,9 @@ The following settings can be customized in `.claude-crew/config.json`:
 |              | `commands.checks`     | ["pnpm tsc -p . --noEmit"]                                             | Validation commands like type checking                                 |
 |              | `commands.checkFiles` | ["pnpm eslint <files>"]                                                | File-specific validation commands. <files> is replaced with paths list |
 | **Database** |
-|              | `database.url`        | "postgresql://postgres:postgres@127.0.0.1:6432/claude-crew-embeddings" | PostgreSQL connection URL. Use your own DB URL when customDb is true   |
-|              | `database.port`       | 6432                                                                   | Port number for built-in Docker DB (ignored when customDb is true)     |
-|              | `database.customDb`   | false                                                                  | Set to true to use your own PostgreSQL database instead of Docker      |
+|              | `database.url`        | "postgresql://postgres:postgres@127.0.0.1:6432/claude-crew-embeddings" | PostgreSQL connection URL for your database                            |
+|              | `database.port`       | 6432                                                                   | Port number for PGlite database                                        |
+|              | `database.customDb`   | false                                                                  | Set to true to use your own PostgreSQL database                        |
 
 ## Integrations
 
@@ -287,7 +286,7 @@ Claude Crew provides the following CLI commands:
 
 - `setup` - Interactive project setup
 - `setup-db` - Manual database setup (useful for reinstallation)
-- `clean` - Remove Docker containers and volumes to reset to pre-setup state
+- `clean` - Reset PGlite database
 - `serve-mcp` - Run the MCP server for Claude Desktop integration
 - `create-snippet` - Create a helper script for Claude Desktop
   - `--disable-send-enter` - Disable sending message on Enter key press (default: false)

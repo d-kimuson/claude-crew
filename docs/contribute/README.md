@@ -8,7 +8,6 @@ This document is a guide explaining how to contribute to the Claude Crew project
 
 - Node.js (version specified in the `.node-version` file)
 - pnpm (version specified in the `packageManager` field of the project root's `package.json`)
-- Docker (for PostgreSQL, optional)
 
 ### Setup Steps
 
