@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/d-kimuson-claude-crew-badge.png)](https://mseep.ai/app/d-kimuson-claude-crew)
+
 # Claude Crew 🤖
 
 [![npm version](https://badge.fury.io/js/claude-crew.svg)](https://badge.fury.io/js/claude-crew)
