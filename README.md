@@ -1,3 +1,10 @@
+> [!WARNING]
+> The Claude Crew project was launched with the goal of building an agent capable of coding within the scope of Claude subscriptions, based on Claude Desktop, before the advent of comprehensive AI agent tools.
+> 
+> However, as time progressed and superior official options like Claude Code emerged, along with a developed ecosystem, the Claude Crew's role became obsolete.
+> 
+> While the GUI aspect is a differentiating factor, please consider options such as [d-kimuson/claude-code-viewer](https://github.com/d-kimuson/claude-code-viewer).
+
 # Claude Crew 🤖
 
 [![npm version](https://badge.fury.io/js/claude-crew.svg)](https://badge.fury.io/js/claude-crew)
